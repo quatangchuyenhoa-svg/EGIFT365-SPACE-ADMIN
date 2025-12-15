@@ -11,6 +11,10 @@ export interface UserProfile {
   full_name?: string
   avatar_url?: string
   role?: string
+  phone?: string
+  address?: string
+  gender?: string
+  date_of_birth?: string
   created_at?: string
   updated_at?: string
 }

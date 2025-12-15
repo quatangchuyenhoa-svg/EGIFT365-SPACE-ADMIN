@@ -90,6 +90,12 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "author",
+      title: "Tác giả",
+      type: "string",
+      description: "Tên tác giả của concept",
+    }),
+    defineField({
       name: "order",
       title: "Order",
       type: "number",
