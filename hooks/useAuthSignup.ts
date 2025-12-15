@@ -17,12 +17,13 @@ export function useAuthSignup() {
     mutationFn: async (credentials: SignupCredentials) => {
       const supabase = createClient()
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: credentials.email,
         password: credentials.password,
         options: {
           data: {
-            full_name: credentials.name,
+            full_name: credentials.name.trim() || null,
           },
         },
       })
@@ -35,24 +36,11 @@ export function useAuthSignup() {
         throw new Error(signUpError.message)
       }
 
-      // Nếu signup thành công và có user, upsert profile với full_name
-      if (signUpData?.user?.id) {
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .upsert(
-            {
-              id: signUpData.user.id,
-              email: credentials.email,
-              full_name: credentials.name.trim() || null,
-              role: "member",
-            },
-            { onConflict: "id" }
-          )
-
-        if (profileError) {
-          console.error("Error updating profile:", profileError)
-        }
-      }
+      // Profile sẽ được tự động tạo bởi database trigger handle_new_user()
+      // Trigger sẽ tự động lấy full_name từ user_metadata (credentials.name)
+      // Không cần client-side upsert vì:
+      // 1. User chưa authenticated nên RLS sẽ block
+      // 2. Trigger đã tự động tạo profile với full_name từ user_metadata
     },
     onSuccess: () => {
       toast.success("Tạo tài khoản thành công! Vui lòng đăng nhập.")
