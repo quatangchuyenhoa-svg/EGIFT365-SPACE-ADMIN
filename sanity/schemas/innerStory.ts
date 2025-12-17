@@ -15,7 +15,7 @@ export default defineType({
       name: "category",
       title: "Category",
       type: "reference",
-      to: [{ type: "category" }],
+      to: [{ type: "innerStoryCategory" }],
       options: {
         filter: "isActive == true",
       },
@@ -66,11 +66,12 @@ export default defineType({
       title: "title",
       media: "image",
       categoryName: "category.name",
+      categoryTag: "category.tag.current",
     },
-    prepare({ title, media, categoryName }) {
+    prepare({ title, media, categoryName, categoryTag }) {
       return {
         title: title || "Untitled Story",
-        subtitle: categoryName ? `Category: ${categoryName}` : "",
+        subtitle: categoryName ? `Category: ${categoryName}` : categoryTag ? `Tag: ${categoryTag}` : "",
         media,
       };
     },
