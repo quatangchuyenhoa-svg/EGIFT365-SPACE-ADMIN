@@ -12,13 +12,30 @@ import {
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/dataTable"
 import { type UserRow, useUsers } from "@/hooks/useUsers"
+import { useDeleteUser } from "@/hooks/useDeleteUser"
 import { ROUTES } from "@/lib/constants/routes"
 import { IconDotsVertical, IconPencil, IconTrash } from "@tabler/icons-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function UsersClient() {
   const { users, loading, error, refetch } = useUsers()
   const router = useRouter()
-  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [selectedUser, setSelectedUser] = useState<UserRow | null>(null)
+
+  const deleteMutation = useDeleteUser({
+    onSuccess: async () => {
+      await refetch()
+    },
+  })
 
   const columns: ColumnDef<UserRow>[] = useMemo(
     () => [
@@ -54,7 +71,9 @@ export default function UsersClient() {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
-          const id = row.original.id
+          const user = row.original
+          const isDeleting = deleteMutation.isPending && selectedUser?.id === user.id
+
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -65,36 +84,18 @@ export default function UsersClient() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <a href={ROUTES.MANAGER.USERS_EDIT(id)} className="flex items-center gap-2">
+                  <a href={ROUTES.MANAGER.USERS_EDIT(user.id)} className="flex items-center gap-2">
                     <IconPencil className="size-4" />
                     Edit
                   </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
-                  onClick={async () => {
-                    if (!id) return
-                    const ok = window.confirm("Delete this user?")
-                    if (!ok) return
-                    try {
-                      setDeletingId(id)
-                      const res = await fetch(`/api/users/${id}`, { method: "DELETE" })
-                      const json = await res.json().catch(() => ({}))
-                      if (!res.ok) {
-                        throw new Error(json?.error || "Failed to delete user")
-                      }
-                      await refetch()
-                    } catch (err) {
-                      console.error(err)
-                      alert(err instanceof Error ? err.message : "Failed to delete user")
-                    } finally {
-                      setDeletingId(null)
-                    }
-                  }}
-                  disabled={deletingId === id}
+                  onClick={() => setSelectedUser(user)}
+                  disabled={isDeleting}
                 >
                   <IconTrash className="size-4" />
-                  {deletingId === id ? "Deleting..." : "Delete"}
+                  {isDeleting ? "Deleting..." : "Delete"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -102,7 +103,7 @@ export default function UsersClient() {
         },
       },
     ],
-    [deletingId, refetch]
+    [deleteMutation.isPending, refetch, selectedUser]
   )
 
   return (
@@ -129,6 +130,46 @@ export default function UsersClient() {
       />
 
       {loading && <p className="text-sm text-muted-foreground">Loading users...</p>}
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog
+        open={!!selectedUser}
+        onOpenChange={(open) => {
+          if (!open && !deleteMutation.isPending) {
+            setSelectedUser(null)
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete user</AlertDialogTitle>
+            <AlertDialogDescription>
+              {selectedUser
+                ? `Bạn có chắc chắn muốn xóa user "${selectedUser.email || selectedUser.id}"? Hành động này không thể hoàn tác.`
+                : "Bạn có chắc chắn muốn xóa user này? Hành động này không thể hoàn tác."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteMutation.isPending || !selectedUser}
+              onClick={() => {
+                if (!selectedUser) return
+                deleteMutation.mutate(selectedUser.id, {
+                  onSettled: () => {
+                    setSelectedUser(null)
+                  },
+                })
+              }}
+            >
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
