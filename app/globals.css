@@ -8,6 +8,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-merriweather, 'Merriweather', serif);
+  --font-body: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -45,45 +47,67 @@
 
 :root {
   --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
+  
+  /* Light Brown Theme */
+  --background: oklch(0.98 0.02 90 / 95%); /* Very light cream/beige for background */
+  --foreground: oklch(0.2 0.08 60); /* Deep warm brown for text */
+  
   /* Font variables cho E-Gift Brand */
   --font-heading-family: var(--font-merriweather, 'Merriweather', serif);
   --font-body-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.586 0.253 17.585);
-  --primary-foreground: oklch(0.969 0.015 12.422);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.712 0.194 13.428);
+  /* Stitch.width fonts */
+  --font-display: var(--font-newsreader, 'Newsreader', serif);
+  --font-sans: var(--font-noto-sans, 'Noto Sans', sans-serif);
+  
+  --card: oklch(0.95 0.02 70); /* Slightly darker cream for cards */
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.45 0.15 45); /* Medium earthy brown for primary actions */
+  --primary-foreground: oklch(0.98 0 0); /* Off-white for primary text */
+  --secondary: oklch(0.85 0.05 75); /* Lighter brown/tan for secondary elements */
+  --secondary-foreground: var(--foreground);
+  --muted: oklch(0.9 0.03 80); /* Muted light brown */
+  --muted-foreground: oklch(0.45 0.05 65); /* Tăng độ tối để đạt contrast tốt hơn (WCAG AA: 4.5:1) */
+  --accent: oklch(0.8 0.1 60); /* Accent brown, slightly warmer */
+  --accent-foreground: var(--foreground);
+  --destructive: oklch(0.6 0.25 35); /* Warm reddish brown for destructive actions */
+  --border: oklch(0.7 0.05 70); /* Medium light brown for borders */
+  --input: oklch(0.9 0.03 85); /* Very light brown for input fields */
+  --ring: oklch(0.45 0.15 45); /* Same as primary for focus rings */
+  
+  /* Chart colors (can be adjusted to fit brown palette if needed, keeping originals for now) */
   --chart-1: oklch(0.81 0.117 11.638);
   --chart-2: oklch(0.645 0.246 16.439);
   --chart-3: oklch(0.586 0.253 17.585);
   --chart-4: oklch(0.514 0.222 16.935);
   --chart-5: oklch(0.455 0.188 13.697);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.586 0.253 17.585);
-  --sidebar-primary-foreground: oklch(0.969 0.015 12.422);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.712 0.194 13.428);
+  
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+  
+  /* Stitch.width Design System Colors */
+  --primary-orange: #eb9947;
+  --background-light: #fcfaf8;
+  --surface-light: #ffffff;
+  --text-main-light: #1b140e;
+  --text-sub-light: #7a5a3d; /* Tăng độ tối để đạt contrast tốt hơn (WCAG AA: 4.5:1) */
+  --border-light: #e5dfd9;
+  --border-subtle-light: #f3ede7;
+  --icon-color-light: #eb9947; /* Muted light orange-brown for icons */
 }
 
 .dark {
+  /* shadcn/ui Dark Theme */
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
+  
   --card: oklch(0.21 0.006 285.885);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
@@ -93,18 +117,21 @@
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
+  --muted-foreground: oklch(0.75 0.015 286.067); /* Tăng độ sáng để đạt contrast tốt hơn (WCAG AA: 4.5:1) */
   --accent: oklch(0.274 0.006 286.033);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.41 0.159 10.272);
+  
+  /* Chart colors */
   --chart-1: oklch(0.81 0.117 11.638);
   --chart-2: oklch(0.645 0.246 16.439);
   --chart-3: oklch(0.586 0.253 17.585);
   --chart-4: oklch(0.514 0.222 16.935);
   --chart-5: oklch(0.455 0.188 13.697);
+  
   --sidebar: oklch(0.21 0.006 285.885);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.645 0.246 16.439);
@@ -113,7 +140,16 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.41 0.159 10.272);
+  
+  /* Stitch.width Design System Colors - Dark Mode (for components compatibility) */
+  --background-dark: oklch(0.141 0.005 285.823);
+  --surface-dark: oklch(0.21 0.006 285.885);
+  --text-main-dark: oklch(0.985 0 0);
+  --text-sub-dark: oklch(0.78 0.015 286.067); /* Tăng độ sáng để đạt contrast tốt hơn (WCAG AA: 4.5:1) */
+  --border-dark: oklch(1 0 0 / 10%);
+  --border-subtle-dark: oklch(1 0 0 / 10%);
 }
+
 
 @layer base {
   * {
@@ -121,5 +157,160 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body-family);
+    font-size: 16px;
+    line-height: 1.8;
   }
+
+  /* Heading styles - "Giọng triết lý" */
+  h1, h2, h3, h4, h5, h6, .heading {
+    font-family: var(--font-heading-family);
+  }
+
+  /* H1 - Tiêu đề trang, tiêu đề Quan niệm */
+  h1 {
+    font-weight: 900;
+    font-size: clamp(20px, 4vw, 28px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* H2 - Tiêu đề mục */
+  h2 {
+    font-weight: 700;
+    font-size: clamp(18px, 3vw, 22px);
+    letter-spacing: 0.04em;
+  }
+
+  /* H3 - Tiêu đề nhỏ */
+  h3 {
+    font-weight: 700;
+    font-size: clamp(16px, 2.5vw, 20px);
+    letter-spacing: 0.02em;
+  }
+
+  /* Body text - Nội dung bài viết */
+  p, li, .body-text {
+    font-family: var(--font-body-family);
+    font-size: 16px;
+    line-height: 1.8;
+    @apply text-foreground;
+  }
+
+  /* Extra slim scrollbars (WebKit) */
+  *::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: oklch(0.7 0.05 70);
+    border-radius: 9999px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.6 0.08 60);
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Extra slim scrollbars (Firefox) */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(0.7 0.05 70) transparent;
+  }
+
+  /* Meta, caption, ghi chú */
+  .meta, .caption, small {
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    @apply text-muted-foreground;
+  }
+
+  /* Kicker - "Quan niệm", "Tri thức" */
+  .kicker {
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+}
+
+@layer utilities {
+  /* Tiêu đề Quan niệm - Style đặc biệt */
+  .egf-title {
+    font-family: var(--font-heading-family);
+    font-weight: 900;
+    font-size: clamp(20px, 5vw, 26px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Tiêu đề Tri thức */
+  .egf-knowledge-title {
+    font-family: var(--font-heading-family);
+    font-weight: 900;
+    font-size: clamp(24px, 6vw, 32px);
+    letter-spacing: 0.08em;
+  }
+
+  /* UI elements - Tag, pill, button nhỏ, label */
+  .egf-ui-label {
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* Text justify cho bài Quan niệm/Tri thức */
+  .egf-justify {
+    text-align: justify;
+  }
+
+  /* Custom text colors với contrast tốt (WCAG AA: 4.5:1) */
+  .text-text-main-light {
+    color: var(--text-main-light);
+  }
+
+  .text-text-sub-light {
+    color: var(--text-sub-light);
+  }
+
+  .dark .text-text-main-dark {
+    color: var(--text-main-dark);
+  }
+
+  .dark .text-text-sub-dark {
+    color: var(--text-sub-dark);
+  }
+}
+
+/* Custom scrollbar for webkit - Stitch.width style */
+@layer base {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--text-sub-dark, #d6bba0);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-orange, #eb9947);
+  }
+}
+
+/* Hide scrollbar utility */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+button {
+  cursor: pointer;
 }
