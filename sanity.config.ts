@@ -14,13 +14,6 @@ export default defineConfig({
 
   basePath: "/studio", // Studio sẽ chạy tại /studio
 
-  // Custom theme & branding
-  theme: {
-    primaryColor: {
-      500: '#EB9947', // Brand orange
-    },
-  },
-
   // Studio appearance
   studio: {
     components: {
