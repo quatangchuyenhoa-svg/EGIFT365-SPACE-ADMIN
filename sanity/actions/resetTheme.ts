@@ -1,4 +1,4 @@
-import { DocumentActionComponent } from 'sanity'
+import { DocumentActionComponent, DocumentActionProps, useDocumentOperation } from 'sanity'
 
 /**
  * Default Theme Colors
@@ -25,18 +25,19 @@ export const DEFAULT_THEME = {
  * Adds "Reset Theme" button to siteSettings document
  * Resets all 12 color fields to default values
  */
-export const resetThemeAction: DocumentActionComponent = (props) => {
+export const ResetThemeAction: DocumentActionComponent = (props: DocumentActionProps) => {
+  // Use the hook to get patch and publish operations (must be called before any conditional returns)
+  const { patch, publish } = useDocumentOperation(props.id, props.type)
+
   // Only show for siteSettings document
-  if (props.schemaType !== 'siteSettings') {
+  if (props.type !== 'siteSettings') {
     return null
   }
 
   return {
     label: 'Reset Theme',
-    tone: 'critical',
+    tone: 'critical' as const,
     onHandle: () => {
-      const { patch, publish } = props
-
       // Confirm before reset
       const confirmed = window.confirm(
         'Reset all theme colors to defaults?\n\n' +

@@ -2,7 +2,7 @@ import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./sanity/schemas";
-import { resetThemeAction } from "./sanity/actions/resetTheme";
+import { ResetThemeAction } from "./sanity/actions/resetTheme";
 import React from "react";
 
 export default defineConfig({
@@ -49,7 +49,7 @@ export default defineConfig({
     actions: (prev, context) => {
       // Add reset theme action for siteSettings
       if (context.schemaType === 'siteSettings') {
-        return [...prev, resetThemeAction]
+        return [...prev, ResetThemeAction]
       }
       return prev
     },
