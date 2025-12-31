@@ -64,21 +64,37 @@ export function ColorInput(props: StringInputProps) {
     <Stack space={3}>
       <Popover
         content={
-          <Card padding={3} ref={pickerRef}>
-            <Stack space={3}>
+          <Card padding={4} ref={pickerRef} style={{ minWidth: '280px' }}>
+            <Stack space={4}>
               <Sketch
                 color={value as string}
                 onChange={handleChange}
                 disableAlpha={true}
-                style={{ width: '100%' }}
+                style={{ width: '100%', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
               />
-              <Flex justify="flex-end">
+              <Flex justify="space-between" align="center">
+                <Text size={2} weight="semibold" style={{ fontFamily: 'monospace', letterSpacing: '0.5px' }}>
+                  {value}
+                </Text>
                 <Text
                   size={1}
-                  style={{ cursor: 'pointer', color: '#999' }}
+                  style={{
+                    cursor: 'pointer',
+                    color: '#EB9947',
+                    fontWeight: '600',
+                    padding: '4px 12px',
+                    borderRadius: '4px',
+                    transition: 'background 0.2s'
+                  }}
                   onClick={() => setIsOpen(false)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(235, 153, 71, 0.1)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent'
+                  }}
                 >
-                  Close
+                  Đóng
                 </Text>
               </Flex>
             </Stack>
@@ -88,31 +104,49 @@ export function ColorInput(props: StringInputProps) {
         portal
       >
         <Flex align="center" gap={3} ref={triggerRef}>
-          {/* Color preview dot */}
+          {/* Larger color preview with gradient border */}
           <Box
             onClick={() => setIsOpen(!isOpen)}
             style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
+              width: '48px',
+              height: '48px',
+              borderRadius: '12px',
               backgroundColor: value as string,
-              border: '2px solid #e0e0e0',
+              border: '3px solid transparent',
+              backgroundImage: `linear-gradient(${value}, ${value}), linear-gradient(135deg, #EB9947 0%, #D68331 100%)`,
+              backgroundOrigin: 'border-box',
+              backgroundClip: 'padding-box, border-box',
               cursor: 'pointer',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-              transition: 'transform 0.2s',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15), inset 0 1px 3px rgba(255,255,255,0.3)',
+              transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.1)'
+              e.currentTarget.style.transform = 'scale(1.08) translateY(-2px)'
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2), inset 0 1px 3px rgba(255,255,255,0.3)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)'
+              e.currentTarget.style.transform = 'scale(1) translateY(0)'
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15), inset 0 1px 3px rgba(255,255,255,0.3)'
             }}
           />
 
-          {/* Hex value text */}
-          <Text size={1} weight="medium" style={{ fontFamily: 'monospace' }}>
-            {value}
-          </Text>
+          {/* Hex value with better styling */}
+          <Flex direction="column" gap={1}>
+            <Text
+              size={2}
+              weight="bold"
+              style={{
+                fontFamily: 'monospace',
+                letterSpacing: '1px',
+                color: '#1B140E'
+              }}
+            >
+              {value}
+            </Text>
+            <Text size={0} muted>
+              Click để chỉnh sửa
+            </Text>
+          </Flex>
         </Flex>
       </Popover>
 

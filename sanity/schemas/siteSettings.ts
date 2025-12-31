@@ -1,5 +1,6 @@
 import { defineType, defineField } from 'sanity'
 import { ColorInput } from '../components/ColorInput'
+import { SiteSettingsPreview } from '../components/SiteSettingsPreview'
 
 /**
  * Site Settings Schema - Color Theme Control
@@ -11,61 +12,86 @@ import { ColorInput } from '../components/ColorInput'
  */
 export default defineType({
   name: 'siteSettings',
-  title: 'Site Settings',
+  title: '🎨 Cài Đặt Giao Diện',
   type: 'document',
   groups: [
     {
       name: 'theme',
-      title: '🎨 Theme Colors',
+      title: '🎨 Màu Sắc Chủ Đề',
+    },
+  ],
+  fieldsets: [
+    {
+      name: 'control',
+      title: '⚙️ Điều Khiển',
+      options: { collapsible: false },
+    },
+    {
+      name: 'backgrounds',
+      title: '🎭 Màu Nền',
+      description: '6 màu nền chính cho các phần của trang',
+      options: { collapsible: true, collapsed: false },
+    },
+    {
+      name: 'buttons',
+      title: '🔘 Màu Nút Bấm',
+      description: '4 màu cho các trạng thái nút',
+      options: { collapsible: true, collapsed: false },
+    },
+    {
+      name: 'texts',
+      title: '✍️ Màu Chữ',
+      description: '4 màu cho tiêu đề, nội dung, và link',
+      options: { collapsible: true, collapsed: false },
     },
   ],
   fields: [
-    // ========== THEME TOGGLE ==========
+    // ========== CONTROL ==========
     defineField({
       name: 'enableTheme',
-      title: 'Enable Custom Theme',
+      title: 'Bật Theme Tùy Chỉnh',
       type: 'boolean',
-      group: 'theme',
+      fieldset: 'control',
       initialValue: true,
-      description: '⚠️ Tắt để dùng màu mặc định từ globals.css thay vì màu từ Sanity',
+      description: '⚠️ Tắt để dùng màu mặc định từ globals.css',
     }),
 
     // ========== BACKGROUND COLORS (6) ==========
     defineField({
       name: 'headerBg',
-      title: 'Header Background',
+      title: '📱 Header',
       type: 'string',
-      group: 'theme',
+      fieldset: 'backgrounds',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#FFFFFF',
-      description: 'Màu nền thanh điều hướng (header)',
+      description: 'Màu nền thanh điều hướng',
     }),
     defineField({
       name: 'bodyBg',
-      title: 'Body Background',
+      title: '📄 Body',
       type: 'string',
-      group: 'theme',
+      fieldset: 'backgrounds',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#FDFBF7',
-      description: 'Màu nền trang chính ',
+      description: 'Màu nền trang chính',
     }),
     defineField({
       name: 'sectionBg',
-      title: 'Section Background',
+      title: '📦 Section',
       type: 'string',
-      group: 'theme',
+      fieldset: 'backgrounds',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#F8F5F1',
-      description: 'Màu nền các section ',
+      description: 'Màu nền các section',
     }),
     defineField({
       name: 'footerBg',
-      title: 'Footer Background',
+      title: '🦶 Footer',
       type: 'string',
-      group: 'theme',
+      fieldset: 'backgrounds',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#69372A',
@@ -73,9 +99,9 @@ export default defineType({
     }),
     defineField({
       name: 'surfaceBg',
-      title: 'Surface Background',
+      title: '🎴 Surface',
       type: 'string',
-      group: 'theme',
+      fieldset: 'backgrounds',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#FFFFFF',
@@ -83,9 +109,9 @@ export default defineType({
     }),
     defineField({
       name: 'overlayBg',
-      title: 'Overlay Background',
+      title: '🔲 Overlay',
       type: 'string',
-      group: 'theme',
+      fieldset: 'backgrounds',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#F5F1EB',
@@ -95,9 +121,9 @@ export default defineType({
     // ========== BUTTON COLORS (4) ==========
     defineField({
       name: 'buttonPrimaryBg',
-      title: 'Primary Button Background',
+      title: '🟠 Primary',
       type: 'string',
-      group: 'theme',
+      fieldset: 'buttons',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#EB9947',
@@ -105,9 +131,9 @@ export default defineType({
     }),
     defineField({
       name: 'buttonPrimaryHover',
-      title: 'Primary Button Hover',
+      title: '🔶 Primary Hover',
       type: 'string',
-      group: 'theme',
+      fieldset: 'buttons',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#D68331',
@@ -115,9 +141,9 @@ export default defineType({
     }),
     defineField({
       name: 'buttonOutlineText',
-      title: 'Outline Button Text',
+      title: '⭕ Outline Text',
       type: 'string',
-      group: 'theme',
+      fieldset: 'buttons',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#EB9947',
@@ -125,9 +151,9 @@ export default defineType({
     }),
     defineField({
       name: 'buttonOutlineBorder',
-      title: 'Outline Button Border',
+      title: '🔘 Outline Border',
       type: 'string',
-      group: 'theme',
+      fieldset: 'buttons',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#EB9947',
@@ -137,9 +163,9 @@ export default defineType({
     // ========== TEXT COLORS (4) ==========
     defineField({
       name: 'textForeground',
-      title: 'Text Foreground (Default)',
+      title: '📝 Foreground',
       type: 'string',
-      group: 'theme',
+      fieldset: 'texts',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#1B140E',
@@ -147,9 +173,9 @@ export default defineType({
     }),
     defineField({
       name: 'textHeading',
-      title: 'Heading Text',
+      title: '📰 Heading',
       type: 'string',
-      group: 'theme',
+      fieldset: 'texts',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#3D2817',
@@ -157,9 +183,9 @@ export default defineType({
     }),
     defineField({
       name: 'textBody',
-      title: 'Body Text',
+      title: '📖 Body',
       type: 'string',
-      group: 'theme',
+      fieldset: 'texts',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#69372A',
@@ -167,9 +193,9 @@ export default defineType({
     }),
     defineField({
       name: 'textHover',
-      title: 'Link Hover Text',
+      title: '🔗 Link Hover',
       type: 'string',
-      group: 'theme',
+      fieldset: 'texts',
       components: { input: ColorInput },
       validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
       initialValue: '#D68331',
@@ -177,11 +203,33 @@ export default defineType({
     }),
   ],
   preview: {
+    select: {
+      // Backgrounds
+      headerBg: 'headerBg',
+      bodyBg: 'bodyBg',
+      sectionBg: 'sectionBg',
+      footerBg: 'footerBg',
+      surfaceBg: 'surfaceBg',
+      overlayBg: 'overlayBg',
+      // Buttons
+      buttonPrimaryBg: 'buttonPrimaryBg',
+      buttonPrimaryHover: 'buttonPrimaryHover',
+      buttonOutlineText: 'buttonOutlineText',
+      buttonOutlineBorder: 'buttonOutlineBorder',
+      // Texts
+      textForeground: 'textForeground',
+      textHeading: 'textHeading',
+      textBody: 'textBody',
+      textHover: 'textHover',
+    },
     prepare() {
       return {
         title: '🎨 Cài Đặt Trang',
         subtitle: 'Màu sắc: 14 màu admin → 50 design tokens',
       }
     },
+  },
+  components: {
+    preview: SiteSettingsPreview,
   },
 })
