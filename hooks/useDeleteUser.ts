@@ -14,7 +14,7 @@ export function useDeleteUser(options?: { onSuccess?: () => Promise<void> | void
         throw new Error(json?.error || "Failed to delete user")
       }
     },
-    onSuccess: async (_data, _variables, _context) => {
+    onSuccess: async () => {
       toast.success("Xóa user thành công")
       if (options?.onSuccess) {
         await options.onSuccess()
