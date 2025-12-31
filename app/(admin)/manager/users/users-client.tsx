@@ -103,7 +103,7 @@ export default function UsersClient() {
         },
       },
     ],
-    [deleteMutation.isPending, refetch, selectedUser]
+    [deleteMutation.isPending, selectedUser]
   )
 
   return (

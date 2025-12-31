@@ -2,6 +2,7 @@ import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./sanity/schemas";
+import { resetThemeAction } from "./sanity/actions/resetTheme";
 
 export default defineConfig({
   name: "egift-studio",
@@ -14,11 +15,21 @@ export default defineConfig({
 
   plugins: [
     structureTool(), // Cấu trúc sidebar và navigation
-    visionTool(), // GROQ query tool
+    visionTool(),    // GROQ query tool
   ],
 
   schema: {
     types: schemaTypes,
+  },
+
+  document: {
+    actions: (prev, context) => {
+      // Add reset theme action for siteSettings
+      if (context.schemaType === 'siteSettings') {
+        return [...prev, resetThemeAction]
+      }
+      return prev
+    },
   },
 });
 
