@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Sanity dataset backups (can be large)
+backups/*.tar.gz
+
+# Migration logs
+logs/*.log
+
+# Keep directory structure
+!backups/.gitkeep
+!backups/README.md
+!logs/.gitkeep
