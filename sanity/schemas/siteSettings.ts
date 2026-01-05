@@ -8,7 +8,7 @@ import { SiteSettingsPreview } from '../components/SiteSettingsPreview'
  * Uses custom ColorInput component with @uiw/react-color
  * Visual color picker compatible with Sanity v4
  *
- * 14 admin colors → 50 design tokens in egift-client
+ * 15 admin colors → 50 design tokens in egift-client
  */
 export default defineType({
   name: 'siteSettings',
@@ -35,7 +35,7 @@ export default defineType({
     {
       name: 'buttons',
       title: '🔘 Màu Nút Bấm',
-      description: '4 màu cho các trạng thái nút',
+      description: '5 màu cho các trạng thái nút',
       options: { collapsible: true, collapsed: false },
     },
     {
@@ -140,6 +140,16 @@ export default defineType({
       description: 'Màu nút chính khi hover',
     }),
     defineField({
+      name: 'buttonPrimaryText',
+      title: '⚪ Primary Text',
+      type: 'string',
+      fieldset: 'buttons',
+      components: { input: ColorInput },
+      validation: (Rule) => Rule.required().regex(/^#[0-9A-Fa-f]{6}$/).error('Must be hex color'),
+      initialValue: '#FFFFFF',
+      description: 'Màu chữ trên nút chính',
+    }),
+    defineField({
       name: 'buttonOutlineText',
       title: '⭕ Outline Text',
       type: 'string',
@@ -214,6 +224,7 @@ export default defineType({
       // Buttons
       buttonPrimaryBg: 'buttonPrimaryBg',
       buttonPrimaryHover: 'buttonPrimaryHover',
+      buttonPrimaryText: 'buttonPrimaryText',
       buttonOutlineText: 'buttonOutlineText',
       buttonOutlineBorder: 'buttonOutlineBorder',
       // Texts
@@ -225,7 +236,7 @@ export default defineType({
     prepare() {
       return {
         title: '🎨 Cài Đặt Trang',
-        subtitle: 'Màu sắc: 14 màu admin → 50 design tokens',
+        subtitle: 'Màu sắc: 15 màu admin → 50 design tokens',
       }
     },
   },
