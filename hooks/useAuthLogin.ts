@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
-import { createClient } from "@/lib/supabase/client"
 import { ROUTES } from "@/lib/constants/routes"
 import { useUserStore } from "@/store/useUserStore"
 import type { UserProfile } from "@/store/useUserStore"
+import { API_CONFIG, STORAGE_KEYS } from "@/lib/api-config"
 
 interface LoginCredentials {
   email: string
@@ -12,8 +12,16 @@ interface LoginCredentials {
 }
 
 interface LoginResponse {
-  success: boolean
-  error?: string
+  accessToken: string
+  user: {
+    id: string
+    email: string
+    fullName: string | null
+    role: string
+    avatarUrl: string | null
+    createdAt: string
+    updatedAt: string
+  }
 }
 
 export function useAuthLogin() {
@@ -22,51 +30,69 @@ export function useAuthLogin() {
 
   const mutation = useMutation({
     mutationFn: async (credentials: LoginCredentials): Promise<LoginResponse> => {
-      const supabase = createClient()
-      
-      // Sign in with email and password
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: credentials.email,
-        password: credentials.password,
-      })
-
-      if (signInError) {
-        // Nếu status code là 400 (Bad Request), thường là thông tin đăng nhập không chính xác
-        if (signInError.status === 400) {
-          throw new Error("Thông tin đăng nhập không chính xác")
+      // Call NestJS backend API for admin login
+      const response = await fetch(
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.LOGIN_ADMIN}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: credentials.email,
+            password: credentials.password,
+          }),
         }
-        throw new Error(signInError.message)
+      )
+
+      let data
+      try {
+        const text = await response.text()
+        try {
+          data = JSON.parse(text)
+        } catch (parseError) {
+          console.error('Failed to parse JSON:', { url: `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.LOGIN_ADMIN}`, status: response.status, text: text.substring(0, 200) })
+          throw new Error('Server trả về lỗi không hợp lệ. Vui lòng kiểm tra lại kết nối.')
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          throw error
+        }
+        throw new Error('Không thể kết nối đến server. Vui lòng thử lại.')
       }
 
-      // Check user role in profile
-      if (signInData.user) {
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", signInData.user.id)
-          .single()
-
-        if (profileError || !profile) {
-          // Sign out if profile doesn't exist
-          await supabase.auth.signOut()
-          throw new Error("Bạn không có quyền truy cập vào trang này.")
-        }
-
-        // Check if role is "master"
-        if (profile.role !== "master") {
-          // Sign out user if role is not master
-          await supabase.auth.signOut()
-          throw new Error("Bạn không có quyền truy cập vào trang này.")
-        }
-
-        // Lưu user và profile vào Zustand store
-        setUser(signInData.user)
-        setProfile(profile as UserProfile)
+      if (!response.ok) {
+        // Backend returns error with message field
+        throw new Error(data.message || 'Đã xảy ra lỗi. Vui lòng thử lại.')
       }
 
-      return {
-        success: true,
+      // Store JWT token in localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.accessToken)
       }
+
+      // Store user and profile in Zustand store
+      // Convert backend response to match UserProfile interface
+      const profile: UserProfile = {
+        id: data.user.id,
+        email: data.user.email,
+        full_name: data.user.fullName,
+        role: data.user.role,
+        avatar_url: data.user.avatarUrl,
+        created_at: data.user.createdAt,
+        updated_at: data.user.updatedAt,
+      }
+
+      // Create a simplified user object for the store
+      const user = {
+        id: data.user.id,
+        email: data.user.email,
+      }
+
+      setUser(user as any)
+      setProfile(profile)
+
+      return data
     },
     onSuccess: () => {
       toast.success("Đăng nhập thành công!")

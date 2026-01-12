@@ -69,6 +69,11 @@ async function getUserWithRole(request: NextRequest, response?: NextResponse) {
 }
 
 export async function proxy(request: NextRequest) {
+  // Temporarily disabled - migrating from Supabase to NestJS auth
+  // TODO: Update to use JWT from NestJS backend
+  return NextResponse.next({ request })
+  
+  /* DISABLED - Supabase code below
   const { pathname } = request.nextUrl
 
   // Allow well-known endpoints (e.g., Chrome devtools)
@@ -129,17 +134,14 @@ export async function proxy(request: NextRequest) {
   }
 
   return response
+  */
 }
 
+// Temporarily disabled - migrating from Supabase to NestJS auth
+// TODO: Update to use JWT from NestJS backend
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Disabled - will be re-enabled after JWT middleware is implemented
+    // "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 }

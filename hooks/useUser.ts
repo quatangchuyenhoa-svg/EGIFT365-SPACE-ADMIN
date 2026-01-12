@@ -1,17 +1,26 @@
 "use client"
 
 import { useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
+// Temporarily disabled - migrating from Supabase to NestJS auth
+// import { createClient } from "@/lib/supabase/client"
 import { useUserStore, type UserProfile } from "@/store/useUserStore"
 
 /**
  * Hook để sync user state từ Supabase với Zustand store
  * Nên gọi ở root layout hoặc component cần user data
+ * 
+ * TODO: Update to use JWT from NestJS backend instead of Supabase
  */
 export function useUser() {
   const { user, profile, setUser, setProfile, setLoading, clearUser } = useUserStore()
 
   useEffect(() => {
+    // Temporarily disabled - migrating from Supabase to NestJS auth
+    // Will be updated to use JWT from localStorage instead
+    setLoading(false)
+    return
+    
+    /* DISABLED - Supabase code below
     const supabase = createClient()
 
     // Lấy user hiện tại
@@ -73,6 +82,7 @@ export function useUser() {
     return () => {
       subscription.unsubscribe()
     }
+    */
   }, [setUser, setProfile, setLoading, clearUser])
 
   return {
