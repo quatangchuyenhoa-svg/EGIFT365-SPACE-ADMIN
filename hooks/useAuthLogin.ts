@@ -26,7 +26,7 @@ interface LoginResponse {
 
 export function useAuthLogin() {
   const router = useRouter()
-  const { setUser, setProfile } = useUserStore()
+  const { setUser, setProfile, setAccessToken } = useUserStore()
 
   const mutation = useMutation({
     mutationFn: async (credentials: LoginCredentials): Promise<LoginResponse> => {
@@ -38,6 +38,7 @@ export function useAuthLogin() {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include', // Include cookies for refresh token
           body: JSON.stringify({
             email: credentials.email,
             password: credentials.password,
@@ -66,10 +67,9 @@ export function useAuthLogin() {
         throw new Error(data.message || 'Đã xảy ra lỗi. Vui lòng thử lại.')
       }
 
-      // Store JWT token in localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.accessToken)
-      }
+      // Refresh token is automatically set in httpOnly cookie by backend
+      // Store access token temporarily in memory (not persisted) for logout
+      setAccessToken(data.accessToken)
 
       // Store user and profile in Zustand store
       // Convert backend response to match UserProfile interface
@@ -89,7 +89,7 @@ export function useAuthLogin() {
         email: data.user.email,
       }
 
-      setUser(user as any)
+      setUser(user)
       setProfile(profile)
 
       return data

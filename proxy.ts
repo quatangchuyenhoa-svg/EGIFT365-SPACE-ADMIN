@@ -69,8 +69,27 @@ async function getUserWithRole(request: NextRequest, response?: NextResponse) {
 }
 
 export async function proxy(request: NextRequest) {
-  // Temporarily disabled - migrating from Supabase to NestJS auth
-  // TODO: Update to use JWT from NestJS backend
+  const { pathname } = request.nextUrl
+
+  // Allow auth routes
+  const isAuthRoute =
+    pathname === ROUTES.AUTH.LOGIN ||
+    pathname === ROUTES.AUTH.SIGNUP ||
+    pathname === ROUTES.AUTH.CALLBACK ||
+    pathname.startsWith(`${ROUTES.AUTH.CALLBACK}/`)
+
+  if (isAuthRoute) {
+    return NextResponse.next({ request })
+  }
+
+  // Check refresh token cookie
+  const adminRefreshToken = request.cookies.get('admin_refresh_token')
+  if (!adminRefreshToken?.value) {
+    const loginUrl = new URL(ROUTES.AUTH.LOGIN, request.url)
+    loginUrl.searchParams.set('next', pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
   return NextResponse.next({ request })
   
   /* DISABLED - Supabase code below
@@ -141,7 +160,6 @@ export async function proxy(request: NextRequest) {
 // TODO: Update to use JWT from NestJS backend
 export const config = {
   matcher: [
-    // Disabled - will be re-enabled after JWT middleware is implemented
-    // "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 }

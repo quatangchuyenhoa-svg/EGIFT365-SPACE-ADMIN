@@ -7,8 +7,10 @@ export const API_CONFIG = {
   ENDPOINTS: {
     AUTH: {
       LOGIN: '/api/auth/login',
-      LOGIN_ADMIN: '/api/auth/login/admin',
-      REGISTER: '/api/auth/register',
+        LOGIN_ADMIN: '/api/auth/login/admin',
+        REGISTER: '/api/auth/register',
+        REFRESH: '/api/auth/refresh',
+        LOGOUT: '/api/auth/logout-admin',
     },
   },
 } as const;
