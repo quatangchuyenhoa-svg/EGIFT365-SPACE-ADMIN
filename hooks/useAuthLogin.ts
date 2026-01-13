@@ -1,10 +1,16 @@
+/**
+ * Hook xử lý đăng nhập cho admin
+ * Sử dụng React Query để gọi API và quản lý state
+ */
+
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { ROUTES } from "@/lib/constants/routes"
 import { useUserStore } from "@/store/useUserStore"
 import type { UserProfile } from "@/store/useUserStore"
-import { API_CONFIG, STORAGE_KEYS } from "@/lib/api-config"
+import { API_CONFIG } from "@/lib/api-config"
+import { fetchClient } from "@/lib/fetcher"
 
 interface LoginCredentials {
   email: string
@@ -30,42 +36,18 @@ export function useAuthLogin() {
 
   const mutation = useMutation({
     mutationFn: async (credentials: LoginCredentials): Promise<LoginResponse> => {
-      // Call NestJS backend API for admin login
-      const response = await fetch(
+      // Call NestJS backend API for admin login using fetchClient
+      // fetchClient throws on error automatically
+      const data = await fetchClient<LoginResponse>(
         `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.LOGIN_ADMIN}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // Include cookies for refresh token
-          body: JSON.stringify({
+          body: {
             email: credentials.email,
             password: credentials.password,
-          }),
+          },
         }
       )
-
-      let data
-      try {
-        const text = await response.text()
-        try {
-          data = JSON.parse(text)
-        } catch (parseError) {
-          console.error('Failed to parse JSON:', { url: `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.LOGIN_ADMIN}`, status: response.status, text: text.substring(0, 200) })
-          throw new Error('Server trả về lỗi không hợp lệ. Vui lòng kiểm tra lại kết nối.')
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          throw error
-        }
-        throw new Error('Không thể kết nối đến server. Vui lòng thử lại.')
-      }
-
-      if (!response.ok) {
-        // Backend returns error with message field
-        throw new Error(data.message || 'Đã xảy ra lỗi. Vui lòng thử lại.')
-      }
 
       // Refresh token is automatically set in httpOnly cookie by backend
       // Store access token temporarily in memory (not persisted) for logout
@@ -76,9 +58,9 @@ export function useAuthLogin() {
       const profile: UserProfile = {
         id: data.user.id,
         email: data.user.email,
-        full_name: data.user.fullName,
+        full_name: data.user.fullName ?? undefined,
         role: data.user.role,
-        avatar_url: data.user.avatarUrl,
+        avatar_url: data.user.avatarUrl ?? undefined,
         created_at: data.user.createdAt,
         updated_at: data.user.updatedAt,
       }

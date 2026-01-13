@@ -21,7 +21,6 @@
 /build
 
 # misc
-.DS_Store
 *.pem
 
 # debug
@@ -38,6 +37,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+.next/cache/.tsbuildinfo
 next-env.d.ts
 
 # Sanity dataset backups (can be large)
@@ -45,8 +45,16 @@ backups/*.tar.gz
 
 # Migration logs
 logs/*.log
+*.log
 
 # Keep directory structure
 !backups/.gitkeep
 !backups/README.md
 !logs/.gitkeep
+
+# IDE
+.vscode
+.idea
+
+# OS files
+.DS_Store
