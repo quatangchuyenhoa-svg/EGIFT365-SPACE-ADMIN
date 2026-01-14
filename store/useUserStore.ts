@@ -2,7 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 
 /**
- * Simple user object (không phụ thuộc Supabase)
+ * Simple user object
  */
 export interface SimpleUser {
   id: string

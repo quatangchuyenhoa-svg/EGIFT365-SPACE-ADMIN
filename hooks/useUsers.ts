@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useState } from "react"
+/**
+ * Hook for fetching users list
+ * Uses React Query with service layer
+ */
+import { useQuery } from "@tanstack/react-query"
+import { listUsersService } from "@/lib/services/users.services"
 
 export type UserRow = {
   id: string
@@ -8,43 +13,21 @@ export type UserRow = {
   created_at?: string | null
 }
 
-type UseUsersResult = {
-  users: UserRow[]
-  loading: boolean
-  error: string | null
-  refetch: () => Promise<void>
+export function useUsers() {
+  const query = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const result = await listUsersService()
+      return result.users
+    },
+    staleTime: 0,
+    gcTime: 5 * 60 * 1000,
+  })
+
+  return {
+    users: query.data ?? [],
+    loading: query.isPending || query.isRefetching,
+    error: query.error ? (query.error as Error).message : null,
+    refetch: query.refetch,
+  }
 }
-
-export function useUsers(): UseUsersResult {
-  const [users, setUsers] = useState<UserRow[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const fetchUsers = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await fetch("/api/users", { cache: "no-store" })
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}))
-        const message = body?.error || `Failed with status ${res.status}`
-        throw new Error(message)
-      }
-      const json = await res.json()
-      setUsers((json?.users ?? []) as UserRow[])
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error"
-      setError(message)
-      setUsers([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchUsers()
-  }, [fetchUsers])
-
-  return { users, loading, error, refetch: fetchUsers }
-}
-

@@ -29,6 +29,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { createUserService, updateUserService } from "@/lib/services/users.services";
 
 type Mode = "create" | "edit";
 
@@ -138,30 +139,22 @@ export default function CreateNewEditUser({
     setError(null);
 
       try {
-        const payload = {
+      if (isCreate) {
+        await createUserService({
           full_name: values.full_name?.trim() || null,
           email: values.email?.trim() || "",
-          role: values.role || null,
-          ...(isCreate ? { password: values.password?.trim() || "" } : {}),
-        };
-
-        const endpoint =
-          mode === "create" ? "/api/users" : userId ? `/api/users/${userId}` : "";
-        const method = mode === "create" ? "POST" : "PUT";
-
-        if (!endpoint) {
+          role: values.role || undefined,
+          password: values.password?.trim() || "",
+        });
+      } else {
+        if (!userId) {
           throw new Error("Missing user id");
         }
-
-        const res = await fetch(endpoint, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+        await updateUserService(userId, {
+          full_name: values.full_name?.trim() || null,
+          email: values.email?.trim() || "",
+          role: values.role || undefined,
         });
-
-        const json = await res.json().catch(() => ({}));
-        if (!res.ok) {
-          throw new Error(json?.error || "Request failed");
         }
 
         router.push(ROUTES.MANAGER.USERS);

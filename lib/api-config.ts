@@ -11,6 +11,21 @@ export const API_CONFIG = {
       REFRESH: '/api/auth/refresh',
       LOGOUT: '/api/auth/logout-admin',
     },
+    ADMIN: {
+      USERS: {
+        LIST: '/api/admin/users',
+        DETAIL: (id: string) => `/api/admin/users/${id}`,
+        CREATE: '/api/admin/users',
+        UPDATE: (id: string) => `/api/admin/users/${id}`,
+        DELETE: (id: string) => `/api/admin/users/${id}`,
+      },
+      PUBLIC_TOKENS: {
+        LIST: '/api/admin/public-tokens',
+        CREATE: '/api/admin/public-tokens',
+        UPDATE: (code: string) => `/api/admin/public-tokens/${encodeURIComponent(code)}`,
+        DELETE: (code: string) => `/api/admin/public-tokens/${encodeURIComponent(code)}`,
+      },
+    },
   },
 } as const;
 

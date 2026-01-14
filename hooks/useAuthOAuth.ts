@@ -12,7 +12,8 @@ import toast from "react-hot-toast"
  */
 export function useAuthOAuth() {
   const mutation = useMutation({
-    mutationFn: async (provider: "github") => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: async (_provider: "github") => {
       throw new Error("OAuth chưa được hỗ trợ. Vui lòng đăng nhập bằng email/password.")
     },
     onError: (error: Error) => {

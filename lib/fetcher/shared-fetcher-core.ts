@@ -8,6 +8,7 @@
  * - Response parsing and error handling
  */
 
+import { API_CONFIG } from '@/lib/api-config';
 import { useUserStore } from '@/store/useUserStore';
 import type { ApiResponse, FetcherOptions, QueuedRequest, ServerFetchResult } from './types';
 
@@ -23,16 +24,17 @@ const requestQueue: QueuedRequest[] = [];
  * Refresh access token
  * Uses request queue to handle concurrent refresh attempts
  *
+ * @param cookieString - Optional cookie string for server-side requests
  * @returns New access token or null if refresh failed
  */
-export async function refreshAccessToken(): Promise<string | null> {
+export async function refreshAccessToken(cookieString?: string): Promise<string | null> {
   // If already refreshing, return existing promise
   if (isRefreshing && refreshPromise) {
     return refreshPromise;
   }
 
   isRefreshing = true;
-  refreshPromise = performRefresh();
+  refreshPromise = performRefresh(cookieString);
 
   try {
     const newToken = await refreshPromise;
@@ -60,11 +62,27 @@ export async function refreshAccessToken(): Promise<string | null> {
 /**
  * Perform actual token refresh
  * Calls /api/auth/refresh endpoint
+ * IMPORTANT: Use relative URL for client-side, will be resolved against current origin
+ * For server-side, use full URL with cookie forwarding
  */
-async function performRefresh(): Promise<string | null> {
+async function performRefresh(cookieString?: string): Promise<string | null> {
   try {
-    const response = await fetch('/api/auth/refresh', {
+    // Use relative URL - works in browser, auto-resolves to current origin
+    // For SSR, this will be called from Next.js API route which handles the request
+    const refreshEndpoint = typeof window !== 'undefined'
+      ? API_CONFIG.ENDPOINTS.AUTH.REFRESH // Client-side: relative URL
+      : `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.REFRESH}`; // Server-side: full URL
+
+    const headers: Record<string, string> = {};
+    
+    // Forward cookie for server-side requests
+    if (cookieString) {
+      headers['Cookie'] = cookieString;
+    }
+
+    const response = await fetch(refreshEndpoint, {
       method: 'POST',
+      headers,
       credentials: 'include',
     });
 
@@ -144,12 +162,27 @@ export async function coreFetchRaw<T>(
         : undefined;
 
   // Make initial request
-  let response = await fetch(endpoint, {
-    method: options.method || 'GET',
-    headers,
-    body,
-    credentials: 'include',
-  });
+  let response: Response;
+  try {
+    response = await fetch(endpoint, {
+      method: options.method || 'GET',
+      headers,
+      body,
+      credentials: 'include',
+    });
+  } catch (error) {
+    // Network error (backend not running, CORS, etc.)
+    console.error('[Fetcher] Network error:', error);
+    return {
+      result: {
+        success: false,
+        status_code: 0,
+        message: error instanceof Error ? error.message : 'Network error - backend may not be running',
+        data: null as T,
+      },
+      rawResponse: new Response(null, { status: 0 }),
+    };
+  }
 
   // Handle 401 - token expired
   if (response.status === 401 && !options.skipRefresh) {
@@ -161,8 +194,8 @@ export async function coreFetchRaw<T>(
       const newToken = await queueRequest();
       headers['Authorization'] = `Bearer ${newToken}`;
     } else {
-      // Start new refresh
-      const newToken = await refreshAccessToken();
+      // Start new refresh - pass cookieString for server-side requests
+      const newToken = await refreshAccessToken(cookieString);
 
       if (newToken) {
         headers['Authorization'] = `Bearer ${newToken}`;
@@ -241,12 +274,24 @@ export async function coreFetch<T>(
         : undefined;
 
   // Make initial request
-  let response = await fetch(endpoint, {
-    method: options.method || 'GET',
-    headers,
-    body,
-    credentials: 'include',
-  });
+  let response: Response;
+  try {
+    response = await fetch(endpoint, {
+      method: options.method || 'GET',
+      headers,
+      body,
+      credentials: 'include',
+    });
+  } catch (error) {
+    // Network error (backend not running, CORS, etc.)
+    console.error('[Fetcher] Network error:', error);
+    return {
+      success: false,
+      status_code: 0,
+      message: error instanceof Error ? error.message : 'Network error - backend may not be running',
+      data: null as T,
+    };
+  }
 
   // Handle 401 - token expired
   if (response.status === 401 && !options.skipRefresh) {
@@ -258,8 +303,8 @@ export async function coreFetch<T>(
       const newToken = await queueRequest();
       headers['Authorization'] = `Bearer ${newToken}`;
     } else {
-      // Start new refresh
-      const newToken = await refreshAccessToken();
+      // Start new refresh - pass cookieString for server-side requests
+      const newToken = await refreshAccessToken(cookieString);
 
       if (newToken) {
         headers['Authorization'] = `Bearer ${newToken}`;
