@@ -1,6 +1,6 @@
 import { defineType, defineField } from 'sanity'
-import { ColorInput } from '../components/ColorInput'
-import { SiteSettingsPreview } from '../components/SiteSettingsPreview'
+import { ColorInput } from '@/sanity/components/ColorInput'
+import { SiteSettingsPreview } from '@/sanity/components/SiteSettingsPreview'
 
 /**
  * Site Settings Schema - Color Theme Control

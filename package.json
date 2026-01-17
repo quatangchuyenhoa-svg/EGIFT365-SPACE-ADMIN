@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start -p 3000",
     "lint": "eslint",
-    "dev:lan": "HOST=0.0.0.0 PORT=3000 next dev"
+    "dev:lan": "HOST=0.0.0.0 PORT=3000 next dev",
+    "kill:3000": "npx kill-port 3000",
+    "kill:3001": "npx kill-port 3001",
+    "kill:9062": "npx kill-port 9062"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -1,25 +1,28 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
-import { createServerClient } from "@supabase/ssr"
-import { ROLES } from "@/lib/constants/roles"
+/**
+ * API route: Users list/create
+ * Proxies requests to NestJS backend
+ */
+import { NextRequest, NextResponse } from "next/server"
+import { fetchServer } from "@/lib/fetcher"
+import { API_CONFIG } from "@/lib/api-config"
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const cookie = request.headers.get("cookie") || undefined
 
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id, full_name, email, role, created_at")
-      .order("created_at", { ascending: false })
+    const result = await fetchServer<{ users: unknown[] }>(
+      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN.USERS.LIST}`,
+      { method: "GET", cookie }
+    )
 
-    if (error) {
+    if (!result.success) {
       return NextResponse.json(
-        { error: error.message, users: [] },
-        { status: 500 }
+        { error: result.message, users: [] },
+        { status: result.status_code || 500 }
       )
     }
 
-    return NextResponse.json({ users: data ?? [] }, { status: 200 })
+    return NextResponse.json(result.data, { status: 200 })
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error"
     return NextResponse.json(
@@ -29,86 +32,26 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { full_name, email, role, password } = body || {}
+    const cookie = request.headers.get("cookie") || undefined
 
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 }
-      )
-    }
-
-    if (role && !ROLES.includes(role)) {
-      return NextResponse.json(
-        { error: "Invalid role" },
-        { status: 400 }
-      )
-    }
-
-    // Use a supabase client that does NOT write auth cookies, to avoid overriding the current admin session
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return []
-          },
-          setAll() {
-            // no-op to prevent cookie overwrite
-          },
-        },
-      }
+    const result = await fetchServer<{ user: unknown }>(
+      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN.USERS.CREATE}`,
+      { method: "POST", body, cookie }
     )
 
-    // Sign up via public key (same as regular signup flow)
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: full_name?.trim() || null,
-          role: role || "member",
-        },
-      },
-    })
-
-    if (signUpError || !signUpData?.user?.id) {
+    if (!result.success) {
       return NextResponse.json(
-        { error: signUpError?.message || "Failed to sign up user" },
-        { status: 500 }
+        { error: result.message },
+        { status: result.status_code || 500 }
       )
     }
 
-    // Insert/update profile (trigger may have already inserted a row)
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .upsert(
-        {
-          id: signUpData.user.id,
-          full_name: full_name?.trim() || null,
-          email,
-          role: role || "member",
-        },
-        { onConflict: "id" }
-      )
-      .select("id, full_name, email, role, created_at")
-      .single()
-
-    if (profileError) {
-      return NextResponse.json(
-        { error: profileError.message },
-        { status: 500 }
-      )
-    }
-
-    return NextResponse.json({ user: profile }, { status: 201 })
+    return NextResponse.json(result.data, { status: 201 })
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error"
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
-

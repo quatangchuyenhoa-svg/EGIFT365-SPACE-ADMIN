@@ -3,6 +3,7 @@ import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./sanity/schemas";
 import { ResetThemeAction } from "./sanity/actions/resetTheme";
+import { NavbarActions } from "./sanity/components/NavbarActions";
 import React from "react";
 
 export default defineConfig({
@@ -33,6 +34,7 @@ export default defineConfig({
           React.createElement('span', { style: { fontSize: '24px' } }, '🎨'),
           React.createElement('span', null, 'E-Gift Studio')
         ),
+      navbar: NavbarActions,
     },
   },
 

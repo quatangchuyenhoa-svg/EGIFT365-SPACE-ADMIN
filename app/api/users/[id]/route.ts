@@ -1,83 +1,82 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
-import { ROLES } from "@/lib/constants/roles"
+/**
+ * API route: User detail/update/delete
+ * Proxies requests to NestJS backend
+ */
+import { NextRequest, NextResponse } from "next/server"
+import { fetchServer } from "@/lib/fetcher"
+import { API_CONFIG } from "@/lib/api-config"
 
 type Params = { params: Promise<{ id: string }> }
 
-export async function GET(_: Request, { params }: Params) {
+export async function GET(_: NextRequest, { params }: Params) {
   try {
     const { id } = await params
-    const supabase = await createClient()
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id, full_name, email, role, created_at")
-      .eq("id", id)
-      .single()
+    const cookie = _.headers.get("cookie") || undefined
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 404 })
+    const result = await fetchServer<{ user: unknown }>(
+      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN.USERS.DETAIL(id)}`,
+      { method: "GET", cookie }
+    )
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.message },
+        { status: result.status_code || 404 }
+      )
     }
 
-    return NextResponse.json({ user: data }, { status: 200 })
+    return NextResponse.json(result.data, { status: 200 })
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error"
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 
-export async function PUT(request: Request, { params }: Params) {
+export async function PUT(request: NextRequest, { params }: Params) {
   try {
     const { id } = await params
     const body = await request.json()
-    const { full_name, email, role } = body || {}
+    const cookie = request.headers.get("cookie") || undefined
 
-    if (!email) {
+    const result = await fetchServer<{ user: unknown }>(
+      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN.USERS.UPDATE(id)}`,
+      { method: "PUT", body, cookie }
+      )
+
+    if (!result.success) {
       return NextResponse.json(
-        { error: "Email is required" },
-        { status: 400 }
+        { error: result.message },
+        { status: result.status_code || 500 }
       )
     }
 
-    if (role && !ROLES.includes(role)) {
-      return NextResponse.json(
-        { error: "Invalid role" },
-        { status: 400 }
-      )
-    }
-
-    const supabase = await createClient()
-    const { data, error } = await supabase
-      .from("profiles")
-      .update({ full_name, email, role: role || "member" })
-      .eq("id", id)
-      .select("id, full_name, email, role, created_at")
-      .single()
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    return NextResponse.json({ user: data }, { status: 200 })
+    return NextResponse.json(result.data, { status: 200 })
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error"
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 
-export async function DELETE(_: Request, { params }: Params) {
+export async function DELETE(_: NextRequest, { params }: Params) {
   try {
     const { id } = await params
-    const supabase = await createClient()
-    const { error } = await supabase.from("profiles").delete().eq("id", id)
+    const cookie = _.headers.get("cookie") || undefined
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    const result = await fetchServer<{ success: boolean }>(
+      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN.USERS.DELETE(id)}`,
+      { method: "DELETE", cookie }
+    )
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.message },
+        { status: result.status_code || 500 }
+      )
     }
 
-    return NextResponse.json({ success: true }, { status: 200 })
+    return NextResponse.json(result.data, { status: 200 })
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error"
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
-
