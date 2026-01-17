@@ -16,6 +16,9 @@ import {
   type PublicTokenRow,
 } from "@/lib/services/public-tokens.services"
 
+// Re-export for consumers
+export type PublicAccessToken = PublicTokenRow
+
 type UsePublicAccessTokensResult = {
   tokens: PublicTokenRow[]
   loading: boolean
