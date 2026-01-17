@@ -90,15 +90,7 @@ export function LoginForm({
           {errors.email && <FieldError errors={[errors.email]} />}
         </Field>
         <Field data-invalid={!!errors.password}>
-          <div className="flex items-center">
-            <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Quên mật khẩu?
-            </a>
-          </div>
+          <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
           <Input
             id="password"
             type="password"

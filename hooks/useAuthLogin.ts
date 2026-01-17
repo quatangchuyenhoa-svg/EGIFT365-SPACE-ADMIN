@@ -1,10 +1,16 @@
+/**
+ * Hook xử lý đăng nhập cho admin
+ * Sử dụng React Query để gọi API và quản lý state
+ */
+
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
-import { createClient } from "@/lib/supabase/client"
 import { ROUTES } from "@/lib/constants/routes"
 import { useUserStore } from "@/store/useUserStore"
 import type { UserProfile } from "@/store/useUserStore"
+import { API_CONFIG } from "@/lib/api-config"
+import { fetchClient } from "@/lib/fetcher"
 
 interface LoginCredentials {
   email: string
@@ -12,61 +18,63 @@ interface LoginCredentials {
 }
 
 interface LoginResponse {
-  success: boolean
-  error?: string
+  accessToken: string
+  user: {
+    id: string
+    email: string
+    fullName: string | null
+    role: string
+    avatarUrl: string | null
+    createdAt: string
+    updatedAt: string
+  }
 }
 
 export function useAuthLogin() {
   const router = useRouter()
-  const { setUser, setProfile } = useUserStore()
+  const { setUser, setProfile, setAccessToken } = useUserStore()
 
   const mutation = useMutation({
     mutationFn: async (credentials: LoginCredentials): Promise<LoginResponse> => {
-      const supabase = createClient()
-      
-      // Sign in with email and password
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: credentials.email,
-        password: credentials.password,
-      })
-
-      if (signInError) {
-        // Nếu status code là 400 (Bad Request), thường là thông tin đăng nhập không chính xác
-        if (signInError.status === 400) {
-          throw new Error("Thông tin đăng nhập không chính xác")
+      // Call NestJS backend API for admin login using fetchClient
+      // fetchClient throws on error automatically
+      const data = await fetchClient<LoginResponse>(
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.LOGIN_ADMIN}`,
+        {
+          method: 'POST',
+          body: {
+            email: credentials.email,
+            password: credentials.password,
+          },
         }
-        throw new Error(signInError.message)
+      )
+
+      // Refresh token is automatically set in httpOnly cookie by backend
+      // Store access token temporarily in memory (not persisted) for logout
+      setAccessToken(data.accessToken)
+
+      // Store user and profile in Zustand store
+      // Convert backend response to match UserProfile interface
+      const profile: UserProfile = {
+        id: data.user.id,
+        email: data.user.email,
+        full_name: data.user.fullName ?? undefined,
+        role: data.user.role,
+        avatar_url: data.user.avatarUrl ?? undefined,
+        created_at: data.user.createdAt,
+        updated_at: data.user.updatedAt,
       }
 
-      // Check user role in profile
-      if (signInData.user) {
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", signInData.user.id)
-          .single()
-
-        if (profileError || !profile) {
-          // Sign out if profile doesn't exist
-          await supabase.auth.signOut()
-          throw new Error("Bạn không có quyền truy cập vào trang này.")
-        }
-
-        // Check if role is "master"
-        if (profile.role !== "master") {
-          // Sign out user if role is not master
-          await supabase.auth.signOut()
-          throw new Error("Bạn không có quyền truy cập vào trang này.")
-        }
-
-        // Lưu user và profile vào Zustand store
-        setUser(signInData.user)
-        setProfile(profile as UserProfile)
+      // Create a simplified user object for the store
+      const user = {
+        id: data.user.id,
+        email: data.user.email,
       }
 
-      return {
-        success: true,
-      }
+      setUser(user)
+      setProfile(profile)
+
+      return data
     },
     onSuccess: () => {
       toast.success("Đăng nhập thành công!")

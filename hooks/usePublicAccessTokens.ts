@@ -1,94 +1,49 @@
+/**
+ * Hook for managing public access tokens
+ * Uses React Query with service layer
+ */
 import { useMemo } from "react"
 import {
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query"
-
-export type PublicAccessToken = {
-  code: string
-  path: string
-  created_at: string
-  updated_at: string
-}
+import {
+  listPublicTokensService,
+  createPublicTokenService,
+  updatePublicTokenService,
+  deletePublicTokenService,
+  type PublicTokenRow,
+} from "@/lib/services/public-tokens.services"
 
 type UsePublicAccessTokensResult = {
-  tokens: PublicAccessToken[]
+  tokens: PublicTokenRow[]
   loading: boolean
   error: string | null
   refetch: () => Promise<unknown>
-  createToken: (path: string, code?: string) => Promise<PublicAccessToken | null>
-  updateToken: (code: string, path: string, newCode?: string) => Promise<PublicAccessToken | null>
+  createToken: (path: string, code?: string) => Promise<PublicTokenRow | null>
+  updateToken: (code: string, path: string, newCode?: string) => Promise<PublicTokenRow | null>
   deleteToken: (code: string) => Promise<boolean>
 }
 
 const queryKey = ["public-access-tokens"]
-
-async function fetchTokensApi(): Promise<PublicAccessToken[]> {
-  const res = await fetch("/api/public-tokens", { cache: "no-store" })
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}))
-    const message = body?.error || `Failed with status ${res.status}`
-    throw new Error(message)
-  }
-  const json = await res.json()
-  return (json?.tokens ?? []) as PublicAccessToken[]
-}
-
-async function createTokenApi(path: string, code?: string): Promise<PublicAccessToken> {
-  const res = await fetch("/api/public-tokens", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ path, code }),
-  })
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}))
-    const message = body?.error || `Failed with status ${res.status}`
-    throw new Error(message)
-  }
-  const json = await res.json()
-  return json.token as PublicAccessToken
-}
-
-async function updateTokenApi(code: string, path: string, newCode?: string): Promise<PublicAccessToken> {
-  const res = await fetch(`/api/public-tokens/${encodeURIComponent(code)}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ path, newCode }),
-  })
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}))
-    const message = body?.error || `Failed with status ${res.status}`
-    throw new Error(message)
-  }
-  const json = await res.json()
-  return json.token as PublicAccessToken
-}
-
-async function deleteTokenApi(code: string): Promise<void> {
-  const res = await fetch(`/api/public-tokens/${encodeURIComponent(code)}`, {
-    method: "DELETE",
-  })
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}))
-    const message = body?.error || `Failed with status ${res.status}`
-    throw new Error(message)
-  }
-}
 
 export function usePublicAccessTokens(): UsePublicAccessTokensResult {
   const queryClient = useQueryClient()
 
   const tokensQuery = useQuery({
     queryKey,
-    queryFn: fetchTokensApi,
+    queryFn: async () => {
+      const result = await listPublicTokensService()
+      return result.tokens
+    },
     staleTime: 0,
     gcTime: 5 * 60 * 1000,
   })
 
   const createMutation = useMutation({
     mutationFn: ({ path, code }: { path: string; code?: string }) =>
-      createTokenApi(path, code),
+      createPublicTokenService({ path, code }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey })
     },
@@ -96,14 +51,14 @@ export function usePublicAccessTokens(): UsePublicAccessTokensResult {
 
   const updateMutation = useMutation({
     mutationFn: ({ code, path, newCode }: { code: string; path: string; newCode?: string }) =>
-      updateTokenApi(code, path, newCode),
+      updatePublicTokenService(code, { path, code: newCode }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey })
     },
   })
 
   const deleteMutation = useMutation({
-    mutationFn: ({ code }: { code: string }) => deleteTokenApi(code),
+    mutationFn: ({ code }: { code: string }) => deletePublicTokenService(code),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey })
     },
@@ -130,17 +85,16 @@ export function usePublicAccessTokens(): UsePublicAccessTokensResult {
     error,
     refetch: tokensQuery.refetch,
     createToken: async (path, code) => {
-      const res = await createMutation.mutateAsync({ path, code })
-      return res ?? null
+      const result = await createMutation.mutateAsync({ path, code })
+      return result.token ?? null
     },
     updateToken: async (code, path, newCode) => {
-      const res = await updateMutation.mutateAsync({ code, path, newCode })
-      return res ?? null
+      const result = await updateMutation.mutateAsync({ code, path, newCode })
+      return result.token ?? null
     },
-    deleteToken: async code => {
+    deleteToken: async (code) => {
       await deleteMutation.mutateAsync({ code })
       return true
     },
   }
 }
-
