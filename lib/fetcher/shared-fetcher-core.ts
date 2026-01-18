@@ -133,6 +133,12 @@ export async function coreFetchRaw<T>(
   options: FetcherOptions,
   cookieString?: string
 ): Promise<ServerFetchResult<T>> {
+  // If running in the browser and a full BASE_URL is used, convert to same-origin path
+  // so requests go to the application domain (Next.js API routes) and cookies set by the app
+  // are applied to the app domain (staging/production).
+  if (typeof window !== 'undefined' && endpoint.startsWith(API_CONFIG.BASE_URL)) {
+    endpoint = endpoint.slice(API_CONFIG.BASE_URL.length) || '/';
+  }
   // Build headers
   const headers: Record<string, string> = {
     // Only set Content-Type if not FormData
@@ -245,6 +251,10 @@ export async function coreFetch<T>(
   options: FetcherOptions,
   cookieString?: string
 ): Promise<ApiResponse<T>> {
+  // If running in the browser and a full BASE_URL is used, convert to same-origin path
+  if (typeof window !== 'undefined' && endpoint.startsWith(API_CONFIG.BASE_URL)) {
+    endpoint = endpoint.slice(API_CONFIG.BASE_URL.length) || '/';
+  }
   // Build headers
   const headers: Record<string, string> = {
     // Only set Content-Type if not FormData

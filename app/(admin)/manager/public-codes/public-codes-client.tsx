@@ -3,10 +3,8 @@
 import { useMemo, useState, useCallback } from "react"
 import { type ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/dataTable"
-import {
-  type PublicAccessToken,
-  usePublicAccessTokens,
-} from "@/hooks/usePublicAccessTokens"
+import { usePublicAccessTokens } from "@/hooks/usePublicAccessTokens"
+import { type PublicTokenRow } from "@/lib/services/public-tokens.services"
 import { TokenActions } from "@/components/molecules/public-codes/TokenActions"
 import { CreatedUrlDialog } from "@/components/molecules/public-codes/CreatedUrlDialog"
 import { CreateDialog } from "@/components/molecules/public-codes/CreateDialog"
@@ -18,8 +16,8 @@ export default function PublicCodesClient() {
     usePublicAccessTokens()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [editingToken, setEditingToken] = useState<PublicAccessToken | null>(null)
-  const [createdToken, setCreatedToken] = useState<PublicAccessToken | null>(null)
+  const [editingToken, setEditingToken] = useState<PublicTokenRow | null>(null)
+  const [createdToken, setCreatedToken] = useState<PublicTokenRow | null>(null)
   const [showCreatedUrl, setShowCreatedUrl] = useState(false)
   const [deletingCode, setDeletingCode] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -80,7 +78,7 @@ export default function PublicCodesClient() {
   }
 
   //sửa token
-  const handleEdit = useCallback((token: PublicAccessToken) => {
+  const handleEdit = useCallback((token: PublicTokenRow) => {
     setEditingToken(token)
     setFormPath(token.path)
     setFormCode(token.code)
@@ -129,11 +127,11 @@ export default function PublicCodesClient() {
   }
 
   //lấy full url của token
-  const getFullUrl = useCallback((token: PublicAccessToken) => {
+  const getFullUrl = useCallback((token: PublicTokenRow) => {
     return `${baseUrl}${token.path}?code=${token.code}`
   }, [baseUrl])
 
-  type TokenWithId = PublicAccessToken & { id: string }
+  type TokenWithId = PublicTokenRow & { id: string }
 
   const columns: ColumnDef<TokenWithId>[] = useMemo(
     () => [
@@ -172,7 +170,7 @@ export default function PublicCodesClient() {
         header: "Actions",
         cell: ({ row }) => (
           <TokenActions
-            token={row.original as PublicAccessToken}
+            token={row.original as PublicTokenRow}
             onEdit={handleEdit}
             onDelete={handleDelete}
             deletingCode={deletingCode}
