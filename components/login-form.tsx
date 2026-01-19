@@ -106,12 +106,6 @@ export function LoginForm({
             Đăng nhập
           </Button>
         </Field>
-        <FieldDescription className="text-center">
-          Bạn chưa có tài khoản?{" "}
-          <a href={ROUTES.AUTH.SIGNUP} className="underline underline-offset-4">
-            Đăng ký
-          </a>
-        </FieldDescription>
       </FieldGroup>
     </form>
   );

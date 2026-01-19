@@ -3,6 +3,7 @@
  * Core logic shared between server and client fetchers
  *
  * Features:
+ * - httpOnly cookie-based authentication (access token in cookie)
  * - Token refresh with request queue
  * - Auto-retry on 401 errors
  * - Response parsing and error handling
@@ -17,17 +18,18 @@ import type { ApiResponse, FetcherOptions, QueuedRequest, ServerFetchResult } fr
  * Prevents multiple concurrent refresh calls
  */
 let isRefreshing = false;
-let refreshPromise: Promise<string | null> | null = null;
+let refreshPromise: Promise<boolean> | null = null;
 const requestQueue: QueuedRequest[] = [];
 
 /**
  * Refresh access token
  * Uses request queue to handle concurrent refresh attempts
+ * Access token is set in httpOnly cookie by backend, no need to store in memory
  *
  * @param cookieString - Optional cookie string for server-side requests
- * @returns New access token or null if refresh failed
+ * @returns true if refresh succeeded, false otherwise
  */
-export async function refreshAccessToken(cookieString?: string): Promise<string | null> {
+export async function refreshAccessToken(cookieString?: string): Promise<boolean> {
   // If already refreshing, return existing promise
   if (isRefreshing && refreshPromise) {
     return refreshPromise;
@@ -37,15 +39,16 @@ export async function refreshAccessToken(cookieString?: string): Promise<string 
   refreshPromise = performRefresh(cookieString);
 
   try {
-    const newToken = await refreshPromise;
+    const success = await refreshPromise;
 
     // Process all queued requests
-    requestQueue.forEach(({ resolve }) => {
-      if (newToken) resolve(newToken);
+    requestQueue.forEach(({ resolve, reject }) => {
+      if (success) resolve(true);
+      else reject(new Error('Token refresh failed'));
     });
     requestQueue.length = 0;
 
-    return newToken;
+    return success;
   } catch (error) {
     // Reject all queued requests
     requestQueue.forEach(({ reject }) => {
@@ -62,19 +65,17 @@ export async function refreshAccessToken(cookieString?: string): Promise<string 
 /**
  * Perform actual token refresh
  * Calls /api/auth/refresh endpoint
- * IMPORTANT: Use relative URL for client-side, will be resolved against current origin
- * For server-side, use full URL with cookie forwarding
+ * Access token is set in httpOnly cookie by backend
  */
-async function performRefresh(cookieString?: string): Promise<string | null> {
+async function performRefresh(cookieString?: string): Promise<boolean> {
   try {
-    // Use relative URL - works in browser, auto-resolves to current origin
-    // For SSR, this will be called from Next.js API route which handles the request
+    // Use relative URL for client-side, full URL for server-side
     const refreshEndpoint = typeof window !== 'undefined'
-      ? API_CONFIG.ENDPOINTS.AUTH.REFRESH // Client-side: relative URL
-      : `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.REFRESH}`; // Server-side: full URL
+      ? API_CONFIG.ENDPOINTS.AUTH.REFRESH
+      : `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.REFRESH}`;
 
     const headers: Record<string, string> = {};
-    
+
     // Forward cookie for server-side requests
     if (cookieString) {
       headers['Cookie'] = cookieString;
@@ -90,30 +91,29 @@ async function performRefresh(cookieString?: string): Promise<string | null> {
       throw new Error('Refresh failed');
     }
 
-    const data: ApiResponse<{ accessToken: string }> = await response.json();
+    const data: ApiResponse<object> = await response.json();
 
     if (!data.success) {
       throw new Error(data.message);
     }
 
-    // Update access token in store
-    useUserStore.getState().setAccessToken(data.data.accessToken);
-
-    return data.data.accessToken;
+    // Access token is now in httpOnly cookie, no need to store in memory
+    console.log('[Fetcher] Token refresh successful');
+    return true;
   } catch (error) {
     console.error('[Fetcher] Token refresh failed:', error);
     // Clear user state on refresh failure
     useUserStore.getState().clearUser();
-    return null;
+    return false;
   }
 }
 
 /**
  * Queue a request during token refresh
  *
- * @returns Promise that resolves with new token
+ * @returns Promise that resolves when refresh completes
  */
-export function queueRequest(): Promise<string> {
+export function queueRequest(): Promise<boolean> {
   return new Promise((resolve, reject) => {
     requestQueue.push({ resolve, reject });
   });
@@ -122,6 +122,7 @@ export function queueRequest(): Promise<string> {
 /**
  * Core fetch function with raw response
  * Returns both ApiResponse and raw Response for cookie forwarding
+ * Uses httpOnly cookies for authentication (no Authorization header needed)
  *
  * @param endpoint - API endpoint URL
  * @param options - Fetch options
@@ -139,20 +140,12 @@ export async function coreFetchRaw<T>(
   if (typeof window !== 'undefined' && endpoint.startsWith(API_CONFIG.BASE_URL)) {
     endpoint = endpoint.slice(API_CONFIG.BASE_URL.length) || '/';
   }
-  // Build headers
+  // Build headers - no Authorization header needed, access token is in httpOnly cookie
   const headers: Record<string, string> = {
     // Only set Content-Type if not FormData
     ...(!(options.body instanceof FormData) && { 'Content-Type': 'application/json' }),
     ...options.headers,
   };
-
-  // Attach access token if not skipped
-  if (!options.skipAuth) {
-    const token = useUserStore.getState().accessToken;
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-  }
 
   // Attach cookie for server-side requests
   if (cookieString) {
@@ -174,7 +167,7 @@ export async function coreFetchRaw<T>(
       method: options.method || 'GET',
       headers,
       body,
-      credentials: 'include',
+      credentials: 'include', // Send cookies with request
     });
   } catch (error) {
     // Network error (backend not running, CORS, etc.)
@@ -190,22 +183,19 @@ export async function coreFetchRaw<T>(
     };
   }
 
-  // Handle 401 - token expired
+  // Handle 401 - token expired, try refresh
   if (response.status === 401 && !options.skipRefresh) {
     console.log('[Fetcher] 401 detected, refreshing token...');
 
     // If refresh in progress, queue this request
     if (isRefreshing) {
       console.log('[Fetcher] Refresh in progress, queuing request...');
-      const newToken = await queueRequest();
-      headers['Authorization'] = `Bearer ${newToken}`;
+      await queueRequest();
     } else {
       // Start new refresh - pass cookieString for server-side requests
-      const newToken = await refreshAccessToken(cookieString);
+      const success = await refreshAccessToken(cookieString);
 
-      if (newToken) {
-        headers['Authorization'] = `Bearer ${newToken}`;
-      } else {
+      if (!success) {
         // Refresh failed - return 401 error
         return {
           result: {
@@ -219,8 +209,8 @@ export async function coreFetchRaw<T>(
       }
     }
 
-    // Retry original request with new token
-    console.log('[Fetcher] Retrying request with new token...');
+    // Retry original request - new access token is in cookie
+    console.log('[Fetcher] Retrying request after token refresh...');
     response = await fetch(endpoint, {
       method: options.method || 'GET',
       headers,
@@ -240,6 +230,7 @@ export async function coreFetchRaw<T>(
 /**
  * Core fetch function
  * Shared logic for server and client fetchers
+ * Uses httpOnly cookies for authentication (no Authorization header needed)
  *
  * @param endpoint - API endpoint URL
  * @param options - Fetch options
@@ -255,20 +246,12 @@ export async function coreFetch<T>(
   if (typeof window !== 'undefined' && endpoint.startsWith(API_CONFIG.BASE_URL)) {
     endpoint = endpoint.slice(API_CONFIG.BASE_URL.length) || '/';
   }
-  // Build headers
+  // Build headers - no Authorization header needed, access token is in httpOnly cookie
   const headers: Record<string, string> = {
     // Only set Content-Type if not FormData
     ...(!(options.body instanceof FormData) && { 'Content-Type': 'application/json' }),
     ...options.headers,
   };
-
-  // Attach access token if not skipped
-  if (!options.skipAuth) {
-    const token = useUserStore.getState().accessToken;
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-  }
 
   // Attach cookie for server-side requests
   if (cookieString) {
@@ -290,7 +273,7 @@ export async function coreFetch<T>(
       method: options.method || 'GET',
       headers,
       body,
-      credentials: 'include',
+      credentials: 'include', // Send cookies with request
     });
   } catch (error) {
     // Network error (backend not running, CORS, etc.)
@@ -303,22 +286,19 @@ export async function coreFetch<T>(
     };
   }
 
-  // Handle 401 - token expired
+  // Handle 401 - token expired, try refresh
   if (response.status === 401 && !options.skipRefresh) {
     console.log('[Fetcher] 401 detected, refreshing token...');
 
     // If refresh in progress, queue this request
     if (isRefreshing) {
       console.log('[Fetcher] Refresh in progress, queuing request...');
-      const newToken = await queueRequest();
-      headers['Authorization'] = `Bearer ${newToken}`;
+      await queueRequest();
     } else {
       // Start new refresh - pass cookieString for server-side requests
-      const newToken = await refreshAccessToken(cookieString);
+      const success = await refreshAccessToken(cookieString);
 
-      if (newToken) {
-        headers['Authorization'] = `Bearer ${newToken}`;
-      } else {
+      if (!success) {
         // Refresh failed - return 401 error
         return {
           success: false,
@@ -329,8 +309,8 @@ export async function coreFetch<T>(
       }
     }
 
-    // Retry original request with new token
-    console.log('[Fetcher] Retrying request with new token...');
+    // Retry original request - new access token is in cookie
+    console.log('[Fetcher] Retrying request after token refresh...');
     response = await fetch(endpoint, {
       method: options.method || 'GET',
       headers,
