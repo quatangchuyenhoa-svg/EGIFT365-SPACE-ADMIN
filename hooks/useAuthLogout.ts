@@ -1,6 +1,7 @@
 /**
  * Hook xử lý đăng xuất cho admin
  * Gọi API logout và xóa state trong Zustand store
+ * Access token is in httpOnly cookie, no need to check store
  */
 
 "use client"
@@ -9,35 +10,28 @@ import { useCallback } from "react"
 import toast from "react-hot-toast"
 import { ROUTES } from "@/lib/constants/routes"
 import { useUserStore } from "@/store/useUserStore"
-import { API_CONFIG } from "@/lib/api-config"
-import { fetchClient } from "@/lib/fetcher"
+import { logoutRequest } from "@/lib/services/auth.services"
 
 export function useAuthLogout() {
-  const { clearUser, accessToken } = useUserStore()
+  const { clearUser, user } = useUserStore()
 
   return useCallback(async () => {
     try {
-      // Call logout endpoint to revoke tokens on server using fetchClient
-      // Backend will clear admin_refresh_token cookie (httpOnly cookie, only backend can clear)
-      // fetchClient auto-attaches Authorization header from accessToken in store
-      if (accessToken) {
-        await fetchClient<void>(
-          `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.LOGOUT}`,
-          {
-            method: 'POST',
-          }
-        )
+      // Call local logout API route
+      // API route will proxy to backend and handle cookie clearing
+      if (user) {
+        await logoutRequest()
       }
     } catch (error) {
       // Even if logout API fails, continue with local cleanup
       console.error('Logout API error:', error)
     }
 
-    // Clear Zustand store (including accessToken)
+    // Clear Zustand store
     clearUser()
 
     toast.success("Đăng xuất thành công!")
     window.location.replace(ROUTES.AUTH.LOGIN)
-  }, [clearUser, accessToken])
+  }, [clearUser, user])
 }
 
