@@ -50,10 +50,14 @@ export async function POST(request: NextRequest) {
       { status: result.status_code }
     );
 
-    // Forward new refresh token cookie from backend (token rotation)
-    const setCookieHeader = rawResponse.headers.get('set-cookie');
-    if (setCookieHeader) {
-      nextResponse.headers.set('set-cookie', setCookieHeader);
+    // Forward new cookies from backend (token rotation)
+    // Backend sets admin_access_token and admin_refresh_token cookies
+    const setCookieHeaders = rawResponse.headers.getSetCookie();
+    if (setCookieHeaders && setCookieHeaders.length > 0) {
+      // Forward each cookie as-is (backend already sets correct options)
+      setCookieHeaders.forEach((cookie) => {
+        nextResponse.headers.append('set-cookie', cookie);
+      });
     }
 
     return nextResponse;
