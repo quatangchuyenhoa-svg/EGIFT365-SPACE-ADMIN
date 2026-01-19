@@ -7,7 +7,6 @@ export async function proxy(request: NextRequest) {
   // Allow auth routes and API routes
   const isAuthRoute =
     pathname === ROUTES.AUTH.LOGIN ||
-    pathname === ROUTES.AUTH.SIGNUP ||
     pathname === ROUTES.AUTH.CALLBACK ||
     pathname.startsWith(`${ROUTES.AUTH.CALLBACK}/`)
 
