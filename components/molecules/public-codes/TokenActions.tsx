@@ -2,15 +2,15 @@
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { type PublicAccessToken } from "@/hooks/usePublicAccessTokens"
+import { type PublicTokenRow } from "@/lib/services/public-tokens.services"
 import { IconDotsVertical, IconPencil, IconTrash, IconCopy } from "@tabler/icons-react"
 
 type TokenActionsProps = {
-  token: PublicAccessToken
-  onEdit: (token: PublicAccessToken) => void
+  token: PublicTokenRow
+  onEdit: (token: PublicTokenRow) => void
   onDelete: (code: string) => void
   deletingCode: string | null
-  onCopy: (token: PublicAccessToken) => void
+  onCopy: (token: PublicTokenRow) => void
 }
 
 export function TokenActions({ token, onEdit, onDelete, deletingCode, onCopy }: TokenActionsProps) {

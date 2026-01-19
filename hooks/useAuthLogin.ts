@@ -1,6 +1,7 @@
 /**
  * Hook xử lý đăng nhập cho admin
  * Sử dụng React Query để gọi API và quản lý state
+ * Access token is stored in httpOnly cookie by backend (not in memory)
  */
 
 import { useMutation } from "@tanstack/react-query"
@@ -9,13 +10,8 @@ import toast from "react-hot-toast"
 import { ROUTES } from "@/lib/constants/routes"
 import { useUserStore } from "@/store/useUserStore"
 import type { UserProfile } from "@/store/useUserStore"
-import { API_CONFIG } from "@/lib/api-config"
-import { fetchClient } from "@/lib/fetcher"
-
-interface LoginCredentials {
-  email: string
-  password: string
-}
+import type { LoginInput } from "@/types/auth.type"
+import { loginRequest } from "@/lib/services/auth.services"
 
 interface LoginResponse {
   accessToken: string
@@ -35,26 +31,17 @@ export function useAuthLogin() {
   const { setUser, setProfile, setAccessToken } = useUserStore()
 
   const mutation = useMutation({
-    mutationFn: async (credentials: LoginCredentials): Promise<LoginResponse> => {
-      // Call NestJS backend API for admin login using fetchClient
-      // fetchClient throws on error automatically
-      const data = await fetchClient<LoginResponse>(
-        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.LOGIN_ADMIN}`,
-        {
-          method: 'POST',
-          body: {
-            email: credentials.email,
-            password: credentials.password,
-          },
-        }
-      )
-
-      // Refresh token is automatically set in httpOnly cookie by backend
+    mutationFn: async (credentials: LoginInput) => {
+      // loginRequest now throws on error, returns data directly
+      const data = await loginRequest(credentials)
+      return data
+    },
+    onSuccess: (data) => {
       // Store access token temporarily in memory (not persisted) for logout
       setAccessToken(data.accessToken)
 
-      // Store user and profile in Zustand store
-      // Convert backend response to match UserProfile interface
+      // Store user and profile in Zustand store (persisted to localStorage)
+      // Transform null to undefined to match UserProfile type
       const profile: UserProfile = {
         id: data.user.id,
         email: data.user.email,
@@ -65,7 +52,6 @@ export function useAuthLogin() {
         updated_at: data.user.updatedAt,
       }
 
-      // Create a simplified user object for the store
       const user = {
         id: data.user.id,
         email: data.user.email,
@@ -74,9 +60,6 @@ export function useAuthLogin() {
       setUser(user)
       setProfile(profile)
 
-      return data
-    },
-    onSuccess: () => {
       toast.success("Đăng nhập thành công!")
       router.push(ROUTES.HOME)
       router.refresh()

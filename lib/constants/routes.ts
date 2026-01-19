@@ -11,7 +11,6 @@ export const ROUTES = {
   // Auth routes
   AUTH: {
     LOGIN: "/auth/login",
-    SIGNUP: "/auth/signup",
     CALLBACK: "/auth/callback",
   },
 

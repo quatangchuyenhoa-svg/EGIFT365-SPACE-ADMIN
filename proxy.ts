@@ -4,14 +4,15 @@ import { ROUTES } from "@/lib/constants/routes"
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Allow auth routes
+  // Allow auth routes and API routes
   const isAuthRoute =
     pathname === ROUTES.AUTH.LOGIN ||
-    pathname === ROUTES.AUTH.SIGNUP ||
     pathname === ROUTES.AUTH.CALLBACK ||
     pathname.startsWith(`${ROUTES.AUTH.CALLBACK}/`)
 
-  if (isAuthRoute) {
+  const isApiRoute = pathname.startsWith('/api/')
+
+  if (isAuthRoute || isApiRoute) {
     return NextResponse.next({ request })
   }
 

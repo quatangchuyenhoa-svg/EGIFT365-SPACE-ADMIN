@@ -31,7 +31,7 @@ interface UserState {
   user: SimpleUser | null
   // Profile từ database
   profile: UserProfile | null
-  // Access token (temporary, not persisted)
+  // Access token (temporary in memory, not persisted for security)
   accessToken: string | null
   // Loading state
   isLoading: boolean
@@ -47,7 +47,7 @@ interface UserState {
 /**
  * Zustand store để quản lý user state
  * Sử dụng persist middleware để lưu vào localStorage
- * Tránh mất dữ liệu khi refresh trang (F5)
+ * Access token is stored in httpOnly cookie (not in store for security)
  */
 export const useUserStore = create<UserState>()(
   persist(
@@ -72,7 +72,7 @@ export const useUserStore = create<UserState>()(
     {
       name: "egift-admin-user-storage", // Tên key trong localStorage
       storage: createJSONStorage(() => localStorage),
-      // Chỉ persist user và profile, không persist accessToken và isLoading
+      // Persist user và profile, access token is in memory only (not persisted)
       partialize: (state) => ({
         user: state.user,
         profile: state.profile,
