@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { fetchServer } from "@/lib/fetcher"
 import { API_CONFIG } from "@/lib/api-config"
+import type { ApiResponse } from "@/lib/fetcher/types"
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,17 +17,30 @@ export async function GET(request: NextRequest) {
     )
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: result.message, tokens: [] },
+      return NextResponse.json<ApiResponse<never>>(
+        {
+          success: false,
+          status_code: result.status_code || 500,
+          message: result.message,
+          data: null as never,
+        },
         { status: result.status_code || 500 }
       )
     }
 
-    return NextResponse.json(result.data, { status: 200 })
+    return NextResponse.json<ApiResponse<{ tokens: unknown[] }>>(
+      result,
+      { status: 200 }
+    )
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error"
-    return NextResponse.json(
-      { error: message, tokens: [] },
+    console.error('Public tokens list API error:', err);
+    return NextResponse.json<ApiResponse<never>>(
+      {
+        success: false,
+        status_code: 500,
+        message: "Đã xảy ra lỗi hệ thống",
+        data: null as never,
+      },
       { status: 500 }
     )
   }
@@ -43,15 +57,31 @@ export async function POST(request: NextRequest) {
     )
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: result.message },
+      return NextResponse.json<ApiResponse<never>>(
+        {
+          success: false,
+          status_code: result.status_code || 500,
+          message: result.message,
+          data: null as never,
+        },
         { status: result.status_code || 500 }
       )
     }
 
-    return NextResponse.json(result.data, { status: 201 })
+    return NextResponse.json<ApiResponse<{ token: unknown }>>(
+      result,
+      { status: 201 }
+    )
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error"
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('Public tokens list API error:', err);
+    return NextResponse.json<ApiResponse<never>>(
+      {
+        success: false,
+        status_code: 500,
+        message: "Đã xảy ra lỗi hệ thống",
+        data: null as never,
+      },
+      { status: 500 }
+    )
   }
 }

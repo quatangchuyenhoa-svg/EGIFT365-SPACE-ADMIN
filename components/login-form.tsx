@@ -16,6 +16,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { useAuthLogin } from "@/hooks/useAuthLogin";
 import { ROUTES } from "@/lib/constants/routes";
 import { Spinner } from "@/components/ui/spinner";
@@ -91,9 +92,8 @@ export function LoginForm({
         </Field>
         <Field data-invalid={!!errors.password}>
           <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             aria-invalid={!!errors.password}
             disabled={isLoading}
             {...register("password")}

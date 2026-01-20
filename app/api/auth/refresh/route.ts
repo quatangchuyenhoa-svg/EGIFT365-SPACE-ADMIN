@@ -11,21 +11,21 @@ import type { ApiResponse } from '@/lib/fetcher/types';
 
 export async function POST(request: NextRequest) {
   try {
-    // Get cookies from request to forward to backend
-    const cookieHeader = request.headers.get('cookie');
+    const refreshTokenCookie = request.cookies.get('admin_refresh_token');
 
-    // Admin uses admin_refresh_token cookie
-    if (!cookieHeader || !cookieHeader.includes('admin_refresh_token')) {
+    if (!refreshTokenCookie) {
       return NextResponse.json<ApiResponse<never>>(
         {
           success: false,
           status_code: 401,
-          message: 'Phiên đăng nhập hết hạn',
+          message: 'Phiên đăng nhập hết hạn (DEBUG_ADMIN_3000)',
           data: null as never,
         },
         { status: 401 }
       );
     }
+
+    const cookieHeader = request.headers.get('cookie');
 
     // Call NestJS backend refresh endpoint using fetchServerRaw
     // Backend will detect admin_refresh_token cookie and refresh accordingly
@@ -33,7 +33,8 @@ export async function POST(request: NextRequest) {
       `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.REFRESH}`,
       {
         method: 'POST',
-        cookie: cookieHeader, // Forward refresh token cookie
+        cookie: cookieHeader ?? undefined, // Forward refresh token cookie
+        skipRefresh: true, // Crucial: Don't let fetcher try to refresh again if this fails
       }
     );
 
@@ -50,10 +51,14 @@ export async function POST(request: NextRequest) {
       { status: result.status_code }
     );
 
-    // Forward new refresh token cookie from backend (token rotation)
-    const setCookieHeader = rawResponse.headers.get('set-cookie');
-    if (setCookieHeader) {
-      nextResponse.headers.set('set-cookie', setCookieHeader);
+    // Forward new cookies from backend (token rotation)
+    // Backend sets admin_access_token and admin_refresh_token cookies
+    const setCookieHeaders = rawResponse.headers.getSetCookie();
+    if (setCookieHeaders && setCookieHeaders.length > 0) {
+      // Forward each cookie as-is (backend already sets correct options)
+      setCookieHeaders.forEach((cookie) => {
+        nextResponse.headers.append('set-cookie', cookie);
+      });
     }
 
     return nextResponse;

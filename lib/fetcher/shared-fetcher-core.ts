@@ -3,7 +3,6 @@
  * Core logic shared between server and client fetchers
  *
  * Features:
- * - httpOnly cookie-based authentication (access token in cookie)
  * - Token refresh with request queue
  * - Auto-retry on 401 errors
  * - Response parsing and error handling
@@ -18,37 +17,60 @@ import type { ApiResponse, FetcherOptions, QueuedRequest, ServerFetchResult } fr
  * Prevents multiple concurrent refresh calls
  */
 let isRefreshing = false;
-let refreshPromise: Promise<boolean> | null = null;
+let refreshPromise: Promise<{ success: boolean; cookies?: string }> | null = null;
 const requestQueue: QueuedRequest[] = [];
+
+/**
+ * Resolve full URL from endpoint
+ * - If endpoint is relative (/api/...) → prefix with BASE_URL
+ * - If endpoint is absolute (http://...) → use as-is
+ *
+ * @param endpoint - Relative or absolute URL
+ * @returns Full URL
+ */
+function resolveUrl(endpoint: string): string {
+  // Already absolute URL
+  if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
+    return endpoint;
+  }
+
+  // Relative URL → prefix with BASE_URL
+  // If running in browser and targeting Next.js API route, keep same-origin path
+  // so the request goes to the application domain (so cookies can be set for that domain).
+  // Server-side should still prefix with BASE_URL to call backend directly.
+  if (typeof window !== 'undefined' && endpoint.startsWith('/api/')) {
+    return endpoint;
+  }
+
+  return `${API_CONFIG.BASE_URL}${endpoint}`;
+}
 
 /**
  * Refresh access token
  * Uses request queue to handle concurrent refresh attempts
- * Access token is set in httpOnly cookie by backend, no need to store in memory
  *
- * @param cookieString - Optional cookie string for server-side requests
- * @returns true if refresh succeeded, false otherwise
+ * @returns { success: boolean; cookies?: string } - success status and new cookies for server-side
  */
-export async function refreshAccessToken(cookieString?: string): Promise<boolean> {
+export async function refreshAccessToken(): Promise<{ success: boolean; cookies?: string }> {
   // If already refreshing, return existing promise
   if (isRefreshing && refreshPromise) {
     return refreshPromise;
   }
 
   isRefreshing = true;
-  refreshPromise = performRefresh(cookieString);
+  refreshPromise = performRefresh();
 
   try {
-    const success = await refreshPromise;
+    const result = await refreshPromise;
 
     // Process all queued requests
     requestQueue.forEach(({ resolve, reject }) => {
-      if (success) resolve(true);
+      if (result.success) resolve(result);
       else reject(new Error('Token refresh failed'));
     });
     requestQueue.length = 0;
 
-    return success;
+    return result;
   } catch (error) {
     // Reject all queued requests
     requestQueue.forEach(({ reject }) => {
@@ -63,27 +85,19 @@ export async function refreshAccessToken(cookieString?: string): Promise<boolean
 }
 
 /**
- * Perform actual token refresh
  * Calls /api/auth/refresh endpoint
  * Access token is set in httpOnly cookie by backend
  */
-async function performRefresh(cookieString?: string): Promise<boolean> {
+async function performRefresh(): Promise<{ success: boolean; cookies?: string }> {
   try {
-    // Use relative URL for client-side, full URL for server-side
+    // Use relative URL - works in browser, auto-resolves to current origin
+    // For SSR, this will be called from Next.js API route which handles the request
     const refreshEndpoint = typeof window !== 'undefined'
-      ? API_CONFIG.ENDPOINTS.AUTH.REFRESH
-      : `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.REFRESH}`;
-
-    const headers: Record<string, string> = {};
-
-    // Forward cookie for server-side requests
-    if (cookieString) {
-      headers['Cookie'] = cookieString;
-    }
+      ? API_CONFIG.ENDPOINTS.AUTH.REFRESH // Client-side: relative URL
+      : `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.REFRESH}`; // Server-side: full URL
 
     const response = await fetch(refreshEndpoint, {
       method: 'POST',
-      headers,
       credentials: 'include',
     });
 
@@ -91,29 +105,36 @@ async function performRefresh(cookieString?: string): Promise<boolean> {
       throw new Error('Refresh failed');
     }
 
-    const data: ApiResponse<object> = await response.json();
+    const data: ApiResponse<{ accessToken: string; cookies?: { accessTokenCookie: string; refreshTokenCookie: string } }> = await response.json();
 
     if (!data.success) {
       throw new Error(data.message);
     }
 
-    // Access token is now in httpOnly cookie, no need to store in memory
-    console.log('[Fetcher] Token refresh successful');
-    return true;
+    // Extract cookies for server-side retry
+    let cookies: string | undefined;
+    if (data.data.cookies) {
+      // For server-side, construct cookie string from response data
+      const accessToken = response.headers.get('set-cookie')?.split(';')[0]?.split('=')[1];
+      const refreshToken = response.headers.get('set-cookie')?.split(';')[0]?.split('=')[1];
+      if (accessToken && refreshToken) {
+        cookies = `${data.data.cookies.accessTokenCookie}=${accessToken}; ${data.data.cookies.refreshTokenCookie}=${refreshToken}`;
+      }
+    }
+
+    return { success: true, cookies };
   } catch (error) {
     console.error('[Fetcher] Token refresh failed:', error);
     // Clear user state on refresh failure
     useUserStore.getState().clearUser();
-    return false;
+    return { success: false };
   }
 }
 
 /**
- * Queue a request during token refresh
- *
  * @returns Promise that resolves when refresh completes
  */
-export function queueRequest(): Promise<boolean> {
+export function queueRequest(): Promise<{ success: boolean; cookies?: string }> {
   return new Promise((resolve, reject) => {
     requestQueue.push({ resolve, reject });
   });
@@ -122,7 +143,6 @@ export function queueRequest(): Promise<boolean> {
 /**
  * Core fetch function with raw response
  * Returns both ApiResponse and raw Response for cookie forwarding
- * Uses httpOnly cookies for authentication (no Authorization header needed)
  *
  * @param endpoint - API endpoint URL
  * @param options - Fetch options
@@ -140,7 +160,7 @@ export async function coreFetchRaw<T>(
   if (typeof window !== 'undefined' && endpoint.startsWith(API_CONFIG.BASE_URL)) {
     endpoint = endpoint.slice(API_CONFIG.BASE_URL.length) || '/';
   }
-  // Build headers - no Authorization header needed, access token is in httpOnly cookie
+  // Build headers
   const headers: Record<string, string> = {
     // Only set Content-Type if not FormData
     ...(!(options.body instanceof FormData) && { 'Content-Type': 'application/json' }),
@@ -161,41 +181,24 @@ export async function coreFetchRaw<T>(
         : undefined;
 
   // Make initial request
-  let response: Response;
-  try {
-    response = await fetch(endpoint, {
-      method: options.method || 'GET',
-      headers,
-      body,
-      credentials: 'include', // Send cookies with request
-    });
-  } catch (error) {
-    // Network error (backend not running, CORS, etc.)
-    console.error('[Fetcher] Network error:', error);
-    return {
-      result: {
-        success: false,
-        status_code: 0,
-        message: error instanceof Error ? error.message : 'Network error - backend may not be running',
-        data: null as T,
-      },
-      rawResponse: new Response(null, { status: 0 }),
-    };
-  }
+  const fullUrl = resolveUrl(endpoint);
+  let response = await fetch(fullUrl, {
+    method: options.method || 'GET',
+    headers,
+    body,
+    credentials: 'include',
+  });
 
-  // Handle 401 - token expired, try refresh
-  if (response.status === 401 && !options.skipRefresh) {
-    console.log('[Fetcher] 401 detected, refreshing token...');
-
+  // Handle 401 - token expired, try refresh (client-side OR server-side with cookies)
+  if (response.status === 401 && !options.skipRefresh && (typeof window !== 'undefined' || cookieString)) {
     // If refresh in progress, queue this request
     if (isRefreshing) {
-      console.log('[Fetcher] Refresh in progress, queuing request...');
       await queueRequest();
     } else {
-      // Start new refresh - pass cookieString for server-side requests
-      const success = await refreshAccessToken(cookieString);
+      // Start new refresh
+      const refreshResult = await refreshAccessToken();
 
-      if (!success) {
+      if (!refreshResult.success) {
         // Refresh failed - return 401 error
         return {
           result: {
@@ -207,11 +210,15 @@ export async function coreFetchRaw<T>(
           rawResponse: response,
         };
       }
+
+      // Update cookie header for retry if cookies provided (server-side)
+      if (refreshResult.cookies && cookieString) {
+        headers['Cookie'] = refreshResult.cookies;
+      }
     }
 
     // Retry original request - new access token is in cookie
-    console.log('[Fetcher] Retrying request after token refresh...');
-    response = await fetch(endpoint, {
+    response = await fetch(fullUrl, {
       method: options.method || 'GET',
       headers,
       body,
@@ -230,7 +237,6 @@ export async function coreFetchRaw<T>(
 /**
  * Core fetch function
  * Shared logic for server and client fetchers
- * Uses httpOnly cookies for authentication (no Authorization header needed)
  *
  * @param endpoint - API endpoint URL
  * @param options - Fetch options
@@ -246,7 +252,7 @@ export async function coreFetch<T>(
   if (typeof window !== 'undefined' && endpoint.startsWith(API_CONFIG.BASE_URL)) {
     endpoint = endpoint.slice(API_CONFIG.BASE_URL.length) || '/';
   }
-  // Build headers - no Authorization header needed, access token is in httpOnly cookie
+  // Build headers
   const headers: Record<string, string> = {
     // Only set Content-Type if not FormData
     ...(!(options.body instanceof FormData) && { 'Content-Type': 'application/json' }),
@@ -267,38 +273,24 @@ export async function coreFetch<T>(
         : undefined;
 
   // Make initial request
-  let response: Response;
-  try {
-    response = await fetch(endpoint, {
-      method: options.method || 'GET',
-      headers,
-      body,
-      credentials: 'include', // Send cookies with request
-    });
-  } catch (error) {
-    // Network error (backend not running, CORS, etc.)
-    console.error('[Fetcher] Network error:', error);
-    return {
-      success: false,
-      status_code: 0,
-      message: error instanceof Error ? error.message : 'Network error - backend may not be running',
-      data: null as T,
-    };
-  }
+  const fullUrl = resolveUrl(endpoint);
+  let response = await fetch(fullUrl, {
+    method: options.method || 'GET',
+    headers,
+    body,
+    credentials: 'include',
+  });
 
-  // Handle 401 - token expired, try refresh
-  if (response.status === 401 && !options.skipRefresh) {
-    console.log('[Fetcher] 401 detected, refreshing token...');
-
+  // Handle 401 - token expired, try refresh (client-side OR server-side with cookies)
+  if (response.status === 401 && !options.skipRefresh && (typeof window !== 'undefined' || cookieString)) {
     // If refresh in progress, queue this request
     if (isRefreshing) {
-      console.log('[Fetcher] Refresh in progress, queuing request...');
       await queueRequest();
     } else {
-      // Start new refresh - pass cookieString for server-side requests
-      const success = await refreshAccessToken(cookieString);
+      // Start new refresh
+      const refreshResult = await refreshAccessToken();
 
-      if (!success) {
+      if (!refreshResult.success) {
         // Refresh failed - return 401 error
         return {
           success: false,
@@ -307,11 +299,15 @@ export async function coreFetch<T>(
           data: null as T,
         };
       }
+
+      // Update cookie header for retry if cookies provided (server-side)
+      if (refreshResult.cookies && cookieString) {
+        headers['Cookie'] = refreshResult.cookies;
+      }
     }
 
-    // Retry original request - new access token is in cookie
-    console.log('[Fetcher] Retrying request after token refresh...');
-    response = await fetch(endpoint, {
+    // Retry original request
+    response = await fetch(fullUrl, {
       method: options.method || 'GET',
       headers,
       body,
