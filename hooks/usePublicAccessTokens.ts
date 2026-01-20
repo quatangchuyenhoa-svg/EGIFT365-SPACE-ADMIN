@@ -24,8 +24,8 @@ type UsePublicAccessTokensResult = {
   loading: boolean
   error: string | null
   refetch: () => Promise<unknown>
-  createToken: (path: string, code?: string) => Promise<PublicTokenRow | null>
-  updateToken: (code: string, path: string, newCode?: string) => Promise<PublicTokenRow | null>
+  createToken: (path: string, title?: string, code?: string) => Promise<PublicTokenRow | null>
+  updateToken: (code: string, path: string, title?: string, newCode?: string) => Promise<PublicTokenRow | null>
   deleteToken: (code: string) => Promise<boolean>
 }
 
@@ -45,16 +45,16 @@ export function usePublicAccessTokens(): UsePublicAccessTokensResult {
   })
 
   const createMutation = useMutation({
-    mutationFn: ({ path, code }: { path: string; code?: string }) =>
-      createPublicTokenService({ path, code }),
+    mutationFn: ({ path, title, code }: { path: string; title?: string; code?: string }) =>
+      createPublicTokenService({ path, title, code }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey })
     },
   })
 
   const updateMutation = useMutation({
-    mutationFn: ({ code, path, newCode }: { code: string; path: string; newCode?: string }) =>
-      updatePublicTokenService(code, { path, code: newCode }),
+    mutationFn: ({ code, path, title, newCode }: { code: string; path: string; title?: string; newCode?: string }) =>
+      updatePublicTokenService(code, { path, title, code: newCode }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey })
     },
@@ -90,12 +90,12 @@ export function usePublicAccessTokens(): UsePublicAccessTokensResult {
     loading: tokensQuery.isPending || tokensQuery.isRefetching,
     error,
     refetch: tokensQuery.refetch,
-    createToken: async (path, code) => {
-      const result = await createMutation.mutateAsync({ path, code })
+    createToken: async (path, title, code) => {
+      const result = await createMutation.mutateAsync({ path, title, code })
       return result.token ?? null
     },
-    updateToken: async (code, path, newCode) => {
-      const result = await updateMutation.mutateAsync({ code, path, newCode })
+    updateToken: async (code, path, title, newCode) => {
+      const result = await updateMutation.mutateAsync({ code, path, title, newCode })
       return result.token ?? null
     },
     deleteToken: async (code) => {
