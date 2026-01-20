@@ -6,9 +6,11 @@ import { Label } from "@/components/ui/label"
 
 export type TokenFormProps = {
   formPath: string
+  formTitle: string
   formCode: string
-  formErrors: { path?: string; code?: string }
+  formErrors: { path?: string; title?: string; code?: string }
   onChangePath: (v: string) => void
+  onChangeTitle: (v: string) => void
   onChangeCode: (v: string) => void
   onGenerate?: () => void
   showPathHint?: boolean
@@ -17,9 +19,11 @@ export type TokenFormProps = {
 
 export function TokenForm({
   formPath,
+  formTitle,
   formCode,
   formErrors,
   onChangePath,
+  onChangeTitle,
   onChangeCode,
   onGenerate,
   showPathHint = true,
@@ -47,6 +51,21 @@ export function TokenForm({
           <p className="text-xs text-muted-foreground">
             Path must start with /egift365/concepts/
           </p>
+        )}
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="title">Title</Label>
+        <Input
+          id="title"
+          placeholder="Optional title for the token"
+          value={formTitle}
+          onChange={e => {
+            onChangeTitle(e.target.value)
+          }}
+          aria-invalid={!!formErrors.title}
+        />
+        {formErrors.title && (
+          <p className="text-sm text-destructive">{formErrors.title}</p>
         )}
       </div>
       <div className="flex flex-col gap-2">

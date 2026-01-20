@@ -31,8 +31,9 @@ export default function PublicCodesClient() {
 
   // Form state
   const [formPath, setFormPath] = useState("")
+  const [formTitle, setFormTitle] = useState("")
   const [formCode, setFormCode] = useState("")
-  const [formErrors, setFormErrors] = useState<{ path?: string; code?: string }>({})
+  const [formErrors, setFormErrors] = useState<{ path?: string; title?: string; code?: string }>({})
 
   //lấy base url của client
   const getBaseUrl = () => {
@@ -72,7 +73,7 @@ export default function PublicCodesClient() {
     if (!validateForm()) return
     setSubmitting(true)
     try {
-      const token = await createToken(formPath.trim(), formCode.trim() || undefined)
+      const token = await createToken(formPath.trim(), formTitle.trim() || undefined, formCode.trim() || undefined)
       if (token) {
         setCreatedToken(token)
         setShowCreatedUrl(true)
@@ -88,6 +89,7 @@ export default function PublicCodesClient() {
   const handleEdit = useCallback((token: PublicTokenRow) => {
     setEditingToken(token)
     setFormPath(token.path)
+    setFormTitle(token.title || "")
     setFormCode(token.code)
     setIsEditDialogOpen(true)
   }, [])
@@ -98,7 +100,7 @@ export default function PublicCodesClient() {
     setSubmitting(true)
     try {
       const newCode = formCode.trim() !== editingToken.code ? formCode.trim() : undefined
-      await updateToken(editingToken.code, formPath.trim(), newCode)
+      await updateToken(editingToken.code, formPath.trim(), formTitle.trim() || undefined, newCode)
       setIsEditDialogOpen(false)
       resetForm()
       setEditingToken(null)
@@ -124,6 +126,7 @@ export default function PublicCodesClient() {
   //reset form
   const resetForm = () => {
     setFormPath("")
+    setFormTitle("")
     setFormCode("")
     setFormErrors({})
   }
@@ -143,6 +146,13 @@ export default function PublicCodesClient() {
 
   const columns: ColumnDef<TokenWithId>[] = useMemo(
     () => [
+      {
+        accessorKey: "title",
+        header: "Title",
+        cell: ({ row }) => (
+          <span className="text-sm">{row.original.title || "—"}</span>
+        ),
+      },
       {
         accessorKey: "path",
         header: "Path",
@@ -210,9 +220,11 @@ export default function PublicCodesClient() {
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
         formPath={formPath}
+        formTitle={formTitle}
         formCode={formCode}
         formErrors={formErrors}
         onChangePath={setFormPath}
+        onChangeTitle={setFormTitle}
         onChangeCode={setFormCode}
         onGenerate={generateCode}
         onSubmit={handleCreate}
@@ -229,9 +241,11 @@ export default function PublicCodesClient() {
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
         formPath={formPath}
+        formTitle={formTitle}
         formCode={formCode}
         formErrors={formErrors}
         onChangePath={setFormPath}
+        onChangeTitle={setFormTitle}
         onChangeCode={setFormCode}
         onSubmit={handleUpdate}
         onCancel={() => {
@@ -247,7 +261,7 @@ export default function PublicCodesClient() {
         data={tokens.map(token => ({ ...token, id: token.code }))}
         columns={columns}
         filterKey="path"
-        filterPlaceholder="Search by path"
+        filterPlaceholder="Search by path, title, or code"
         showAddButton={true}
         onAdd={() => {
           resetForm()
