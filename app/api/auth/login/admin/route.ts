@@ -8,29 +8,29 @@ interface LoginInput {
   password: string;
 }
 
+interface UserProfile {
+  id: string;
+  email: string;
+  fullName: string | null;
+  role: string;
+  avatarUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface LoginResponse {
   accessToken: string;
-  user: {
-    id: string;
-    email: string;
-    fullName: string | null;
-    role: string;
-    avatarUrl: string | null;
-    createdAt: string;
-    updatedAt: string;
-  };
+  user: UserProfile;
 }
 
 /**
  * POST /api/auth/login/admin
  * Proxy layer to NestJS backend for admin login
- * Handles httpOnly cookie forwarding
  */
 export async function POST(request: NextRequest) {
   try {
     const body: LoginInput = await request.json();
 
-    // Validate input
     if (!body.email || !body.password) {
       return NextResponse.json<ApiResponse<never>>(
         {
@@ -43,43 +43,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call NestJS backend using fetchServerRaw for cookie forwarding
+    // Call NestJS backend using fetchServerRaw to get headers
     const { result, rawResponse } = await fetchServerRaw<LoginResponse>(
       `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.LOGIN_ADMIN}`,
       {
         method: 'POST',
         body,
+        skipAuth: true,
+        skipRefresh: true,
       }
     );
 
     if (!result.success) {
       return NextResponse.json<ApiResponse<never>>(
         result as ApiResponse<never>,
-        { status: result.status_code }
+        { status: result.status_code || 401 }
       );
     }
 
-    // Create success response with accessToken included
-    const responseWithToken: LoginResponse = {
-      accessToken: 'admin-token-placeholder', // Backend sets this in httpOnly cookie
-      user: result.data.user,
-    };
-
+    // Create success response
     const nextResponse = NextResponse.json<ApiResponse<LoginResponse>>(
       {
-        success: result.success,
-        status_code: result.status_code,
-        message: result.message,
-        data: responseWithToken,
+        ...result,
+        message: 'Đăng nhập thành công',
       },
-      { status: result.status_code }
+      { status: 200 }
     );
 
-    // Forward httpOnly cookies from backend response
-    // Backend sets admin_access_token and admin_refresh_token cookies
+    // Forward new cookies from backend (access and refresh tokens as httpOnly)
     const setCookieHeaders = rawResponse.headers.getSetCookie();
     if (setCookieHeaders && setCookieHeaders.length > 0) {
-      // Forward each cookie as-is (backend already sets correct options)
       setCookieHeaders.forEach((cookie) => {
         nextResponse.headers.append('set-cookie', cookie);
       });
@@ -87,12 +80,12 @@ export async function POST(request: NextRequest) {
 
     return nextResponse;
   } catch (error) {
-    console.error('Login API error:', error);
+    console.error('[Admin Login API] Error:', error);
     return NextResponse.json<ApiResponse<never>>(
       {
         success: false,
         status_code: 500,
-        message: 'Đã xảy ra lỗi. Vui lòng thử lại.',
+        message: 'Đã xảy ra lỗi hệ thống',
         data: null as never,
       },
       { status: 500 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState, useCallback } from "react"
+import { useMemo, useState, useCallback, useEffect } from "react"
 import { type ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "@/components/dataTable"
 import { usePublicAccessTokens } from "@/hooks/usePublicAccessTokens"
@@ -21,6 +21,13 @@ export default function PublicCodesClient() {
   const [showCreatedUrl, setShowCreatedUrl] = useState(false)
   const [deletingCode, setDeletingCode] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+
+  // Show error toast when there's an error
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
 
   // Form state
   const [formPath, setFormPath] = useState("")
@@ -108,6 +115,7 @@ export default function PublicCodesClient() {
     setDeletingCode(code)
     try {
       await deleteToken(code)
+      toast.success("Token deleted successfully")
     } finally {
       setDeletingCode(null)
     }

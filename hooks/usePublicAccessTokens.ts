@@ -65,6 +65,9 @@ export function usePublicAccessTokens(): UsePublicAccessTokensResult {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey })
     },
+    onError: (error: Error) => {
+      console.error('Delete token error:', error)
+    },
   })
 
   const error = useMemo(() => {
