@@ -10,17 +10,20 @@ import { API_CONFIG } from '@/lib/api-config';
 export interface PublicTokenRow {
   code: string;
   path: string;
+  title?: string;
   created_at: string;
   updated_at: string;
 }
 
 export interface CreatePublicTokenInput {
   path: string;
+  title?: string;
   code?: string;
 }
 
 export interface UpdatePublicTokenInput {
   path?: string;
+  title?: string;
   code?: string;
 }
 
