@@ -1,19 +1,19 @@
-/**
- * API route: Users list/create
- * Proxies requests to NestJS backend
- */
 import { NextRequest, NextResponse } from "next/server"
 import { fetchServer } from "@/lib/fetcher"
 import { API_CONFIG } from "@/lib/api-config"
 import type { ApiResponse } from "@/lib/fetcher/types"
 
-export async function GET(request: NextRequest) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ code: string }> }
+) {
   try {
+    const { code } = await params
     const cookie = request.headers.get("cookie") || undefined
 
-    const result = await fetchServer<{ users: unknown[] }>(
-      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN.USERS.LIST}`,
-      { method: "GET", cookie }
+    const result = await fetchServer<{ deleted: boolean }>(
+      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN.PUBLIC_TOKENS.DELETE(code)}`,
+      { method: "DELETE", cookie }
     )
 
     if (!result.success) {
@@ -28,12 +28,12 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    return NextResponse.json<ApiResponse<{ users: unknown[] }>>(
+    return NextResponse.json<ApiResponse<{ deleted: boolean }>>(
       result,
       { status: 200 }
     )
   } catch (err) {
-    console.error('Admin users list API error:', err);
+    console.error('Admin public token API error:', err);
     return NextResponse.json<ApiResponse<never>>(
       {
         success: false,
@@ -46,14 +46,18 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ code: string }> }
+) {
   try {
+    const { code } = await params
     const body = await request.json()
     const cookie = request.headers.get("cookie") || undefined
 
-    const result = await fetchServer<{ user: unknown }>(
-      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN.USERS.CREATE}`,
-      { method: "POST", body, cookie }
+    const result = await fetchServer<{ token: unknown }>(
+      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN.PUBLIC_TOKENS.UPDATE(code)}`,
+      { method: "PUT", body, cookie }
     )
 
     if (!result.success) {
@@ -68,12 +72,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse.json<ApiResponse<{ user: unknown }>>(
+    return NextResponse.json<ApiResponse<{ token: unknown }>>(
       result,
-      { status: 201 }
+      { status: 200 }
     )
   } catch (err) {
-    console.error('Admin users list API error:', err);
+    console.error('Admin public token API error:', err);
     return NextResponse.json<ApiResponse<never>>(
       {
         success: false,

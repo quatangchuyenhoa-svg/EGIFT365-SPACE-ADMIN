@@ -35,10 +35,9 @@ export interface ServerFetcherOptions<TBody = unknown> extends FetcherOptions<TB
 
 /**
  * Queued request during token refresh
- * Resolves with boolean (success) since access token is in httpOnly cookie
  */
 export interface QueuedRequest {
-  resolve: (success: boolean) => void;
+  resolve: (result: { success: boolean; cookies?: string }) => void;
   reject: (error: Error) => void;
 }
 
