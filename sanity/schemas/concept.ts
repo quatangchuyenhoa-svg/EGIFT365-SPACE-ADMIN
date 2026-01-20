@@ -70,6 +70,13 @@ export default defineType({
       description: "Tùy chọn: upload audio (mp3, m4a, wav...) cho concept",
     }),
     defineField({
+      name: "autoplay",
+      title: "Auto Play",
+      type: "boolean",
+      description: "Tự động phát audio khi vào trang",
+      initialValue: false,
+    }),
+    defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
