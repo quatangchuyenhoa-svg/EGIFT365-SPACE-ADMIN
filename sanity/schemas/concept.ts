@@ -130,6 +130,13 @@ export default defineType({
       initialValue: "portrait",
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: "handwrittenMode",
+      title: "Handwritten Mode",
+      type: "boolean",
+      description: "Bật để hiển thị bài viết dưới dạng chữ viết tay trên giấy kẻ ngang",
+      initialValue: false,
+    }),
   ],
   preview: {
     select: {
@@ -137,11 +144,14 @@ export default defineType({
       media: "image",
       categoryName: "category.displayName",
       categoryValue: "category.value",
+      handwrittenMode: "handwrittenMode",
     },
-    prepare({ title, media, categoryName, categoryValue }) {
+    prepare({ title, media, categoryName, categoryValue, handwrittenMode }) {
+      const categoryText = categoryName || categoryValue ? `Category: ${categoryName || categoryValue}` : "";
+      const handwrittenIndicator = handwrittenMode ? " ✍️" : "";
       return {
-        title: title || "Untitled Concept",
-        subtitle: categoryName || categoryValue ? `Category: ${categoryName || categoryValue}` : "",
+        title: (title || "Untitled Concept") + handwrittenIndicator,
+        subtitle: categoryText,
         media,
       };
     },
