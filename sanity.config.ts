@@ -44,34 +44,17 @@ export default defineConfig({
         S.list()
           .title("E-Gift Studio")
           .items([
-            // Existing auto-generated items (exclude knowledgeItem)
             ...S.documentTypeListItems().filter(
               (item) => !["knowledgeItem"].includes(item.getId() as string)
             ),
             S.divider(),
-            // Kho Tri Thức sections
             S.listItem()
-              .title("Kho Tri Thức - Quan Niệm")
+              .title("Kho Tri Thức")
               .child(
                 S.documentList()
-                  .title("Quan Niệm")
-                  .filter('_type == "knowledgeItem" && contentType == "concept"')
-                  .defaultOrdering([{ field: "order", direction: "asc" }])
-              ),
-            S.listItem()
-              .title("Kho Tri Thức - Bài Viết")
-              .child(
-                S.documentList()
-                  .title("Bài Viết")
-                  .filter('_type == "knowledgeItem" && contentType == "article"')
-                  .defaultOrdering([{ field: "publishedAt", direction: "desc" }])
-              ),
-            S.listItem()
-              .title("Kho Tri Thức - Tất cả")
-              .child(
-                S.documentList()
-                  .title("Tất cả")
+                  .title("Kho Tri Thức")
                   .filter('_type == "knowledgeItem"')
+                  .defaultOrdering([{ field: "order", direction: "asc" }])
               ),
           ]),
     }),
