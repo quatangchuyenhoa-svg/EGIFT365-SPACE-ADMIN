@@ -3,7 +3,15 @@ import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./sanity/schemas";
 import { ResetThemeAction } from "./sanity/actions/resetTheme";
+import { DeletePostAction } from "./sanity/actions/deletePost";
 import { NavbarActions } from "./sanity/components/NavbarActions";
+import {
+  BookIcon,
+  BulbOutlineIcon,
+  DocumentsIcon,
+  TagIcon,
+  FolderIcon,
+} from "@sanity/icons";
 import React from "react";
 
 export default defineConfig({
@@ -42,20 +50,57 @@ export default defineConfig({
     structureTool({
       structure: (S) =>
         S.list()
-          .title("E-Gift Studio")
+          .title("Quản lý Nội dung")
           .items([
-            ...S.documentTypeListItems().filter(
-              (item) => !["knowledgeItem"].includes(item.getId() as string)
-            ),
-            S.divider(),
+            // --- MAIN CONTENT ---
             S.listItem()
               .title("Kho Tri Thức")
+              .icon(BookIcon)
               .child(
-                S.documentList()
+                S.documentTypeList("knowledgeItem")
                   .title("Kho Tri Thức")
-                  .filter('_type == "knowledgeItem"')
                   .defaultOrdering([{ field: "order", direction: "asc" }])
               ),
+            S.listItem()
+              .title("Kho Quan Niệm")
+              .icon(BulbOutlineIcon)
+              .child(
+                S.documentTypeList("concept")
+                  .title("Kho Quan Niệm")
+                  .defaultOrdering([{ field: "order", direction: "asc" }])
+              ),
+            S.listItem()
+              .title("Câu Chuyện Nội Tâm")
+              .icon(DocumentsIcon)
+              .child(
+                S.documentTypeList("innerStory").title("Danh sách Câu chuyện")
+              ),
+
+            S.divider(),
+
+            // --- CLASSIFICATION ---
+            S.listItem()
+              .title("Phân loại & Danh mục")
+              .icon(FolderIcon)
+              .child(
+                S.list()
+                  .title("Phân loại")
+                  .items([
+                    S.listItem()
+                      .title("Danh mục bài viết")
+                      .icon(TagIcon)
+                      .child(S.documentTypeList("category").title("Danh mục bài viết")),
+                    S.listItem()
+                      .title("Danh mục câu chuyện")
+                      .icon(TagIcon)
+                      .child(S.documentTypeList("innerStoryCategory").title("Danh mục câu chuyện")),
+                  ])
+              ),
+
+            // Hide automatically generated items that we manually added above
+            ...S.documentTypeListItems().filter(
+              (item) => !["knowledgeItem", "concept", "siteSettings", "innerStory", "homeBanner", "category", "innerStoryCategory", "blockContent"].includes(item.getId() as string)
+            ),
           ]),
     }),
     visionTool(),    // GROQ query tool
@@ -67,6 +112,11 @@ export default defineConfig({
 
   document: {
     actions: (prev, context) => {
+      // Add custom delete action for knowledge and concepts
+      if (['knowledgeItem', 'concept'].includes(context.schemaType)) {
+        return [...prev, DeletePostAction]
+      }
+
       // Add reset theme action for siteSettings
       if (context.schemaType === 'siteSettings') {
         return [...prev, ResetThemeAction]

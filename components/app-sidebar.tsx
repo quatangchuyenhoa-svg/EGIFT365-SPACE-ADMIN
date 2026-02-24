@@ -32,9 +32,21 @@ const data = {
       icon: IconHome2,
     },
     {
-      title: "Studio",
-      url: "/studio",
+      title: "Content Hub",
+      url: "#",
       icon: IconPalette,
+      items: [
+        {
+          title: "Kho Tri Thức",
+          url: ROUTES.MANAGER.KNOWLEDGE,
+          icon: IconPalette,
+        },
+        {
+          title: "Kho Quan Niệm",
+          url: ROUTES.MANAGER.CONCEPTS,
+          icon: IconPalette,
+        },
+      ],
     },
     {
       title: "Manager",

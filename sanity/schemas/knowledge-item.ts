@@ -1,4 +1,5 @@
 import { defineType, defineField } from "sanity";
+import { DeleteButtonInput } from "../components/DeleteButtonInput";
 
 // Schema cho Kho Tri Thức - giống hệt Kho Quan Niệm
 export default defineType({
@@ -126,6 +127,15 @@ export default defineType({
       type: "boolean",
       description: "Bật để hiển thị bài viết dưới dạng chữ viết tay trên giấy kẻ ngang",
       initialValue: false,
+    }),
+    defineField({
+      name: "deleteAction",
+      title: "Thao tác xóa",
+      type: "string",
+      components: {
+        input: DeleteButtonInput
+      },
+      description: "Cẩn trọng: Xóa bài viết vĩnh viễn",
     }),
   ],
   preview: {

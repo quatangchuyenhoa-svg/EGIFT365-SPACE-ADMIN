@@ -12,20 +12,6 @@ import { useUserStore } from "@/store/useUserStore"
 import type { UserProfile } from "@/store/useUserStore"
 import type { LoginInput } from "@/types/auth.type"
 import { loginRequest } from "@/lib/services/auth.services"
-
-interface LoginResponse {
-  accessToken: string
-  user: {
-    id: string
-    email: string
-    fullName: string | null
-    role: string
-    avatarUrl: string | null
-    createdAt: string
-    updatedAt: string
-  }
-}
-
 export function useAuthLogin() {
   const router = useRouter()
   const { setUser, setProfile, setAccessToken } = useUserStore()
