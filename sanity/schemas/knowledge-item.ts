@@ -1,9 +1,10 @@
 import { defineType, defineField } from "sanity";
 import { DeleteButtonInput } from "../components/DeleteButtonInput";
 
+// Schema cho Kho Tri Thức - giống hệt Kho Quan Niệm
 export default defineType({
-  name: "concept",
-  title: "Concept (Kho Quan Niệm)",
+  name: "knowledgeItem",
+  title: "Kho Tri Thức (Knowledge Base)",
   type: "document",
   fields: [
     defineField({
@@ -47,28 +48,22 @@ export default defineType({
       name: "image",
       title: "Image",
       type: "image",
-      options: {
-        hotspot: true,
-      },
+      options: { hotspot: true },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "backgroundImage",
       title: "Background Image",
       type: "image",
-      options: {
-        hotspot: true,
-      },
-      description: "Ảnh nền cho trang concept (dùng cho cả layout dọc và ngang)",
+      options: { hotspot: true },
+      description: "Ảnh nền cho trang (dùng cho cả layout dọc và ngang)",
     }),
     defineField({
       name: "audio",
       title: "Audio",
       type: "file",
-      options: {
-        accept: "audio/*",
-      },
-      description: "Tùy chọn: upload audio (mp3, m4a, wav...) cho concept",
+      options: { accept: "audio/*" },
+      description: "Tùy chọn: upload audio (mp3, m4a, wav...) cho bài viết",
     }),
     defineField({
       name: "autoplay",
@@ -81,10 +76,7 @@ export default defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: {
-        source: "title",
-        maxLength: 96,
-      },
+      options: { source: "title", maxLength: 96 },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -92,16 +84,14 @@ export default defineType({
       title: "Category",
       type: "reference",
       to: [{ type: "category" }],
-      options: {
-        filter: "isActive == true",
-      },
+      options: { filter: "isActive == true" },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "author",
       title: "Tác giả",
       type: "string",
-      description: "Tên tác giả của concept",
+      description: "Tên tác giả",
     }),
     defineField({
       name: "order",
@@ -114,7 +104,7 @@ export default defineType({
       name: "isActive",
       title: "Active",
       type: "boolean",
-      description: "Bật/tắt concept",
+      description: "Bật/tắt bài viết",
       initialValue: true,
     }),
     defineField({
@@ -152,19 +142,16 @@ export default defineType({
     select: {
       title: "title",
       media: "image",
-      categoryName: "category.displayName",
-      categoryValue: "category.value",
+      categoryName: "category.name",
       handwrittenMode: "handwrittenMode",
     },
-    prepare({ title, media, categoryName, categoryValue, handwrittenMode }) {
-      const categoryText = categoryName || categoryValue ? `Category: ${categoryName || categoryValue}` : "";
+    prepare({ title, media, categoryName, handwrittenMode }) {
       const handwrittenIndicator = handwrittenMode ? " ✍️" : "";
       return {
-        title: (title || "Untitled Concept") + handwrittenIndicator,
-        subtitle: categoryText,
+        title: (title || "Untitled") + handwrittenIndicator,
+        subtitle: categoryName ? `Danh mục: ${categoryName}` : "",
         media,
       };
     },
   },
 });
-

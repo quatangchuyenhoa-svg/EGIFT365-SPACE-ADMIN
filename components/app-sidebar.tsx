@@ -4,11 +4,11 @@ import * as React from "react";
 import {
   IconChartBar,
   IconHome2,
-  IconInnerShadowTop,
   IconKey,
   IconPalette,
   IconUsers,
 } from "@tabler/icons-react";
+import Image from "next/image";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -32,9 +32,21 @@ const data = {
       icon: IconHome2,
     },
     {
-      title: "Studio",
-      url: "/studio",
+      title: "Content Hub",
+      url: "#",
       icon: IconPalette,
+      items: [
+        {
+          title: "Kho Tri Thức",
+          url: ROUTES.MANAGER.KNOWLEDGE,
+          icon: IconPalette,
+        },
+        {
+          title: "Kho Quan Niệm",
+          url: ROUTES.MANAGER.CONCEPTS,
+          icon: IconPalette,
+        },
+      ],
     },
     {
       title: "Manager",
@@ -72,11 +84,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
+              size="lg"
+              className="data-[slot=sidebar-menu-button]:h-auto data-[slot=sidebar-menu-button]:py-2"
             >
               <a href={ROUTES.HOME}>
-                <IconInnerShadowTop className="size-5!" />
-                <span className="text-base font-semibold">Egift365 Admin</span>
+                <Image
+                  src="/logo/space_logo.png"
+                  alt="Egift365 Admin"
+                  width={150}
+                  height={50}
+                  className="h-12 w-auto object-contain"
+                />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -7,7 +7,7 @@ export const ROUTES = {
   // Public routes
   HOME: "/",
   STUDIO: "/studio",
-  
+
   // Auth routes
   AUTH: {
     LOGIN: "/auth/login",
@@ -19,6 +19,8 @@ export const ROUTES = {
     USERS_CREATE: "/manager/users/create",
     USERS_EDIT: (id: string) => `/manager/users/${id}/edit`,
     PUBLIC_CODES: "/manager/public-codes",
+    KNOWLEDGE: "/manager/knowledge",
+    CONCEPTS: "/manager/concepts",
   },
 } as const
 
