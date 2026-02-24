@@ -32,6 +32,11 @@ const data = {
       icon: IconHome2,
     },
     {
+      title: "Sanity Studio",
+      url: ROUTES.STUDIO,
+      icon: IconPalette,
+    },
+    {
       title: "Content Hub",
       url: "#",
       icon: IconPalette,
