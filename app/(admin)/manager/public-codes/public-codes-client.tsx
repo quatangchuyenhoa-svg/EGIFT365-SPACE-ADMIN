@@ -11,6 +11,9 @@ import { CreateDialog } from "@/components/molecules/public-codes/CreateDialog"
 import { EditDialog } from "@/components/molecules/public-codes/EditDialog"
 import { toast } from "react-hot-toast"
 
+const PATH_PREFIX = "/egift365/"
+const ALLOWED_APP_PATHS = ["concepts/", "knowledge/"]
+
 export default function PublicCodesClient() {
   const { tokens, loading, error, createToken, updateToken, deleteToken } =
     usePublicAccessTokens()
@@ -56,10 +59,11 @@ export default function PublicCodesClient() {
   const validateForm = (): boolean => {
     const errors: { path?: string; code?: string } = {}
     const trimmedPath = formPath.trim()
+
     if (!trimmedPath) {
       errors.path = "Path is required"
-    } else if (!trimmedPath.startsWith("/egift365/concepts/")) {
-      errors.path = "Path must start with /egift365/concepts/"
+    } else if (!ALLOWED_APP_PATHS.some(sub => trimmedPath.startsWith(sub))) {
+      errors.path = `Path must start with ${ALLOWED_APP_PATHS.join(" or ")}`
     }
     if (!formCode.trim()) {
       errors.code = "Code is required"
@@ -73,7 +77,8 @@ export default function PublicCodesClient() {
     if (!validateForm()) return
     setSubmitting(true)
     try {
-      const token = await createToken(formPath.trim(), formTitle.trim() || undefined, formCode.trim() || undefined)
+      const fullPath = `${PATH_PREFIX}${formPath.trim().replace(/^\/+/, "")}`
+      const token = await createToken(fullPath, formTitle.trim() || undefined, formCode.trim() || undefined)
       if (token) {
         setCreatedToken(token)
         setShowCreatedUrl(true)
@@ -88,7 +93,11 @@ export default function PublicCodesClient() {
   //sửa token
   const handleEdit = useCallback((token: PublicTokenRow) => {
     setEditingToken(token)
-    setFormPath(token.path)
+    // Strip prefix for editing
+    const displayPath = token.path.startsWith(PATH_PREFIX)
+      ? token.path.substring(PATH_PREFIX.length)
+      : token.path
+    setFormPath(displayPath)
     setFormTitle(token.title || "")
     setFormCode(token.code)
     setIsEditDialogOpen(true)
@@ -99,8 +108,9 @@ export default function PublicCodesClient() {
     if (!editingToken || !validateForm()) return
     setSubmitting(true)
     try {
+      const fullPath = `${PATH_PREFIX}${formPath.trim().replace(/^\/+/, "")}`
       const newCode = formCode.trim() !== editingToken.code ? formCode.trim() : undefined
-      await updateToken(editingToken.code, formPath.trim(), formTitle.trim() || undefined, newCode)
+      await updateToken(editingToken.code, fullPath, formTitle.trim() || undefined, newCode)
       setIsEditDialogOpen(false)
       resetForm()
       setEditingToken(null)

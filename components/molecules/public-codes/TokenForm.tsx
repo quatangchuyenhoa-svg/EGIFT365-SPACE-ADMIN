@@ -35,21 +35,27 @@ export function TokenForm({
         <Label htmlFor="path">
           Path <span className="text-destructive">*</span>
         </Label>
-        <Input
-          id="path"
-          placeholder="/egift365/concepts/my-slug"
-          value={formPath}
-          onChange={e => {
-            onChangePath(e.target.value)
-          }}
-          aria-invalid={!!formErrors.path}
-        />
+        <div className="relative flex items-center">
+          <span className="absolute left-3 text-sm text-muted-foreground select-none">
+            /egift365/
+          </span>
+          <Input
+            id="path"
+            placeholder="concepts/slug-here"
+            className="pl-[74px]"
+            value={formPath}
+            onChange={e => {
+              onChangePath(e.target.value)
+            }}
+            aria-invalid={!!formErrors.path}
+          />
+        </div>
         {formErrors.path && (
           <p className="text-sm text-destructive">{formErrors.path}</p>
         )}
         {showPathHint && (
           <p className="text-xs text-muted-foreground">
-            Path must start with /egift365/concepts/
+            Path must start with concepts/ or knowledge/
           </p>
         )}
       </div>
