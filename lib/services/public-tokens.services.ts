@@ -11,6 +11,7 @@ export interface PublicTokenRow {
   code: string;
   path: string;
   title?: string;
+  category?: string;
   created_at: string;
   updated_at: string;
 }
@@ -19,12 +20,14 @@ export interface CreatePublicTokenInput {
   path: string;
   title?: string;
   code?: string;
+  category?: string;
 }
 
 export interface UpdatePublicTokenInput {
   path?: string;
   title?: string;
   code?: string;
+  category?: string;
 }
 
 /**
