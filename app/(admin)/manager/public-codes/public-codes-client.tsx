@@ -36,6 +36,7 @@ export default function PublicCodesClient() {
   const [formPath, setFormPath] = useState("")
   const [formTitle, setFormTitle] = useState("")
   const [formCode, setFormCode] = useState("")
+  const [formCategory, setFormCategory] = useState("")
   const [formErrors, setFormErrors] = useState<{ path?: string; title?: string; code?: string }>({})
 
   //lấy base url của client
@@ -78,7 +79,12 @@ export default function PublicCodesClient() {
     setSubmitting(true)
     try {
       const fullPath = `${PATH_PREFIX}${formPath.trim().replace(/^\/+/, "")}`
-      const token = await createToken(fullPath, formTitle.trim() || undefined, formCode.trim() || undefined)
+      const token = await createToken(
+        fullPath,
+        formTitle.trim() || undefined,
+        formCode.trim() || undefined,
+        formCategory.trim() || undefined
+      )
       if (token) {
         setCreatedToken(token)
         setShowCreatedUrl(true)
@@ -100,6 +106,7 @@ export default function PublicCodesClient() {
     setFormPath(displayPath)
     setFormTitle(token.title || "")
     setFormCode(token.code)
+    setFormCategory(token.category || "")
     setIsEditDialogOpen(true)
   }, [])
 
@@ -110,7 +117,13 @@ export default function PublicCodesClient() {
     try {
       const fullPath = `${PATH_PREFIX}${formPath.trim().replace(/^\/+/, "")}`
       const newCode = formCode.trim() !== editingToken.code ? formCode.trim() : undefined
-      await updateToken(editingToken.code, fullPath, formTitle.trim() || undefined, newCode)
+      await updateToken(
+        editingToken.code,
+        fullPath,
+        formTitle.trim() || undefined,
+        newCode,
+        formCategory.trim() || undefined
+      )
       setIsEditDialogOpen(false)
       resetForm()
       setEditingToken(null)
@@ -138,6 +151,7 @@ export default function PublicCodesClient() {
     setFormPath("")
     setFormTitle("")
     setFormCode("")
+    setFormCategory("")
     setFormErrors({})
   }
 
@@ -161,6 +175,15 @@ export default function PublicCodesClient() {
         header: "Title",
         cell: ({ row }) => (
           <span className="text-sm">{row.original.title || "—"}</span>
+        ),
+      },
+      {
+        accessorKey: "category",
+        header: "Category",
+        cell: ({ row }) => (
+          <span className="text-sm bg-secondary px-2 py-0.5 rounded text-secondary-foreground whitespace-nowrap">
+            {row.original.category || "—"}
+          </span>
         ),
       },
       {
@@ -236,6 +259,8 @@ export default function PublicCodesClient() {
         onChangePath={setFormPath}
         onChangeTitle={setFormTitle}
         onChangeCode={setFormCode}
+        formCategory={formCategory}
+        onChangeCategory={setFormCategory}
         onGenerate={generateCode}
         onSubmit={handleCreate}
         onCancel={() => {
@@ -257,6 +282,8 @@ export default function PublicCodesClient() {
         onChangePath={setFormPath}
         onChangeTitle={setFormTitle}
         onChangeCode={setFormCode}
+        formCategory={formCategory}
+        onChangeCategory={setFormCategory}
         onSubmit={handleUpdate}
         onCancel={() => {
           setIsEditDialogOpen(false)
