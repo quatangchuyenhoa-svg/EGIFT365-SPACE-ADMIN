@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { client as sanityClient } from "@/sanity/client";
 import { toast } from "react-hot-toast";
+import { QUERY_KEYS } from "@/lib/constants/query-keys";
 
 export type ContentItem = {
     _id: string;
@@ -21,7 +22,7 @@ export type ContentItem = {
  */
 export function useContentList(type: "knowledgeItem" | "concept") {
     return useQuery({
-        queryKey: ["content", type],
+        queryKey: QUERY_KEYS.CONTENT(type),
         queryFn: async () => {
             const query = `*[_type == "${type}"] | order(order asc, _createdAt desc) {
         _id,
@@ -57,7 +58,7 @@ export function useDeleteContent() {
         },
         onSuccess: () => {
             toast.success("Xóa bài viết thành công!");
-            queryClient.invalidateQueries({ queryKey: ["content"] });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.CONTENT() });
         },
         onError: (error) => {
             toast.error(error instanceof Error ? error.message : "Xóa bài viết thất bại");
@@ -70,7 +71,7 @@ export function useDeleteContent() {
  */
 export function useRecentArticles() {
     return useQuery({
-        queryKey: ["recent-articles"],
+        queryKey: QUERY_KEYS.RECENT_ARTICLES,
         queryFn: async () => {
             const query = `*[_type in ["knowledgeItem", "concept"]] | order(_createdAt desc)[0...10] {
         _id,

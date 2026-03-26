@@ -5,6 +5,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import toast from "react-hot-toast"
 import { deleteUserService } from "@/lib/services/users.services"
+import { QUERY_KEYS } from "@/lib/constants/query-keys"
 
 export function useDeleteUser(options?: { onSuccess?: () => Promise<void> | void }) {
   const queryClient = useQueryClient()
@@ -15,7 +16,7 @@ export function useDeleteUser(options?: { onSuccess?: () => Promise<void> | void
     },
     onSuccess: async () => {
       // Invalidate users query to refetch
-      await queryClient.invalidateQueries({ queryKey: ["users"] })
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USERS })
       toast.success("Xóa user thành công")
       if (options?.onSuccess) {
         await options.onSuccess()

@@ -13,9 +13,11 @@ export type UserRow = {
   created_at?: string | null
 }
 
+import { QUERY_KEYS } from "@/lib/constants/query-keys"
+
 export function useUsers() {
   const query = useQuery({
-    queryKey: ["users"],
+    queryKey: QUERY_KEYS.USERS,
     queryFn: async () => {
       const result = await listUsersService()
       return result.users

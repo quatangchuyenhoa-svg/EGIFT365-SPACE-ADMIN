@@ -16,6 +16,8 @@ import {
   type PublicTokenRow,
 } from "@/lib/services/public-tokens.services"
 
+import { QUERY_KEYS } from "@/lib/constants/query-keys"
+
 // Re-export for consumers
 export type PublicAccessToken = PublicTokenRow
 
@@ -29,7 +31,7 @@ type UsePublicAccessTokensResult = {
   deleteToken: (code: string) => Promise<boolean>
 }
 
-const queryKey = ["public-access-tokens"]
+const queryKey = QUERY_KEYS.PUBLIC_TOKENS
 
 export function usePublicAccessTokens(): UsePublicAccessTokensResult {
   const queryClient = useQueryClient()

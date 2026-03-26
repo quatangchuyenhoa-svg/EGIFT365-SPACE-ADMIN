@@ -74,6 +74,8 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 import * as React from 'react';
+import { DataTablePagination } from './data-table-pagination';
+import { DataTableToolbar } from './data-table-toolbar';
 
 function DragHandle({ id }: { id: UniqueIdentifier }) {
   const { attributes, listeners } = useSortable({
@@ -350,71 +352,17 @@ export function DataTable<
 
   return (
     <div className="w-full flex-col justify-start gap-6">
-      <div className="flex flex-col gap-3 px-2 sm:px-4 lg:flex-row lg:items-center lg:justify-between lg:px-6">
-        {/* Left: Search */}
-        <div className="flex flex-1 items-center gap-2">
-          {showSearch && filterKey ? (
-            <div className="flex w-full items-center sm:w-auto sm:py-2">
-              <Input
-                placeholder={filterPlaceholder || 'Search...'}
-                value={
-                  (table.getColumn(filterKey)?.getFilterValue() as string) ?? ''
-                }
-                onChange={event =>
-                  table.getColumn(filterKey)?.setFilterValue(event.target.value)
-                }
-                className="w-full sm:w-56 md:w-72"
-              />
-            </div>
-          ) : null}
-          {trashComponent}
-        </div>
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2">
-          {showColumnCustomizer ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-9">
-                  <IconLayoutColumns className="size-4" />
-                  <span className="hidden md:inline lg:ml-1">Customize columns</span>
-                  <IconChevronDown className="ml-1 hidden size-3 md:inline" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                {table
-                  .getAllColumns()
-                  .filter(
-                    column =>
-                      typeof column.accessorFn !== 'undefined' &&
-                      column.getCanHide()
-                  )
-                  .map(column => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={value =>
-                          column.toggleVisibility(!!value)
-                        }
-                      >
-                        {column.id}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : null}
-          {showAddButton && onAdd ? (
-            <Button variant="outline" size="sm" onClick={onAdd} className="h-9">
-              <IconPlus className="size-4" />
-              <span className="hidden md:inline lg:ml-1">
-                {addLabel || 'Add'}
-              </span>
-            </Button>
-          ) : null}
-        </div>
-      </div>
+      <DataTableToolbar
+        table={table}
+        filterKey={filterKey}
+        filterPlaceholder={filterPlaceholder}
+        showSearch={showSearch}
+        showColumnCustomizer={showColumnCustomizer}
+        showAddButton={showAddButton}
+        onAdd={onAdd}
+        addLabel={addLabel}
+        trashComponent={trashComponent}
+      />
       <div className="relative flex flex-col gap-4 overflow-x-auto px-2 sm:px-4 lg:px-6">
         <div className="min-w-full overflow-x-auto rounded-lg border">
           <DndContext
@@ -499,108 +447,13 @@ export function DataTable<
             </Table>
           </DndContext>
         </div>
-        <div className="flex flex-col gap-4 px-2 sm:flex-row sm:items-center sm:justify-between sm:px-4">
-          <div className="flex flex-1 items-center gap-2 sm:gap-4">
-            {selectable ? (
-              <div className="text-muted-foreground hidden flex-1 text-xs sm:text-sm lg:flex">
-                {table.getFilteredSelectedRowModel().rows.length} of{' '}
-                {table.getFilteredRowModel().rows.length} rows selected
-              </div>
-            ) : (
-              <div className="flex-1" />
-            )}
-            {/* Bulk Delete Button */}
-            {onBulkDelete && table.getFilteredSelectedRowModel().rows.length > 0 && (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() =>
-                  onBulkDelete(table.getFilteredSelectedRowModel().rows)
-                }
-                className="h-9"
-              >
-                <IconTrash className="size-4" />
-                <span className="hidden md:inline lg:ml-1">
-                  Bulk delete ({table.getFilteredSelectedRowModel().rows.length})
-                </span>
-                <span className="ml-1 md:hidden">
-                  {table.getFilteredSelectedRowModel().rows.length}
-                </span>
-              </Button>
-            )}
-          </div>
           {showPagination && (
-            <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 lg:w-fit lg:gap-8">
-              <div className="hidden items-center gap-2 lg:flex">
-                <Label htmlFor="rows-per-page" className="text-sm font-medium">
-                  Rows per page
-                </Label>
-                <Select
-                  value={`${table.getState().pagination.pageSize}`}
-                  onValueChange={value => {
-                    table.setPageSize(Number(value));
-                  }}
-                >
-                  <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                    <SelectValue placeholder={table.getState().pagination.pageSize} />
-                  </SelectTrigger>
-                  <SelectContent side="top">
-                    {[10, 20, 30, 40, 50].map(pageSize => (
-                      <SelectItem key={pageSize} value={`${pageSize}`}>
-                        {pageSize}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center justify-center text-xs font-medium sm:text-sm">
-                Page {table.getState().pagination.pageIndex + 1} of{' '}
-                {table.getPageCount()}
-              </div>
-              <div className="flex items-center justify-center gap-1 sm:gap-2">
-                <Button
-                  variant="outline"
-                  className="hidden h-8 w-8 p-0 lg:flex"
-                  onClick={() => table.setPageIndex(0)}
-                  disabled={!table.getCanPreviousPage()}
-                >
-                  <span className="sr-only">Go to first page</span>
-                  <IconChevronsLeft className="size-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="h-8 w-8 p-0"
-                  size="icon"
-                  onClick={() => table.previousPage()}
-                  disabled={!table.getCanPreviousPage()}
-                >
-                  <span className="sr-only">Go to previous page</span>
-                  <IconChevronLeft className="size-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="h-8 w-8 p-0"
-                  size="icon"
-                  onClick={() => table.nextPage()}
-                  disabled={!table.getCanNextPage()}
-                >
-                  <span className="sr-only">Go to next page</span>
-                  <IconChevronRight className="size-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="hidden h-8 w-8 p-0 lg:flex"
-                  size="icon"
-                  onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                  disabled={!table.getCanNextPage()}
-                >
-                  <span className="sr-only">Go to last page</span>
-                  <IconChevronsRight className="size-4" />
-                </Button>
-              </div>
-            </div>
+            <DataTablePagination
+              table={table}
+              selectable={selectable}
+              onBulkDelete={onBulkDelete}
+            />
           )}
-        </div>
       </div>
     </div>
   );

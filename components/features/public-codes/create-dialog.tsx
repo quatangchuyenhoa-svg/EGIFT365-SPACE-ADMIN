@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { TokenForm } from "./token-form"
+import { generateRandomHexStr } from "@/lib/utils"
 
 const PATH_PREFIX = "/egift365/"
 const ALLOWED_APP_PATHS = ["concepts/", "knowledge/"]
@@ -38,10 +39,7 @@ export function CreateDialog({
   const [submitting, setSubmitting] = useState(false)
 
   const generateCode = () => {
-    const array = new Uint8Array(16)
-    crypto.getRandomValues(array)
-    const code = Array.from(array, byte => byte.toString(16).padStart(2, "0")).join("")
-    setFormCode(code)
+    setFormCode(generateRandomHexStr(16))
   }
 
   const validateForm = (): boolean => {
