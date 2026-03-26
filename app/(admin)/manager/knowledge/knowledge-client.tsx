@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/dataTable";
+import { DataTable } from "@/components/shared/data-table";
 import { useContentList, useDeleteContent, type ContentItem } from "@/hooks/useContent";
 import { Button } from "@/components/ui/button";
 import { IconPencil, IconTrash, IconDotsVertical } from "@tabler/icons-react";

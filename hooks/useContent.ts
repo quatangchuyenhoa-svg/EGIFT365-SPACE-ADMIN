@@ -64,3 +64,25 @@ export function useDeleteContent() {
         },
     });
 }
+
+/**
+ * Hook to get recent dashboard articles
+ */
+export function useRecentArticles() {
+    return useQuery({
+        queryKey: ["recent-articles"],
+        queryFn: async () => {
+            const query = `*[_type in ["knowledgeItem", "concept"]] | order(_createdAt desc)[0...10] {
+        _id,
+        _type,
+        title,
+        "category": category->{name, displayName},
+        isActive,
+        _createdAt,
+        _updatedAt
+      }`;
+            return await sanityClient.fetch<ContentItem[]>(query);
+        },
+    });
+}
+

@@ -1,6 +1,6 @@
 import { Metadata } from "next"
 import UsersClient from "./users-client"
-import { InfoCard } from "@/components/infoCard"
+import { InfoCard } from "@/components/shared/info-card"
 
 export const metadata: Metadata = {
   title: "Users manager",

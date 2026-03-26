@@ -1,6 +1,6 @@
-import { SectionCards } from "@/components/section-cards"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DashboardArticles } from "@/components/dashboard-articles"
+import { SectionCards } from "@/components/shared/section-cards"
+import { ChartAreaInteractive } from "@/components/features/dashboard/chart-area-interactive"
+import { DashboardArticles } from "@/components/features/dashboard/dashboard-articles"
 
 export default function Home() {
   return (

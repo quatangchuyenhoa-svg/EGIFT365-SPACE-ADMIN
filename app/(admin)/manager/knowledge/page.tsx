@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import KnowledgeClient from "@/app/(admin)/manager/knowledge/knowledge-client";
-import { InfoCard } from "@/components/infoCard";
+import { InfoCard } from "@/components/shared/info-card";
 
 export const metadata: Metadata = {
     title: "Quản lý Kho Tri Thức",

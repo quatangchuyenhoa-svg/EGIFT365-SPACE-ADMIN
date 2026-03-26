@@ -2,7 +2,7 @@
 
 import { useMemo } from "react"
 import { type ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "@/components/dataTable"
+import { DataTable } from "@/components/shared/data-table"
 import { type UserRow, useUsers } from "@/hooks/useUsers"
 
 export default function UsersClient() {

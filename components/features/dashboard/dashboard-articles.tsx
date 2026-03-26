@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/dataTable";
-import { useDeleteContent, type ContentItem } from "@/hooks/useContent";
+import { DataTable } from "@/components/shared/data-table";
+import { useDeleteContent, useRecentArticles, type ContentItem } from "@/hooks/useContent";
 import { Button } from "@/components/ui/button";
 import { IconPencil, IconTrash, IconDotsVertical } from "@tabler/icons-react";
 import { client as sanityClient } from "@/sanity/client";
@@ -30,21 +30,7 @@ export function DashboardArticles() {
     const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
     const deleteMutation = useDeleteContent();
 
-    const { data: articles } = useQuery({
-        queryKey: ["recent-articles"],
-        queryFn: async () => {
-            const query = `*[_type in ["knowledgeItem", "concept"]] | order(_createdAt desc)[0...10] {
-        _id,
-        _type,
-        title,
-        "category": category->{name, displayName},
-        isActive,
-        _createdAt,
-        _updatedAt
-      }`;
-            return await sanityClient.fetch<ContentItem[]>(query);
-        },
-    });
+    const { data: articles } = useRecentArticles();
 
     const columns: ColumnDef<ContentItem>[] = useMemo(
         () => [

@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { DataTable } from "@/components/dataTable"
+import { DataTable } from "@/components/shared/data-table"
 import { type UserRow, useUsers } from "@/hooks/useUsers"
 import { useDeleteUser } from "@/hooks/useDeleteUser"
 import { ROUTES } from "@/lib/constants/routes"

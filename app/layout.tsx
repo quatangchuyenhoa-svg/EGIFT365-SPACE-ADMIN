@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
-import { StudioWrapper } from "@/components/studio-wrapper";
-import { UserProvider } from "@/components/UserProvider";
+import { StudioWrapper } from "@/components/providers/studio-wrapper";
+import { UserProvider } from "@/components/providers/user-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {

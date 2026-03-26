@@ -2,44 +2,35 @@
 
 import { useMemo, useState, useCallback, useEffect } from "react"
 import { type ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "@/components/dataTable"
+import { DataTable } from "@/components/shared/data-table"
 import { usePublicAccessTokens } from "@/hooks/usePublicAccessTokens"
 import { type PublicTokenRow } from "@/lib/services/public-tokens.services"
-import { TokenActions } from "@/components/molecules/public-codes/TokenActions"
-import { CreatedUrlDialog } from "@/components/molecules/public-codes/CreatedUrlDialog"
-import { CreateDialog } from "@/components/molecules/public-codes/CreateDialog"
-import { EditDialog } from "@/components/molecules/public-codes/EditDialog"
+import { TokenActions } from "@/components/features/public-codes/token-actions"
+import { CreatedUrlDialog } from "@/components/features/public-codes/created-url-dialog"
+import { CreateDialog } from "@/components/features/public-codes/create-dialog"
+import { EditDialog } from "@/components/features/public-codes/edit-dialog"
 import { toast } from "react-hot-toast"
-
-const PATH_PREFIX = "/egift365/"
-const ALLOWED_APP_PATHS = ["concepts/", "knowledge/"]
 
 export default function PublicCodesClient() {
   const { tokens, loading, error, createToken, updateToken, deleteToken } =
     usePublicAccessTokens()
+  
+  // Modal states
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editingToken, setEditingToken] = useState<PublicTokenRow | null>(null)
+  
   const [createdToken, setCreatedToken] = useState<PublicTokenRow | null>(null)
   const [showCreatedUrl, setShowCreatedUrl] = useState(false)
   const [deletingCode, setDeletingCode] = useState<string | null>(null)
-  const [submitting, setSubmitting] = useState(false)
 
-  // Show error toast when there's an error
+  // Show error toast when there's a global fetch error
   useEffect(() => {
     if (error) {
       toast.error(error)
     }
   }, [error])
 
-  // Form state
-  const [formPath, setFormPath] = useState("")
-  const [formTitle, setFormTitle] = useState("")
-  const [formCode, setFormCode] = useState("")
-  const [formCategory, setFormCategory] = useState("")
-  const [formErrors, setFormErrors] = useState<{ path?: string; title?: string; code?: string }>({})
-
-  //lấy base url của client
+  // Get base url
   const getBaseUrl = () => {
     if (typeof window === "undefined") return ""
     if (process.env.NEXT_PUBLIC_CLIENT_URL) return process.env.NEXT_PUBLIC_CLIENT_URL
@@ -48,91 +39,10 @@ export default function PublicCodesClient() {
 
   const baseUrl = getBaseUrl()
 
-  //tạo code ngẫu nhiên(32 characters)
-  const generateCode = () => {
-    const array = new Uint8Array(16)
-    crypto.getRandomValues(array)
-    const code = Array.from(array, byte => byte.toString(16).padStart(2, "0")).join("")
-    setFormCode(code)
-  }
-
-  //validate form path và code
-  const validateForm = (): boolean => {
-    const errors: { path?: string; code?: string } = {}
-    const trimmedPath = formPath.trim()
-
-    if (!trimmedPath) {
-      errors.path = "Path is required"
-    } else if (!ALLOWED_APP_PATHS.some(sub => trimmedPath.startsWith(sub))) {
-      errors.path = `Path must start with ${ALLOWED_APP_PATHS.join(" or ")}`
-    }
-    if (!formCode.trim()) {
-      errors.code = "Code is required"
-    }
-    setFormErrors(errors)
-    return Object.keys(errors).length === 0
-  }
-
-  //tạo token mới
-  const handleCreate = async () => {
-    if (!validateForm()) return
-    setSubmitting(true)
-    try {
-      const fullPath = `${PATH_PREFIX}${formPath.trim().replace(/^\/+/, "")}`
-      const token = await createToken(
-        fullPath,
-        formTitle.trim() || undefined,
-        formCode.trim() || undefined,
-        formCategory.trim() || undefined
-      )
-      if (token) {
-        setCreatedToken(token)
-        setShowCreatedUrl(true)
-        setIsCreateDialogOpen(false)
-        resetForm()
-      }
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  //sửa token
   const handleEdit = useCallback((token: PublicTokenRow) => {
     setEditingToken(token)
-    // Strip prefix for editing
-    const displayPath = token.path.startsWith(PATH_PREFIX)
-      ? token.path.substring(PATH_PREFIX.length)
-      : token.path
-    setFormPath(displayPath)
-    setFormTitle(token.title || "")
-    setFormCode(token.code)
-    setFormCategory(token.category || "")
-    setIsEditDialogOpen(true)
   }, [])
 
-  //cập nhật token
-  const handleUpdate = async () => {
-    if (!editingToken || !validateForm()) return
-    setSubmitting(true)
-    try {
-      const fullPath = `${PATH_PREFIX}${formPath.trim().replace(/^\/+/, "")}`
-      const newCode = formCode.trim() !== editingToken.code ? formCode.trim() : undefined
-      await updateToken(
-        editingToken.code,
-        fullPath,
-        formTitle.trim() || undefined,
-        newCode,
-        formCategory.trim() || undefined
-      )
-      setIsEditDialogOpen(false)
-      resetForm()
-      setEditingToken(null)
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  //xóa token
   const handleDelete = useCallback(async (code: string) => {
     if (!window.confirm("Are you sure you want to delete this token? Links using this code will no longer work.")) {
       return
@@ -146,22 +56,11 @@ export default function PublicCodesClient() {
     }
   }, [deleteToken])
 
-  //reset form
-  const resetForm = () => {
-    setFormPath("")
-    setFormTitle("")
-    setFormCode("")
-    setFormCategory("")
-    setFormErrors({})
-  }
-
-  //copy to clipboard
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     toast.success("Copied link to clipboard")
   }
 
-  //lấy full url của token
   const getFullUrl = useCallback((token: PublicTokenRow) => {
     return `${baseUrl}${token.path}?code=${token.code}`
   }, [baseUrl])
@@ -248,49 +147,24 @@ export default function PublicCodesClient() {
         onCopy={copyToClipboard}
       />
 
-      {/* Create Dialog */}
       <CreateDialog
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
-        formPath={formPath}
-        formTitle={formTitle}
-        formCode={formCode}
-        formErrors={formErrors}
-        onChangePath={setFormPath}
-        onChangeTitle={setFormTitle}
-        onChangeCode={setFormCode}
-        formCategory={formCategory}
-        onChangeCategory={setFormCategory}
-        onGenerate={generateCode}
-        onSubmit={handleCreate}
-        onCancel={() => {
-          setIsCreateDialogOpen(false)
-          resetForm()
+        onCreate={createToken}
+        onSuccess={(token) => {
+          setCreatedToken(token)
+          setShowCreatedUrl(true)
         }}
-        submitting={submitting}
         loading={loading}
       />
 
-      {/* Edit Dialog */}
       <EditDialog
-        open={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-        formPath={formPath}
-        formTitle={formTitle}
-        formCode={formCode}
-        formErrors={formErrors}
-        onChangePath={setFormPath}
-        onChangeTitle={setFormTitle}
-        onChangeCode={setFormCode}
-        formCategory={formCategory}
-        onChangeCategory={setFormCategory}
-        onSubmit={handleUpdate}
-        onCancel={() => {
-          setIsEditDialogOpen(false)
-          resetForm()
-          setEditingToken(null)
+        token={editingToken}
+        open={!!editingToken}
+        onOpenChange={(val) => {
+            if (!val) setEditingToken(null)
         }}
-        submitting={submitting}
+        onUpdate={updateToken}
         loading={loading}
       />
 
@@ -300,10 +174,7 @@ export default function PublicCodesClient() {
         filterKey="path"
         filterPlaceholder="Search by path, title, or code"
         showAddButton={true}
-        onAdd={() => {
-          resetForm()
-          setIsCreateDialogOpen(true)
-        }}
+        onAdd={() => setIsCreateDialogOpen(true)}
         addLabel="Create Token"
         showColumnCustomizer={true}
         showSearch={true}

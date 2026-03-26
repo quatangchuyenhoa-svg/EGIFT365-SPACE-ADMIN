@@ -1,6 +1,6 @@
 import { Metadata } from "next"
 import PublicCodesClient from "./public-codes-client"
-import { InfoCard } from "@/components/infoCard"
+import { InfoCard } from "@/components/shared/info-card"
 
 export const metadata: Metadata = {
   title: "Public Codes Manager",

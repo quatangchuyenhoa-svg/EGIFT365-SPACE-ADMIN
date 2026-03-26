@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { ROLES, type Role } from "@/lib/constants/roles";
 import { ROUTES } from "@/lib/constants/routes";
-import { InfoCard } from "@/components/infoCard";
+import { InfoCard } from "@/components/shared/info-card";
 import {
   Field,
   FieldDescription,

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import ConceptsClient from "@/app/(admin)/manager/concepts/concepts-client";
-import { InfoCard } from "@/components/infoCard";
+import { InfoCard } from "@/components/shared/info-card";
 
 export const metadata: Metadata = {
     title: "Quản lý Kho Quan Niệm",
