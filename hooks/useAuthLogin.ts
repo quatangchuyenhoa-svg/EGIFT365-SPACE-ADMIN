@@ -51,7 +51,8 @@ export function useAuthLogin() {
       router.refresh()
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Đã xảy ra lỗi. Vui lòng thử lại.")
+      console.error('[Login Error]:', error.message);
+      toast.error("Có lỗi xảy ra !");
     },
   })
 

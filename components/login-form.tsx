@@ -50,8 +50,9 @@ export function LoginForm({
   useEffect(() => {
     const errorParam = searchParams.get("error");
     if (errorParam) {
-      const errorMessage = decodeURIComponent(errorParam);
-      toast.error(errorMessage);
+      const rawError = decodeURIComponent(errorParam);
+      console.error('[Login Error from URL]:', rawError);
+      toast.error("Có lỗi xảy ra !");
       // Clean up URL by removing error param
       router.replace(ROUTES.AUTH.LOGIN, { scroll: false });
     }
