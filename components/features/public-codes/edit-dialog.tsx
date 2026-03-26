@@ -16,10 +16,10 @@ const PATH_PREFIX = "/egift365/"
 const ALLOWED_APP_PATHS = ["concepts/", "knowledge/"]
 
 type EditDialogProps = {
-  token: { path: string; code: string; title?: string | null; category?: string | null } | null
+  token: { path: string; code: string; title?: string | null } | null
   open: boolean
   onOpenChange: (open: boolean) => void
-  onUpdate: (code: string, newPath: string, newTitle?: string, newCode?: string, newCategory?: string) => Promise<any>
+  onUpdate: (code: string, newPath: string, newTitle?: string, newCode?: string) => Promise<any>
   loading?: boolean
 }
 
@@ -33,7 +33,6 @@ export function EditDialog({
   const [formPath, setFormPath] = useState("")
   const [formTitle, setFormTitle] = useState("")
   const [formCode, setFormCode] = useState("")
-  const [formCategory, setFormCategory] = useState("")
   const [formErrors, setFormErrors] = useState<{ path?: string; title?: string; code?: string }>({})
   const [submitting, setSubmitting] = useState(false)
 
@@ -46,7 +45,6 @@ export function EditDialog({
       setFormPath(displayPath)
       setFormTitle(token.title || "")
       setFormCode(token.code)
-      setFormCategory(token.category || "")
     } else {
       resetForm()
     }
@@ -79,8 +77,7 @@ export function EditDialog({
         token.code,
         fullPath,
         formTitle.trim() || undefined,
-        newCode,
-        formCategory.trim() || undefined
+        newCode
       )
       onOpenChange(false)
       resetForm()
@@ -93,7 +90,6 @@ export function EditDialog({
     setFormPath("")
     setFormTitle("")
     setFormCode("")
-    setFormCategory("")
     setFormErrors({})
   }
 
@@ -118,12 +114,10 @@ export function EditDialog({
           formPath={formPath}
           formTitle={formTitle}
           formCode={formCode}
-          formCategory={formCategory}
           formErrors={formErrors}
           onChangePath={setFormPath}
           onChangeTitle={setFormTitle}
           onChangeCode={setFormCode}
-          onChangeCategory={setFormCategory}
           showPathHint
           showCodeHint
         />

@@ -77,15 +77,6 @@ export default function PublicCodesClient() {
         ),
       },
       {
-        accessorKey: "category",
-        header: "Category",
-        cell: ({ row }) => (
-          <span className="text-sm bg-secondary px-2 py-0.5 rounded text-secondary-foreground whitespace-nowrap">
-            {row.original.category || "—"}
-          </span>
-        ),
-      },
-      {
         accessorKey: "path",
         header: "Path",
         cell: ({ row }) => (

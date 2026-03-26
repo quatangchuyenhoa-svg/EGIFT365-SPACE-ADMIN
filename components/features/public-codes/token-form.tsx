@@ -12,8 +12,6 @@ export type TokenFormProps = {
   onChangePath: (v: string) => void
   onChangeTitle: (v: string) => void
   onChangeCode: (v: string) => void
-  formCategory: string
-  onChangeCategory: (v: string) => void
   onGenerate?: () => void
   showPathHint?: boolean
   showCodeHint?: boolean
@@ -30,8 +28,6 @@ export function TokenForm({
   onGenerate,
   showPathHint = true,
   showCodeHint = true,
-  formCategory,
-  onChangeCategory,
 }: TokenFormProps) {
   return (
     <div className="flex flex-col gap-4 py-4">
@@ -64,19 +60,7 @@ export function TokenForm({
         )}
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="category">Category</Label>
-        <select
-          id="category"
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          value={formCategory}
-          onChange={e => onChangeCategory(e.target.value)}
-        >
-          <option value="">Select Category</option>
-          <option value="Kho tri thức">Kho tri thức</option>
-          <option value="Kho quan niệm">Kho quan niệm</option>
-        </select>
-      </div>
+
       <div className="flex flex-col gap-2">
         <Label htmlFor="title">Title</Label>
         <Input

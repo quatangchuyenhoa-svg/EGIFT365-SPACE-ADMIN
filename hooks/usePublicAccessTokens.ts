@@ -42,7 +42,7 @@ export function usePublicAccessTokens(): UsePublicAccessTokensResult {
       const result = await listPublicTokensService()
       return result.tokens
     },
-    staleTime: 0,
+    staleTime: 60 * 1000, // 1 minute
     gcTime: 5 * 60 * 1000,
   })
 

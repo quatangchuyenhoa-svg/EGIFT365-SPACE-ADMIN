@@ -24,6 +24,7 @@ import {
 import { useUser } from "@/hooks/useUser"
 import { ROUTES } from "@/lib/constants/routes"
 import Image from "next/image"
+import Link from "next/link"
 
 const data = {
   navMain: [
@@ -90,7 +91,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!p-0"
               asChild
             >
-              <a href={ROUTES.HOME} className="flex items-center gap-2 overflow-hidden">
+              <Link href={ROUTES.HOME} className="flex items-center gap-2 overflow-hidden">
                 <div className="flex aspect-square size-8 min-w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground group-data-[collapsible=icon]:mx-auto">
                   <GalleryVerticalEnd className="size-4" />
                 </div>
@@ -100,7 +101,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </span>
                   <span className="truncate text-xs opacity-70">Admin Panel</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

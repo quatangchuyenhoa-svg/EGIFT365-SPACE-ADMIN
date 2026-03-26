@@ -10,8 +10,8 @@ import { API_CONFIG } from '@/lib/api-config';
 export interface PublicTokenRow {
   code: string;
   path: string;
-  title?: string;
-  category?: string;
+  title?: string | null;
+  category?: string | null;
   created_at: string;
   updated_at: string;
 }

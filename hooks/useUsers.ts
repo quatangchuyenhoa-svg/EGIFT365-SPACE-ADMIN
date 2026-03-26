@@ -22,7 +22,7 @@ export function useUsers() {
       const result = await listUsersService()
       return result.users
     },
-    staleTime: 0,
+    staleTime: 60 * 1000, // 1 minute
     gcTime: 5 * 60 * 1000,
   })
 

@@ -19,7 +19,7 @@ const ALLOWED_APP_PATHS = ["concepts/", "knowledge/"]
 type CreateDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onCreate: (path: string, title?: string, code?: string, category?: string) => Promise<any>
+  onCreate: (path: string, title?: string, code?: string) => Promise<any>
   onSuccess: (token: any) => void
   loading?: boolean
 }
@@ -34,7 +34,6 @@ export function CreateDialog({
   const [formPath, setFormPath] = useState("")
   const [formTitle, setFormTitle] = useState("")
   const [formCode, setFormCode] = useState("")
-  const [formCategory, setFormCategory] = useState("")
   const [formErrors, setFormErrors] = useState<{ path?: string; title?: string; code?: string }>({})
   const [submitting, setSubmitting] = useState(false)
 
@@ -66,8 +65,7 @@ export function CreateDialog({
       const token = await onCreate(
         fullPath,
         formTitle.trim() || undefined,
-        formCode.trim() || undefined,
-        formCategory.trim() || undefined
+        formCode.trim() || undefined
       )
       if (token) {
         onSuccess(token)
@@ -83,7 +81,6 @@ export function CreateDialog({
     setFormPath("")
     setFormTitle("")
     setFormCode("")
-    setFormCategory("")
     setFormErrors({})
   }
 
@@ -108,12 +105,10 @@ export function CreateDialog({
           formPath={formPath}
           formTitle={formTitle}
           formCode={formCode}
-          formCategory={formCategory}
           formErrors={formErrors}
           onChangePath={setFormPath}
           onChangeTitle={setFormTitle}
           onChangeCode={setFormCode}
-          onChangeCategory={setFormCategory}
           onGenerate={generateCode}
         />
         <DialogFooter>
