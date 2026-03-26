@@ -1,105 +1,105 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
-  IconChartBar,
-  IconHome2,
-  IconKey,
-  IconPalette,
-  IconUsers,
-} from "@tabler/icons-react";
-import Image from "next/image";
+  BookOpen,
+  ChartBar,
+  Home,
+  Palette,
+  GalleryVerticalEnd,
+} from "lucide-react"
 
-import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
+import { NavMain } from "@/components/nav-main"
+import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarRail,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { useUser } from "@/hooks/useUser";
-import { ROUTES } from "@/lib/constants/routes";
+  SidebarMenuButton,
+} from "@/components/ui/sidebar"
+import { useUser } from "@/hooks/useUser"
+import { ROUTES } from "@/lib/constants/routes"
+import Image from "next/image"
 
 const data = {
   navMain: [
     {
       title: "Home",
       url: ROUTES.HOME,
-      icon: IconHome2,
+      icon: Home,
+      isActive: true,
     },
     {
       title: "Sanity Studio",
       url: ROUTES.STUDIO,
-      icon: IconPalette,
+      icon: Palette,
     },
     {
       title: "Content Hub",
       url: "#",
-      icon: IconPalette,
+      icon: BookOpen,
       items: [
         {
           title: "Kho Tri Thức",
           url: ROUTES.MANAGER.KNOWLEDGE,
-          icon: IconPalette,
         },
         {
           title: "Kho Quan Niệm",
           url: ROUTES.MANAGER.CONCEPTS,
-          icon: IconPalette,
         },
       ],
     },
     {
       title: "Manager",
       url: "#",
-      icon: IconChartBar,
+      icon: ChartBar,
       items: [
         {
           title: "Users manager",
           url: ROUTES.MANAGER.USERS,
-          icon: IconUsers,
         },
         {
           title: "Public Codes",
           url: ROUTES.MANAGER.PUBLIC_CODES,
-          icon: IconKey,
         },
       ],
     },
   ],
-};
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { profile } = useUser();
+  const { profile } = useUser()
 
   const user = {
-    name: profile?.full_name || "User",
+    name: profile?.full_name || "Admin User",
     email: profile?.email || "",
-    avatar: profile?.avatar_url || undefined,
-  };
+    avatar: profile?.avatar_url || "",
+  }
 
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              asChild
               size="lg"
-              className="data-[slot=sidebar-menu-button]:h-auto data-[slot=sidebar-menu-button]:py-2"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!p-0"
+              asChild
             >
-              <a href={ROUTES.HOME}>
-                <Image
-                  src="/logo/space_logo.png"
-                  alt="Egift365 Admin"
-                  width={150}
-                  height={50}
-                  className="h-12 w-auto object-contain"
-                />
+              <a href={ROUTES.HOME} className="flex items-center gap-2 overflow-hidden">
+                <div className="flex aspect-square size-8 min-w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground group-data-[collapsible=icon]:mx-auto">
+                  <GalleryVerticalEnd className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight transition-all group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:hidden">
+                  <span className="truncate font-bold text-base text-primary">
+                    Egift Digital Space
+                  </span>
+                  <span className="truncate text-xs opacity-70">Admin Panel</span>
+                </div>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -111,6 +111,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         <NavUser user={user} />
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
-  );
+  )
 }
