@@ -2,7 +2,6 @@ import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { schemaTypes } from "./sanity/schemas";
-import { ResetThemeAction } from "./sanity/actions/resetTheme";
 import { DeletePostAction } from "./sanity/actions/deletePost";
 import { NavbarActions } from "./sanity/components/NavbarActions";
 import {
@@ -13,6 +12,25 @@ import {
   FolderIcon,
 } from "@sanity/icons";
 import React from "react";
+
+/**
+ * Custom Logo Component
+ */
+const StudioLogo = () => (
+  <div
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      fontSize: '18px',
+      fontWeight: 'bold',
+      color: '#EB9947',
+    }}
+  >
+    <span style={{ fontSize: '24px' }}>🎨</span>
+    <span>E-Gift Studio</span>
+  </div>
+);
 
 export default defineConfig({
   name: "egift-studio",
@@ -26,22 +44,7 @@ export default defineConfig({
   // Studio appearance
   studio: {
     components: {
-      logo: () =>
-        React.createElement(
-          'div',
-          {
-            style: {
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              color: '#EB9947',
-            },
-          },
-          React.createElement('span', { style: { fontSize: '24px' } }, '🎨'),
-          React.createElement('span', null, 'E-Gift Studio')
-        ),
+      logo: StudioLogo,
       navbar: NavbarActions,
     },
   },
@@ -99,7 +102,7 @@ export default defineConfig({
 
             // Hide automatically generated items that we manually added above
             ...S.documentTypeListItems().filter(
-              (item) => !["knowledgeItem", "concept", "siteSettings", "innerStory", "homeBanner", "category", "innerStoryCategory", "blockContent"].includes(item.getId() as string)
+              (item) => !["knowledgeItem", "concept", "innerStory", "homeBanner", "category", "innerStoryCategory", "blockContent"].includes(item.getId() as string)
             ),
           ]),
     }),
@@ -117,12 +120,7 @@ export default defineConfig({
         return [...prev, DeletePostAction]
       }
 
-      // Add reset theme action for siteSettings
-      if (context.schemaType === 'siteSettings') {
-        return [...prev, ResetThemeAction]
-      }
       return prev
     },
   },
 });
-
