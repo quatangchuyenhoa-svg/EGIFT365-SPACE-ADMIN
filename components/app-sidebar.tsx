@@ -59,6 +59,11 @@ const data = {
       icon: IconChartBar,
       items: [
         {
+          title: "Concepts",
+          url: ROUTES.MANAGER.ANALYTICS,
+          icon: IconChartBar,
+        },
+        {
           title: "Users manager",
           url: ROUTES.MANAGER.USERS,
           icon: IconUsers,
