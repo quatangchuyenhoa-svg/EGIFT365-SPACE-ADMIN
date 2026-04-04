@@ -21,6 +21,7 @@ export const ROUTES = {
     PUBLIC_CODES: "/manager/public-codes",
     KNOWLEDGE: "/manager/knowledge",
     CONCEPTS: "/manager/concepts",
+    ANALYTICS: "/manager/analytics",
   },
 } as const
 

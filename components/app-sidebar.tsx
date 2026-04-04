@@ -59,6 +59,11 @@ const data = {
       icon: IconChartBar,
       items: [
         {
+          title: "Concepts",
+          url: ROUTES.MANAGER.ANALYTICS,
+          icon: IconChartBar,
+        },
+        {
           title: "Users manager",
           url: ROUTES.MANAGER.USERS,
           icon: IconUsers,
@@ -83,7 +88,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar
+      collapsible="offcanvas"
+      className="bg-white/60 dark:bg-black/30 backdrop-blur-2xl border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300"
+      {...props}
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

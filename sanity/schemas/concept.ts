@@ -62,6 +62,15 @@ export default defineType({
       description: "Ảnh nền cho trang concept (dùng cho cả layout dọc và ngang)",
     }),
     defineField({
+      name: "mobileImage",
+      title: "Ảnh Mobile View",
+      type: "image",
+      options: {
+        hotspot: true,
+      },
+      description: "Ảnh tỉ lệ dọc (9:16) dùng cho trang lướt mobile. Nếu không có sẽ dùng ảnh chính.",
+    }),
+    defineField({
       name: "audio",
       title: "Audio",
       type: "file",
