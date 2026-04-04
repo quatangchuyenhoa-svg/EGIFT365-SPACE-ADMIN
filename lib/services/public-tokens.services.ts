@@ -12,6 +12,8 @@ export interface PublicTokenRow {
   path: string;
   title?: string;
   category?: string;
+  usage_count?: number;
+  last_accessed_at?: string | null;
   created_at: string;
   updated_at: string;
 }

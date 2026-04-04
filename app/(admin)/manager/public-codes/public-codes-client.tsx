@@ -201,6 +201,31 @@ export default function PublicCodesClient() {
         ),
       },
       {
+        accessorKey: "usage_count",
+        header: "Usage",
+        cell: ({ row }) => {
+          const count = row.original.usage_count || 0;
+          return (
+            <span className="inline-flex items-center rounded-md bg-zinc-100 dark:bg-zinc-800 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:text-zinc-200">
+              {count} {count <= 1 ? "view" : "views"}
+            </span>
+          );
+        },
+      },
+      {
+        accessorKey: "last_accessed_at",
+        header: "Last Used",
+        cell: ({ row }) => {
+          if (!row.original.last_accessed_at) return <span className="text-muted-foreground text-xs">—</span>;
+          try {
+            const date = new Date(row.original.last_accessed_at);
+            return <span className="text-xs">{date.toLocaleDateString()} {date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>;
+          } catch {
+            return "—";
+          }
+        },
+      },
+      {
         accessorKey: "created_at",
         header: "Created At",
         cell: ({ row }) =>
