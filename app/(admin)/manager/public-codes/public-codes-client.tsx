@@ -158,10 +158,10 @@ export default function PublicCodesClient() {
   }
 
   //copy to clipboard
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = useCallback((text: string) => {
     navigator.clipboard.writeText(text)
     toast.success(t('public_codes.copy_success'))
-  }
+  }, [t])
 
   //lấy full url của token
   const getFullUrl = useCallback((token: PublicTokenRow) => {
