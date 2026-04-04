@@ -42,10 +42,11 @@ export async function GET(request: Request) {
     // Chúng ta chỉ cần trả lại đúng format đó cho frontend
     return NextResponse.json(data);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     console.error('Lỗi khi truy xuất Analytics từ Backend:', error);
     return NextResponse.json(
-      { error: 'Lấy dữ liệu Analytics thất bại', details: error.message },
+      { error: 'Lấy dữ liệu Analytics thất bại', details: err.message },
       { status: 500 }
     );
   }

@@ -19,10 +19,10 @@ export function useAnalytics(dateRange: string, type: 'concepts' | 'home') {
         throw new Error(json.error || "Failed to fetch analytics")
       }
       
-      const rows = (json.data || []) as any[]
+      const rows = (json.data || []) as Record<string, unknown>[]
       return rows.map((row) => ({
         ...row,
-        id: row.path || row.slug || Math.random().toString(),
+        id: (row.path as string) || (row.slug as string) || Math.random().toString(),
       })) as AnalyticsRow[]
     },
     staleTime: 60 * 1000,
