@@ -4,22 +4,36 @@ import * as React from "react"
 import { usePathname } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { ROUTES } from "@/lib/constants/routes"
+import { useTranslation } from "@/lib/i18n/client"
 
-const pageTitles: Record<string, string> = {
-  [ROUTES.HOME]: "Home",
-  [ROUTES.MANAGER.USERS]: "Users Manager",
-  [ROUTES.MANAGER.PUBLIC_CODES]: "Public Codes Manager",
-  [ROUTES.STUDIO]: "Studio",
-}
-
-export function AdminLayout({ children }: { children: React.ReactNode }) {
+export function AdminLayout({ 
+  children,
+  lng
+}: { 
+  children: React.ReactNode, 
+  lng: string 
+}) {
   const pathname = usePathname()
-  const title = pageTitles[pathname] || "Home"
+  const { t, i18n } = useTranslation()
+
+  React.useEffect(() => {
+    if (lng && i18n.language !== lng) {
+      i18n.changeLanguage(lng)
+    }
+  }, [lng, i18n])
+  
+  const pageTitles: Record<string, string> = {
+    [ROUTES.HOME]: t('sidebar.home'),
+    [ROUTES.MANAGER.USERS]: t('sidebar.users_manager'),
+    [ROUTES.MANAGER.PUBLIC_CODES]: t('sidebar.public_codes'),
+    [ROUTES.MANAGER.KNOWLEDGE]: t('sidebar.knowledge_base'),
+    [ROUTES.MANAGER.CONCEPTS]: t('sidebar.concepts_base'),
+    [ROUTES.STUDIO]: t('sidebar.sanity'),
+  }
+
+  const title = pageTitles[pathname] || t('sidebar.home')
 
   return (
     <div className="relative min-h-screen">
@@ -35,7 +49,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         }
       >
         {/* Use floating variant for a detached glassmorphism look */}
-        <AppSidebar variant="floating" />
+        <AppSidebar variant="floating" lng={lng} />
         <SidebarInset className="bg-transparent/0">
           <SiteHeader title={title} />
           <div className="flex flex-1 flex-col px-4 pb-8 pt-4 md:px-8">

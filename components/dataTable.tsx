@@ -74,8 +74,10 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 import * as React from 'react';
+import { useTranslation } from '@/lib/i18n/client';
 
 function DragHandle({ id }: { id: UniqueIdentifier }) {
+  const { t } = useTranslation();
   const { attributes, listeners } = useSortable({
     id,
   });
@@ -89,7 +91,7 @@ function DragHandle({ id }: { id: UniqueIdentifier }) {
       className="text-muted-foreground size-7 hover:bg-transparent"
     >
       <IconGripVertical className="text-muted-foreground size-3" />
-      <span className="sr-only">Drag to reorder</span>
+      <span className="sr-only">{t('dataTable.drag_to_reorder', { defaultValue: 'Drag to reorder' })}</span>
     </Button>
   );
 }
@@ -179,6 +181,7 @@ export function DataTable<
   renderExpandedContent?: (row: Row<TData>) => React.ReactNode;
   meta?: Record<string, unknown>;
 }) {
+  const { t } = useTranslation();
   const [data, setData] = React.useState(() => initialData);
 
   // Update data when initialData changes
@@ -243,7 +246,7 @@ export function DataTable<
             (table.getIsSomePageRowsSelected() && 'indeterminate')
           }
           onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
+          aria-label={t('dataTable.select_all', { defaultValue: 'Select all' })}
         />
       </div>
     ),
@@ -252,7 +255,7 @@ export function DataTable<
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={value => row.toggleSelected(!!value)}
-          aria-label="Select row"
+          aria-label={t('dataTable.select_row', { defaultValue: 'Select row' })}
         />
       </div>
     ),
@@ -356,7 +359,7 @@ export function DataTable<
           {showSearch && filterKey ? (
             <div className="flex w-full items-center sm:w-auto sm:py-2">
               <Input
-                placeholder={filterPlaceholder || 'Search...'}
+                placeholder={filterPlaceholder || t('dataTable.search_placeholder')}
                 value={
                   (table.getColumn(filterKey)?.getFilterValue() as string) ?? ''
                 }
@@ -376,7 +379,7 @@ export function DataTable<
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-9">
                   <IconLayoutColumns className="size-4" />
-                  <span className="hidden md:inline lg:ml-1">Customize columns</span>
+                  <span className="hidden md:inline lg:ml-1">{t('dataTable.customize_columns')}</span>
                   <IconChevronDown className="ml-1 hidden size-3 md:inline" />
                 </Button>
               </DropdownMenuTrigger>
@@ -409,7 +412,7 @@ export function DataTable<
             <Button variant="outline" size="sm" onClick={onAdd} className="h-9">
               <IconPlus className="size-4" />
               <span className="hidden md:inline lg:ml-1">
-                {addLabel || 'Add'}
+                {addLabel || t('dataTable.add')}
               </span>
             </Button>
           ) : null}
@@ -495,7 +498,7 @@ export function DataTable<
                         <svg xmlns="http://www.w3.org/2000/svg" className="size-8 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-2.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                         </svg>
-                        <span className="text-sm">No results found</span>
+                        <span className="text-sm">{t('dataTable.no_results')}</span>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -508,8 +511,10 @@ export function DataTable<
           <div className="flex flex-1 items-center gap-2 sm:gap-4">
             {selectable ? (
               <div className="text-muted-foreground hidden flex-1 text-xs sm:text-sm lg:flex">
-                {table.getFilteredSelectedRowModel().rows.length} of{' '}
-                {table.getFilteredRowModel().rows.length} rows selected
+                {t('dataTable.selected_count', { 
+                  selected: table.getFilteredSelectedRowModel().rows.length,
+                  total: table.getFilteredRowModel().rows.length 
+                })}
               </div>
             ) : (
               <div className="flex-1" />
@@ -526,7 +531,7 @@ export function DataTable<
               >
                 <IconTrash className="size-4" />
                 <span className="hidden md:inline lg:ml-1">
-                  Bulk delete ({table.getFilteredSelectedRowModel().rows.length})
+                  {t('dataTable.bulk_delete', { count: table.getFilteredSelectedRowModel().rows.length })}
                 </span>
                 <span className="ml-1 md:hidden">
                   {table.getFilteredSelectedRowModel().rows.length}
@@ -538,7 +543,7 @@ export function DataTable<
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 lg:w-fit lg:gap-8">
               <div className="hidden items-center gap-2 lg:flex">
                 <Label htmlFor="rows-per-page" className="text-sm font-medium">
-                  Rows per page
+                  {t('dataTable.rows_per_page')}
                 </Label>
                 <Select
                   value={`${table.getState().pagination.pageSize}`}
@@ -559,8 +564,10 @@ export function DataTable<
                 </Select>
               </div>
               <div className="flex items-center justify-center text-xs font-medium sm:text-sm">
-                Page {table.getState().pagination.pageIndex + 1} of{' '}
-                {table.getPageCount()}
+                {t('dataTable.page_info', {
+                  current: table.getState().pagination.pageIndex + 1,
+                  total: table.getPageCount()
+                })}
               </div>
               <div className="flex items-center justify-center gap-1 sm:gap-2">
                 <Button
@@ -569,7 +576,7 @@ export function DataTable<
                   onClick={() => table.setPageIndex(0)}
                   disabled={!table.getCanPreviousPage()}
                 >
-                  <span className="sr-only">Go to first page</span>
+                  <span className="sr-only">{t('dataTable.first_page')}</span>
                   <IconChevronsLeft className="size-4" />
                 </Button>
                 <Button
@@ -579,7 +586,7 @@ export function DataTable<
                   onClick={() => table.previousPage()}
                   disabled={!table.getCanPreviousPage()}
                 >
-                  <span className="sr-only">Go to previous page</span>
+                  <span className="sr-only">{t('dataTable.prev_page')}</span>
                   <IconChevronLeft className="size-4" />
                 </Button>
                 <Button
@@ -589,7 +596,7 @@ export function DataTable<
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
                 >
-                  <span className="sr-only">Go to next page</span>
+                  <span className="sr-only">{t('dataTable.next_page')}</span>
                   <IconChevronRight className="size-4" />
                 </Button>
                 <Button
@@ -599,7 +606,7 @@ export function DataTable<
                   onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                   disabled={!table.getCanNextPage()}
                 >
-                  <span className="sr-only">Go to last page</span>
+                  <span className="sr-only">{t('dataTable.last_page')}</span>
                   <IconChevronsRight className="size-4" />
                 </Button>
               </div>

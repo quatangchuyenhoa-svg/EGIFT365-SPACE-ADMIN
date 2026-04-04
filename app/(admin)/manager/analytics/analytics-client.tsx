@@ -13,7 +13,10 @@ import Link from "next/link"
 import { IconEye } from "@tabler/icons-react"
 import { AlertCircle, RefreshCcw } from "lucide-react"
 
+import { useTranslation } from "@/lib/i18n/client"
+
 export default function AnalyticsClient() {
+  const { t } = useTranslation()
   const [dateRange, setDateRange] = useState("30daysAgo")
   const [type, setType] = useState<"concepts" | "home">("concepts")
 
@@ -23,7 +26,7 @@ export default function AnalyticsClient() {
     () => [
       {
         id: "rank",
-        header: "Rank",
+        header: t('analytics.rank'),
         cell: ({ row }) => {
           const index = row.index;
           if (index === 0) return <Badge className="bg-amber-500 dark:bg-amber-600 text-white shadow-xs hover:shadow-md transition-shadow">#1</Badge>;
@@ -34,7 +37,7 @@ export default function AnalyticsClient() {
       },
       {
         accessorKey: "title",
-        header: "Article Title",
+        header: t('analytics.article_title'),
         cell: ({ row }) => {
           return (
             <div className="py-0.5">
@@ -48,12 +51,12 @@ export default function AnalyticsClient() {
       },
       {
         accessorKey: "views",
-        header: "Views",
-        cell: ({ row }) => <span className="font-semibold text-sm text-emerald-600 tabular-nums">{row.original.views.toLocaleString('en-US')}</span>,
+        header: t('analytics.views'),
+        cell: ({ row }) => <span className="font-semibold text-sm text-emerald-600 tabular-nums">{row.original.views.toLocaleString()}</span>,
       },
       {
         id: "actions",
-        header: "Actions",
+        header: t('analytics.actions'),
         cell: ({ row }) => {
           const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || 'https://space.egift365.vn'
           return (
@@ -62,7 +65,7 @@ export default function AnalyticsClient() {
                 href={`${clientUrl}${row.original.path}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                title="View actual page"
+                title={t('analytics.view_page')}
               >
                 <IconEye className="size-5 text-muted-foreground group-hover:text-primary transition-colors" />
               </Link>
@@ -71,7 +74,7 @@ export default function AnalyticsClient() {
         },
       },
     ],
-    []
+    [t]
   )
 
   return (
@@ -80,10 +83,10 @@ export default function AnalyticsClient() {
         <div className="bg-destructive/15 text-destructive p-4 flex items-start gap-3 rounded-md border border-destructive/20">
           <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <h3 className="font-medium">Analytics Connection Error</h3>
+            <h3 className="font-medium">{t('analytics.error_title')}</h3>
             <p className="text-sm opacity-90">{error}</p>
             <p className="text-sm opacity-70 border-t border-destructive/20 pt-2 mt-2">
-              Please ensure you have configured GA4 (Property ID, Email, Private Key) in the Admin `.env` and enabled the Data API.
+              {t('analytics.error_desc')}
             </p>
           </div>
         </div>
@@ -92,21 +95,21 @@ export default function AnalyticsClient() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <Tabs defaultValue="concepts" value={type} onValueChange={(v) => setType(v as 'concepts' | 'home')} className="w-full sm:w-auto">
           <TabsList>
-            <TabsTrigger value="concepts">Concepts Library</TabsTrigger>
-            <TabsTrigger value="home">Home</TabsTrigger>
+            <TabsTrigger value="concepts">{t('analytics.tabs.concepts')}</TabsTrigger>
+            <TabsTrigger value="home">{t('analytics.tabs.home')}</TabsTrigger>
           </TabsList>
         </Tabs>
 
         <div className="flex flex-wrap items-center gap-2">
           <Select value={dateRange} onValueChange={setDateRange}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Time Range" />
+              <SelectValue placeholder={t('time_range.7d', { ns: 'common' })} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="7daysAgo">Last 7 days</SelectItem>
-              <SelectItem value="30daysAgo">Last 30 days</SelectItem>
-              <SelectItem value="90daysAgo">Last 90 days</SelectItem>
-              <SelectItem value="2020-01-01">All time</SelectItem>
+              <SelectItem value="7daysAgo">{t('analytics.range.7days')}</SelectItem>
+              <SelectItem value="30daysAgo">{t('analytics.range.30days')}</SelectItem>
+              <SelectItem value="90daysAgo">{t('analytics.range.90days')}</SelectItem>
+              <SelectItem value="2020-01-01">{t('analytics.range.all')}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -116,7 +119,7 @@ export default function AnalyticsClient() {
             disabled={loading}
           >
             <RefreshCcw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
+            {t('common.retry')}
           </Button>
         </div>
       </div>
@@ -125,7 +128,7 @@ export default function AnalyticsClient() {
         data={data}
         columns={columns}
         filterKey="title"
-        filterPlaceholder="Search by title..."
+        filterPlaceholder={t('analytics.article_title')}
         showSearch={true}
         showPagination={true}
         selectable={false}
@@ -133,7 +136,7 @@ export default function AnalyticsClient() {
         meta={{}}
       />
 
-      {loading && <p className="text-sm text-muted-foreground animate-pulse mt-2">Loading data from Google Analytics...</p>}
+      {loading && <p className="text-sm text-muted-foreground animate-pulse mt-2">{t('analytics.loading_ga')}</p>}
     </div>
   )
 }

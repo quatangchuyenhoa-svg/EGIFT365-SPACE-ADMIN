@@ -1,0 +1,166 @@
+{
+  "common": {
+    "actions": "Hành động",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "deleting": "Đang xóa...",
+    "created_at": "Ngày tạo",
+    "updated_at": "Ngày cập nhật",
+    "title": "Tiêu đề",
+    "description": "Mô tả",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "submit": "Gửi",
+    "save": "Lưu",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "no_data": "Không có dữ liệu",
+    "search": "Tìm kiếm...",
+    "copy": "Sao chép",
+    "copied": "Đã sao chép",
+    "retry": "Thử lại",
+    "path": "Đường dẫn",
+    "category": "Danh mục",
+    "code": "Mã",
+    "status": "Trạng thái",
+    "active": "Hoạt động",
+    "inactive": "Ẩn"
+  },
+  "dashboard": {
+    "title": "Bảng Điều Khiển",
+    "total_users": "Tổng Người Dùng",
+    "ga_traffic": "Traffic GA4 (Tháng này)",
+    "qr_scans": "Lượt Quét Mã QR",
+    "top_concept": "Bài Viết Quán Quân",
+    "growth": "tăng trưởng",
+    "scans": "lượt quét",
+    "views": "lượt xem",
+    "users": "người dùng",
+    "no_data": "Chưa có dữ liệu",
+    "loading": "Đang tải dữ liệu...",
+    "error_loading": "Lỗi tải thống kê lưu lượng.",
+    "top_concept_empty": "Chưa có bài viết nào được quét",
+    "online_traffic": "Lưu Lượng Truy Cập Trực Tuyến",
+    "ga4_total_views_desc": "Tổng lượt Views trên GA4",
+    "ga4_views": "GA4 Views",
+    "total_users_desc": "Tổng số tài khoản trong hệ thống",
+    "ga_traffic_desc": "Lượt xem trang thực tế theo GA4",
+    "qr_scans_desc": "Tổng số lượt tải mã Code đã quét",
+    "top_concept_desc": "Đường dẫn: {{path}}",
+    "details": "Chi tiết",
+    "recent_articles": "Bài viết gần đây"
+  },
+  "time_range": {
+    "7d": "7 Ngày Gần Nhất",
+    "30d": "30 Ngày Qua",
+    "90d": "90 Ngày Qua"
+  },
+  "sidebar": {
+    "home": "Trang chủ",
+    "dashboard": "Bảng điều khiển",
+    "sanity": "Sanity Studio",
+    "content_hub": "Trung tâm nội dung",
+    "knowledge_base": "Kho Tri Thức",
+    "concepts_base": "Kho Quan Niệm",
+    "manager": "Quản lý",
+    "concepts": "Thống kê",
+    "users_manager": "Quản lý người dùng",
+    "public_codes": "Mã công khai",
+    "users": "Người dùng",
+    "settings": "Cài đặt"
+  },
+  "header": {
+    "dashboard": "Tổng quan",
+    "theme": "Chuyển chế độ tối",
+    "language": "Ngôn ngữ"
+  },
+  "users": {
+    "manager_title": "Quản lý người dùng",
+    "manager_desc": "Xem danh sách người dùng và phân quyền.",
+    "full_name": "Họ và tên",
+    "email": "Email",
+    "role": "Vai trò",
+    "search_placeholder": "Tìm kiếm theo email...",
+    "delete_confirm_title": "Xóa người dùng",
+    "delete_confirm_desc": "Bạn có chắc chắn muốn xóa người dùng \"{{name}}\"? Hành động này không thể hoàn tác.",
+    "load_error": "Không thể tải danh sách người dùng"
+  },
+  "public_codes": {
+    "manager_title": "Quản lý Mã Công Khai",
+    "manager_desc": "Quản lý các mã truy cập công khai. Tạo mã để chia sẻ nội dung mà không cần đăng nhập.",
+    "usage": "Lượt dùng",
+    "last_used": "Dùng cuối",
+    "search_placeholder": "Tìm theo đường dẫn, tiêu đề hoặc mã...",
+    "create_token": "Tạo Token",
+    "delete_confirm_desc": "Bạn có chắc chắn muốn xóa mã này? Các liên kết sử dụng mã này sẽ không còn hoạt động.",
+    "load_error": "Không thể tải danh sách mã",
+    "delete_success": "Xóa mã thành công",
+    "copy_success": "Đã sao chép liên kết vào bộ nhớ tạm",
+    "form": {
+      "path_required": "Đường dẫn là bắt buộc",
+      "path_invalid": "Đường dẫn phải bắt đầu bằng concepts/ hoặc knowledge/",
+      "code_required": "Mã là bắt buộc"
+    }
+  },
+  "knowledge": {
+    "title": "Kho Tri Thức",
+    "desc": "Quản lý các bài viết tri thức. Bạn có thể xóa bài viết trực tiếp tại đây hoặc chỉnh sửa trong Studio.",
+    "manager_title": "Quản lý Kho Tri Thức",
+    "manager_desc": "Danh sách bài viết trong Kho Tri Thức"
+  },
+  "concepts": {
+    "title": "Kho Quan Niệm",
+    "desc": "Quản lý các bài viết quan niệm. Bạn có thể xóa bài viết trực tiếp tại đây hoặc chỉnh sửa trong Studio.",
+    "manager_title": "Quản lý Kho Quan Niệm",
+    "manager_desc": "Danh sách bài viết trong Kho Quan Niệm"
+  },
+  "analytics": {
+    "title": "Thống kê truy cập",
+    "desc": "Theo dõi lưu lượng truy cập từ GA4.",
+    "rank": "Hạng",
+    "article_title": "Tiêu đề bài viết",
+    "views": "Lượt xem",
+    "actions": "Thao tác",
+    "view_page": "Xem trang thực tế",
+    "loading_ga": "Đang tải dữ liệu từ Google Analytics...",
+    "error_title": "Lỗi kết nối Analytics",
+    "error_desc": "Vui lòng kiểm tra cấu hình GA4 (Property ID, Email, Private Key) trong tệp .env và đảm bảo Data API đã được bật.",
+    "tabs": {
+        "concepts": "Kho Quan Niệm",
+        "home": "Trang chủ"
+    },
+    "range": {
+        "7days": "7 ngày qua",
+        "30days": "30 ngày qua",
+        "90days": "90 ngày qua",
+        "all": "Tất cả thời gian"
+    }
+  },
+  "content": {
+    "edit_in_studio": "Sửa trong Studio",
+    "delete_article": "Xóa bài viết",
+    "add_new": "Thêm bài viết mới",
+    "search_placeholder": "Tìm kiếm tiêu đề...",
+    "confirm_delete_title": "Xác nhận xóa",
+    "confirm_delete_desc": "Bạn có chắc chắn muốn xóa bài viết \"{{title}}\"? Hành động này không thể hoàn tác."
+  },
+  "user": {
+    "profile": "Hồ sơ",
+    "logout": "Đăng xuất"
+  },
+  "dataTable": {
+    "search_placeholder": "Tìm kiếm...",
+    "customize_columns": "Tùy chỉnh cột",
+    "add": "Thêm",
+    "no_results": "Không tìm thấy kết quả nào",
+    "selected_count": "{{selected}} trên {{total}} dòng được chọn",
+    "bulk_delete": "Xóa hàng loạt ({{count}})",
+    "rows_per_page": "Số dòng mỗi trang",
+    "page_info": "Trang {{current}} trên {{total}}",
+    "first_page": "Trang đầu",
+    "prev_page": "Trang trước",
+    "next_page": "Trang sau",
+    "last_page": "Trang cuối"
+  }
+}

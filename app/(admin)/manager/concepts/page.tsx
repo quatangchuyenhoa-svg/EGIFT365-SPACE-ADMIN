@@ -1,18 +1,21 @@
 import { Metadata } from "next";
 import ConceptsClient from "@/app/(admin)/manager/concepts/concepts-client";
 import { InfoCard } from "@/components/infoCard";
+import { getTranslation } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
-    title: "Quản lý Kho Quan Niệm",
-    description: "Danh sách bài viết trong Kho Quan Niệm",
+    title: "Concepts Base Manager",
+    description: "List of articles in Concepts Base",
 };
 
-export default function ConceptsPage() {
+export default async function ConceptsPage() {
+    const { t } = await getTranslation();
+
     return (
         <div className="flex flex-col gap-4 p-6">
             <InfoCard
-                title="Kho Quan Niệm"
-                description="Quản lý các bài viết quan niệm. Bạn có thể xóa bài viết trực tiếp tại đây hoặc chỉnh sửa trong Studio."
+                title={t('concepts.title')}
+                description={t('concepts.desc')}
                 className="border-border/60 shadow-sm"
             />
             <ConceptsClient />

@@ -1,18 +1,21 @@
 import { Metadata } from "next";
 import KnowledgeClient from "@/app/(admin)/manager/knowledge/knowledge-client";
 import { InfoCard } from "@/components/infoCard";
+import { getTranslation } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
-    title: "Quản lý Kho Tri Thức",
-    description: "Danh sách bài viết trong Kho Tri Thức",
+    title: "Knowledge Base Manager",
+    description: "List of articles in Knowledge Base",
 };
 
-export default function KnowledgePage() {
+export default async function KnowledgePage() {
+    const { t } = await getTranslation();
+
     return (
         <div className="flex flex-col gap-4 p-6">
             <InfoCard
-                title="Kho Tri Thức"
-                description="Quản lý các bài viết tri thức. Bạn có thể xóa bài viết trực tiếp tại đây hoặc chỉnh sửa trong Studio."
+                title={t('knowledge.title')}
+                description={t('knowledge.desc')}
                 className="border-border/60 shadow-sm"
             />
             <KnowledgeClient />

@@ -25,8 +25,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { useTranslation } from "@/lib/i18n/client"
 
 export default function UsersClient() {
+  const { t } = useTranslation()
   const { users, loading, error, refetch } = useUsers()
   const router = useRouter()
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null)
@@ -46,22 +48,22 @@ export default function UsersClient() {
       },
       {
         accessorKey: "full_name",
-        header: "Full name",
+        header: t('users.full_name'),
         cell: ({ row }) => row.original.full_name || "—",
       },
       {
         accessorKey: "email",
-        header: "Email",
+        header: t('users.email'),
         cell: ({ row }) => row.original.email || "—",
       },
       {
         accessorKey: "role",
-        header: "Role",
+        header: t('users.role'),
         cell: ({ row }) => row.original.role || "—",
       },
       {
         accessorKey: "created_at",
-        header: "Created at",
+        header: t('common.created_at'),
         cell: ({ row }) =>
           row.original.created_at
             ? new Date(row.original.created_at).toLocaleString()
@@ -69,7 +71,7 @@ export default function UsersClient() {
       },
       {
         id: "actions",
-        header: "Actions",
+        header: t('common.actions'),
         cell: ({ row }) => {
           const user = row.original
           const isDeleting = deleteMutation.isPending && selectedUser?.id === user.id
@@ -79,14 +81,14 @@ export default function UsersClient() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                   <IconDotsVertical className="size-4" />
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">{t('common.actions')}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
                   <a href={ROUTES.MANAGER.USERS_EDIT(user.id)} className="flex items-center gap-2">
                     <IconPencil className="size-4" />
-                    Edit
+                    {t('common.edit')}
                   </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -95,7 +97,7 @@ export default function UsersClient() {
                   disabled={isDeleting}
                 >
                   <IconTrash className="size-4" />
-                  {isDeleting ? "Deleting..." : "Delete"}
+                  {isDeleting ? t('common.deleting') : t('common.delete')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -103,14 +105,14 @@ export default function UsersClient() {
         },
       },
     ],
-    [deleteMutation.isPending, selectedUser]
+    [deleteMutation.isPending, selectedUser, t]
   )
 
   return (
     <div className="flex flex-col gap-4">
       {error && (
         <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          Failed to load users: {error}
+          {t('users.load_error')}: {error}
         </div>
       )}
 
@@ -118,7 +120,7 @@ export default function UsersClient() {
         data={users}
         columns={columns}
         filterKey="email"
-        filterPlaceholder="Search by email"
+        filterPlaceholder={t('users.search_placeholder')}
         showAddButton={true}
         onAdd={() => router.push(ROUTES.MANAGER.USERS_CREATE)}
         showColumnCustomizer={true}
@@ -129,7 +131,7 @@ export default function UsersClient() {
         meta={{}}
       />
 
-      {loading && <p className="text-sm text-muted-foreground">Loading users...</p>}
+      {loading && <p className="text-sm text-muted-foreground">{t('common.loading')}</p>}
 
       {/* Delete confirmation dialog */}
       <AlertDialog
@@ -142,16 +144,16 @@ export default function UsersClient() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete user</AlertDialogTitle>
+            <AlertDialogTitle>{t('users.delete_confirm_title')}</AlertDialogTitle>
             <AlertDialogDescription>
               {selectedUser
-                ? `Bạn có chắc chắn muốn xóa user "${selectedUser.email || selectedUser.id}"? Hành động này không thể hoàn tác.`
-                : "Bạn có chắc chắn muốn xóa user này? Hành động này không thể hoàn tác."}
+                ? t('users.delete_confirm_desc', { name: selectedUser.email || selectedUser.id })
+                : t('users.delete_confirm_desc', { name: 'this user' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleteMutation.isPending}>
-              Cancel
+              {t('common.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -165,7 +167,7 @@ export default function UsersClient() {
                 })
               }}
             >
-              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+              {deleteMutation.isPending ? t('common.deleting') : t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

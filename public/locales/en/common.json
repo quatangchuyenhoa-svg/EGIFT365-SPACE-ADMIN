@@ -1,0 +1,166 @@
+{
+  "common": {
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "created_at": "Created At",
+    "updated_at": "Updated At",
+    "title": "Title",
+    "description": "Description",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "save": "Save",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "no_data": "No data",
+    "search": "Search...",
+    "copy": "Copy",
+    "copied": "Copied",
+    "retry": "Retry",
+    "path": "Path",
+    "category": "Category",
+    "code": "Code",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "dashboard": {
+    "title": "Dashboard Overview",
+    "total_users": "Total Users",
+    "ga_traffic": "GA4 Traffic (This Month)",
+    "qr_scans": "QR Code Scans",
+    "top_concept": "Top Concept Article",
+    "growth": "growth",
+    "scans": "scans",
+    "views": "views",
+    "users": "users",
+    "no_data": "No data yet",
+    "loading": "Loading stats...",
+    "error_loading": "Failed to load traffic stats.",
+    "top_concept_empty": "No articles scanned yet",
+    "online_traffic": "Online Traffic Flow",
+    "ga4_total_views_desc": "Total Views on GA4",
+    "ga4_views": "GA4 Views",
+    "total_users_desc": "Total accounts in the system",
+    "ga_traffic_desc": "Actual page views from GA4",
+    "qr_scans_desc": "Total QR Code scans tracked",
+    "top_concept_desc": "Path: {{path}}",
+    "details": "Details",
+    "recent_articles": "Recent Articles"
+  },
+  "time_range": {
+    "7d": "Last 7 Days",
+    "30d": "Last 30 Days",
+    "90d": "Last 90 Days"
+  },
+  "sidebar": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "sanity": "Sanity Studio",
+    "content_hub": "Content Hub",
+    "knowledge_base": "Knowledge Base",
+    "concepts_base": "Concepts Base",
+    "manager": "Manager",
+    "concepts": "Statistics",
+    "users_manager": "Users Manager",
+    "public_codes": "Public Codes",
+    "users": "Users",
+    "settings": "Settings"
+  },
+  "header": {
+    "dashboard": "Overview",
+    "theme": "Toggle theme",
+    "language": "Language"
+  },
+  "users": {
+    "manager_title": "Users Manager",
+    "manager_desc": "View all users and manage roles.",
+    "full_name": "Full Name",
+    "email": "Email",
+    "role": "Role",
+    "search_placeholder": "Search by email...",
+    "delete_confirm_title": "Delete User",
+    "delete_confirm_desc": "Are you sure you want to delete user \"{{name}}\"? This action cannot be undone.",
+    "load_error": "Failed to load users"
+  },
+  "public_codes": {
+    "manager_title": "Public Codes Manager",
+    "manager_desc": "Manage public access tokens. Create tokens to share content links without login.",
+    "usage": "Usage",
+    "last_used": "Last Used",
+    "search_placeholder": "Search by path, title, or code...",
+    "create_token": "Create Token",
+    "delete_confirm_desc": "Are you sure you want to delete this token? Links using this code will no longer work.",
+    "load_error": "Failed to load tokens",
+    "delete_success": "Token deleted successfully",
+    "copy_success": "Copied link to clipboard",
+    "form": {
+      "path_required": "Path is required",
+      "path_invalid": "Path must start with concepts/ or knowledge/",
+      "code_required": "Code is required"
+    }
+  },
+  "knowledge": {
+    "title": "Knowledge Base",
+    "desc": "Manage knowledge articles. You can delete articles here or edit them in the Studio.",
+    "manager_title": "Knowledge Base Manager",
+    "manager_desc": "List of articles in Knowledge Base"
+  },
+  "concepts": {
+    "title": "Concepts Base",
+    "desc": "Manage concept articles. You can delete articles here or edit them in the Studio.",
+    "manager_title": "Concepts Base Manager",
+    "manager_desc": "List of articles in Concepts Base"
+  },
+  "analytics": {
+    "title": "Traffic Statistics",
+    "desc": "Track real-time traffic flow from GA4.",
+    "rank": "Rank",
+    "article_title": "Article Title",
+    "views": "Views",
+    "actions": "Actions",
+    "view_page": "View actual page",
+    "loading_ga": "Loading data from Google Analytics...",
+    "error_title": "Analytics Connection Error",
+    "error_desc": "Please ensure you have configured GA4 (Property ID, Email, Private Key) in the Admin .env and enabled the Data API.",
+    "tabs": {
+        "concepts": "Concepts Library",
+        "home": "Home"
+    },
+    "range": {
+        "7days": "Last 7 days",
+        "30days": "Last 30 days",
+        "90days": "Last 90 days",
+        "all": "All time"
+    }
+  },
+  "content": {
+    "edit_in_studio": "Edit in Studio",
+    "delete_article": "Delete Article",
+    "add_new": "Add New Article",
+    "search_placeholder": "Search title...",
+    "confirm_delete_title": "Confirm Delete",
+    "confirm_delete_desc": "Are you sure you want to delete the article \"{{title}}\"? This action cannot be undone."
+  },
+  "user": {
+    "profile": "Profile",
+    "logout": "Log out"
+  },
+  "dataTable": {
+    "search_placeholder": "Search...",
+    "customize_columns": "Customize columns",
+    "add": "Add",
+    "no_results": "No results found",
+    "selected_count": "{{selected}} of {{total}} rows selected",
+    "bulk_delete": "Bulk delete ({{count}})",
+    "rows_per_page": "Rows per page",
+    "page_info": "Page {{current}} of {{total}}",
+    "first_page": "Go to first page",
+    "prev_page": "Go to previous page",
+    "next_page": "Go to next page",
+    "last_page": "Go to last page"
+  }
+}

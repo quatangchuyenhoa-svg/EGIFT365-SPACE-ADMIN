@@ -11,6 +11,9 @@ export const API_CONFIG = {
       LOGOUT: '/api/auth/logout',
     },
     ADMIN: {
+      DASHBOARD: {
+        STATS: '/api/admin/dashboard/stats',
+      },
       USERS: {
         LIST: '/api/admin/users',
         DETAIL: (id: string) => `/api/admin/users/${id}`,

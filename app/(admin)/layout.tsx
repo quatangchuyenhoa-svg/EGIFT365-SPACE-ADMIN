@@ -1,10 +1,14 @@
 import { AdminLayout } from "@/components/admin-layout"
+import { getTranslation } from "@/lib/i18n/server"
 
-export default function AdminGroupLayout({
+export default async function AdminGroupLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return <AdminLayout>{children}</AdminLayout>
+  const { i18n } = await getTranslation()
+  const lng = i18n.language
+
+  return <AdminLayout lng={lng}>{children}</AdminLayout>
 }
 
