@@ -26,10 +26,10 @@ export default function AnalyticsClient() {
         header: "Rank",
         cell: ({ row }) => {
           const index = row.index;
-          if (index === 0) return <Badge className="bg-amber-500 hover:bg-amber-600">#1</Badge>;
-          if (index === 1) return <Badge variant="secondary" className="bg-zinc-300 text-zinc-800 hover:bg-zinc-400">#2</Badge>;
-          if (index === 2) return <Badge variant="secondary" className="bg-orange-300 text-orange-900 hover:bg-orange-400">#3</Badge>;
-          return <span className="text-muted-foreground ml-2">#{index + 1}</span>;
+          if (index === 0) return <Badge className="bg-amber-500 dark:bg-amber-600 text-white shadow-xs hover:shadow-md transition-shadow">#1</Badge>;
+          if (index === 1) return <Badge variant="secondary" className="bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 shadow-xs">#2</Badge>;
+          if (index === 2) return <Badge variant="secondary" className="bg-orange-200/50 dark:bg-orange-900/50 text-orange-900 dark:text-orange-200 shadow-xs">#3</Badge>;
+          return <span className="text-muted-foreground ml-2 font-mono text-xs">#{index + 1}</span>;
         },
       },
       {
@@ -37,9 +37,9 @@ export default function AnalyticsClient() {
         header: "Article Title",
         cell: ({ row }) => {
           return (
-            <div>
-              <div className="font-medium">{row.original.title || 'No title'}</div>
-              <div className="text-xs text-muted-foreground font-mono bg-muted/50 px-1.5 py-0.5 rounded inline-block mt-1">
+            <div className="py-0.5">
+              <div className="font-medium text-sm group-hover:text-primary transition-colors">{row.original.title || 'No title'}</div>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono bg-muted/60 px-1.5 py-0.5 rounded-sm inline-block mt-1">
                 {row.original.path}
               </div>
             </div>
@@ -49,7 +49,7 @@ export default function AnalyticsClient() {
       {
         accessorKey: "views",
         header: "Views",
-        cell: ({ row }) => <span className="font-semibold text-emerald-600">{row.original.views.toLocaleString('en-US')}</span>,
+        cell: ({ row }) => <span className="font-semibold text-sm text-emerald-600 tabular-nums">{row.original.views.toLocaleString('en-US')}</span>,
       },
       {
         id: "actions",
@@ -57,14 +57,14 @@ export default function AnalyticsClient() {
         cell: ({ row }) => {
           const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || 'https://space.egift365.vn'
           return (
-            <Button variant="ghost" size="icon" asChild>
+            <Button variant="ghost" size="icon" asChild className="size-8 rounded-lg group">
               <Link
                 href={`${clientUrl}${row.original.path}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="View actual page"
               >
-                <IconEye className="size-4 text-muted-foreground" />
+                <IconEye className="size-5 text-muted-foreground group-hover:text-primary transition-colors" />
               </Link>
             </Button>
           )

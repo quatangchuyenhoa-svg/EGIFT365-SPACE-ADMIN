@@ -46,72 +46,72 @@
 }
 
 :root {
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
+  --radius: 1rem;
+  --background: oklch(0.98 0.01 240);
+  --foreground: oklch(0.20 0.03 250);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
+  --card-foreground: oklch(0.20 0.03 250);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.488 0.243 264.376);
-  --primary-foreground: oklch(0.97 0.014 254.604);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.546 0.245 262.881);
-  --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.708 0 0);
+  --popover-foreground: oklch(0.20 0.03 250);
+  --primary: oklch(0.65 0.18 40);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.95 0.01 250);
+  --secondary-foreground: oklch(0.20 0.03 250);
+  --muted: oklch(0.95 0.01 250);
+  --muted-foreground: oklch(0.55 0.02 250);
+  --accent: oklch(0.95 0.01 250);
+  --accent-foreground: oklch(0.20 0.03 250);
+  --destructive: oklch(0.60 0.20 25);
+  --border: oklch(0.92 0.02 250);
+  --input: oklch(0.92 0.02 250);
+  --ring: oklch(0.65 0.18 40);
+  --chart-1: oklch(0.65 0.18 40);
+  --chart-2: oklch(0.70 0.10 180);
+  --chart-3: oklch(0.50 0.15 250);
+  --chart-4: oklch(0.85 0.15 80);
+  --chart-5: oklch(0.40 0.10 20);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.20 0.03 250);
+  --sidebar-primary: oklch(0.65 0.18 40);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.95 0.01 250);
+  --sidebar-accent-foreground: oklch(0.20 0.03 250);
+  --sidebar-border: oklch(0.92 0.02 250);
+  --sidebar-ring: oklch(0.65 0.18 40);
 }
 
 .dark {
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.488 0.243 264.376);
-  --primary-foreground: oklch(0.97 0.014 254.604);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.623 0.214 259.815);
-  --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.439 0 0);
+  --background: oklch(0.12 0.02 250);
+  --foreground: oklch(0.98 0.01 250);
+  --card: oklch(0.18 0.03 250);
+  --card-foreground: oklch(0.98 0.01 250);
+  --popover: oklch(0.18 0.03 250);
+  --popover-foreground: oklch(0.98 0.01 250);
+  --primary: oklch(0.65 0.18 40);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.25 0.03 250);
+  --secondary-foreground: oklch(0.98 0.01 250);
+  --muted: oklch(0.25 0.03 250);
+  --muted-foreground: oklch(0.70 0.02 250);
+  --accent: oklch(0.25 0.03 250);
+  --accent-foreground: oklch(0.98 0.01 250);
+  --destructive: oklch(0.60 0.20 25);
+  --border: oklch(0.25 0.03 250);
+  --input: oklch(0.25 0.03 250);
+  --ring: oklch(0.65 0.18 40);
+  --chart-1: oklch(0.65 0.18 40);
+  --chart-2: oklch(0.70 0.10 180);
+  --chart-3: oklch(0.50 0.15 250);
+  --chart-4: oklch(0.85 0.15 80);
+  --chart-5: oklch(0.40 0.10 20);
+  --sidebar: oklch(0.18 0.03 250);
+  --sidebar-foreground: oklch(0.98 0.01 250);
+  --sidebar-primary: oklch(0.65 0.18 40);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.25 0.03 250);
+  --sidebar-accent-foreground: oklch(0.98 0.01 250);
+  --sidebar-border: oklch(0.25 0.03 250);
+  --sidebar-ring: oklch(0.65 0.18 40);
 }
 
 
@@ -123,51 +123,63 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body-family);
-    font-size: 16px;
-    line-height: 1.8;
+    font-size: 15px;
+    line-height: 1.6;
   }
 
-  /* Heading styles - "Giọng triết lý" */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  .heading {
+  /* Admin-optimized headings (lighter than landing page) */
+  h1, h2, h3, h4, h5, h6, .heading {
     font-family: var(--font-heading-family);
+    letter-spacing: -0.01em;
+    text-transform: none;
   }
 
-  /* H1 - Tiêu đề trang, tiêu đề Quan niệm */
-  h1 {
-    font-weight: 900;
-    font-size: clamp(20px, 4vw, 28px);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+  h1 { font-weight: 700; font-size: 1.25rem; }
+  h2 { font-weight: 600; font-size: 1.125rem; }
+  h3 { font-weight: 600; font-size: 1rem; }
+
+  /* Smooth transitions on interactive elements */
+  button, a, input, select, textarea,
+  [data-slot="button"],
+  [data-slot="card"],
+  [data-slot="table-row"] {
+    transition: all 0.2s ease-out;
   }
 
-  /* H2 - Tiêu đề mục */
-  h2 {
-    font-weight: 700;
-    font-size: clamp(18px, 3vw, 22px);
-    letter-spacing: 0.04em;
+  /* Force consistent sidebar icon sizes (bypassing shadcn [&>svg]:size-4 trap) */
+  [data-slot="sidebar-menu-button"] svg,
+  [data-slot="sidebar-menu-sub-button"] svg {
+    @apply size-5! shrink-0;
   }
 
-  /* H3 - Tiêu đề nhỏ */
-  h3 {
-    font-weight: 700;
-    font-size: clamp(16px, 2.5vw, 20px);
-    letter-spacing: 0.02em;
+  /* ── Card overrides (via data-slot, no component edit) ── */
+  [data-slot="card"] {
+    border-color: var(--border);
+    @apply shadow-sm;
+  }
+  [data-slot="card"]:hover {
+    @apply shadow-md;
+    transform: translateY(-1px);
   }
 
-  /* Body text - Nội dung bài viết */
-  p,
-  li,
-  .body-text {
-    font-family: var(--font-body-family);
-    font-size: 16px;
-    line-height: 1.8;
-    @apply text-foreground;
+  /* ── Table overrides (via data-slot, no component edit) ── */
+  [data-slot="table-header"] {
+    @apply bg-muted/40;
+  }
+  [data-slot="table-head"] {
+    @apply text-xs uppercase tracking-wider font-semibold text-muted-foreground px-4;
+    height: 2.75rem;
+  }
+  [data-slot="table-cell"] {
+    @apply px-4 py-3;
+  }
+  [data-slot="table-row"]:hover {
+    @apply bg-primary/5;
+  }
+
+  /* ── Button active feedback ── */
+  [data-slot="button"]:active {
+    transform: scale(0.98);
   }
 
   /* Extra slim scrollbars (WebKit) */
@@ -175,16 +187,13 @@
     width: 4px;
     height: 4px;
   }
-
   *::-webkit-scrollbar-thumb {
     background: oklch(0.7 0.05 70);
     border-radius: 9999px;
   }
-
   *::-webkit-scrollbar-thumb:hover {
     background: oklch(0.6 0.08 60);
   }
-
   *::-webkit-scrollbar-track {
     background: transparent;
   }
@@ -196,15 +205,13 @@
   }
 
   /* Meta, caption, ghi chú */
-  .meta,
-  .caption,
-  small {
+  .meta, .caption, small {
     font-family: var(--font-body-family);
     font-size: 12px;
     @apply text-muted-foreground;
   }
 
-  /* Kicker - "Quan niệm", "Tri thức" */
+  /* Kicker */
   .kicker {
     font-family: var(--font-body-family);
     font-size: 12px;

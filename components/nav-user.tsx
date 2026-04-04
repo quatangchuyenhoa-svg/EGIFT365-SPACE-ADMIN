@@ -68,7 +68,7 @@ export function NavUser({
                   {user.email}
                 </span>
               </div>
-              <IconDotsVertical className="ml-auto size-4" />
+              <IconDotsVertical className="ml-auto size-5 opacity-60" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -88,13 +88,13 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <IconUserCircle className="mr-2 h-4 w-4" />
+            <DropdownMenuItem className="cursor-pointer">
+              <IconUserCircle className="mr-2 size-5 opacity-70" />
               <span>Hồ sơ</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={handleLogout}>
-              <IconLogout className="mr-2 h-4 w-4" />
+            <DropdownMenuItem onSelect={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
+              <IconLogout className="mr-2 size-5 opacity-70" />
               <span>Đăng xuất</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
