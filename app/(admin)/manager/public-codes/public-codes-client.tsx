@@ -10,11 +10,13 @@ import { CreatedUrlDialog } from "@/components/molecules/public-codes/CreatedUrl
 import { CreateDialog } from "@/components/molecules/public-codes/CreateDialog"
 import { EditDialog } from "@/components/molecules/public-codes/EditDialog"
 import { toast } from "react-hot-toast"
+import { useTranslation } from "@/lib/i18n/client"
 
 const PATH_PREFIX = "/egift365/"
 const ALLOWED_APP_PATHS = ["concepts/", "knowledge/"]
 
 export default function PublicCodesClient() {
+  const { t } = useTranslation()
   const { tokens, loading, error, createToken, updateToken, deleteToken } =
     usePublicAccessTokens()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -28,9 +30,9 @@ export default function PublicCodesClient() {
   // Show error toast when there's an error
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(t('public_codes.load_error'))
     }
-  }, [error])
+  }, [error, t])
 
   // Form state
   const [formPath, setFormPath] = useState("")
@@ -62,12 +64,12 @@ export default function PublicCodesClient() {
     const trimmedPath = formPath.trim()
 
     if (!trimmedPath) {
-      errors.path = "Path is required"
+      errors.path = t('public_codes.form.path_required')
     } else if (!ALLOWED_APP_PATHS.some(sub => trimmedPath.startsWith(sub))) {
-      errors.path = `Path must start with ${ALLOWED_APP_PATHS.join(" or ")}`
+      errors.path = t('public_codes.form.path_invalid')
     }
     if (!formCode.trim()) {
-      errors.code = "Code is required"
+      errors.code = t('public_codes.form.code_required')
     }
     setFormErrors(errors)
     return Object.keys(errors).length === 0
@@ -134,17 +136,17 @@ export default function PublicCodesClient() {
 
   //xóa token
   const handleDelete = useCallback(async (code: string) => {
-    if (!window.confirm("Are you sure you want to delete this token? Links using this code will no longer work.")) {
+    if (!window.confirm(t('public_codes.delete_confirm_desc'))) {
       return
     }
     setDeletingCode(code)
     try {
       await deleteToken(code)
-      toast.success("Token deleted successfully")
+      toast.success(t('public_codes.delete_success'))
     } finally {
       setDeletingCode(null)
     }
-  }, [deleteToken])
+  }, [deleteToken, t])
 
   //reset form
   const resetForm = () => {
@@ -158,7 +160,7 @@ export default function PublicCodesClient() {
   //copy to clipboard
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
-    toast.success("Copied link to clipboard")
+    toast.success(t('public_codes.copy_success'))
   }
 
   //lấy full url của token
@@ -172,14 +174,14 @@ export default function PublicCodesClient() {
     () => [
       {
         accessorKey: "title",
-        header: "Title",
+        header: t('common.title'),
         cell: ({ row }) => (
           <span className="text-sm">{row.original.title || "—"}</span>
         ),
       },
       {
         accessorKey: "category",
-        header: "Category",
+        header: t('common.category'),
         cell: ({ row }) => (
           <span className="text-sm bg-secondary px-2 py-0.5 rounded text-secondary-foreground whitespace-nowrap">
             {row.original.category || "—"}
@@ -188,33 +190,33 @@ export default function PublicCodesClient() {
       },
       {
         accessorKey: "path",
-        header: "Path",
+        header: t('common.path'),
         cell: ({ row }) => (
           <span className="font-mono text-sm">{row.original.path}</span>
         ),
       },
       {
         accessorKey: "code",
-        header: "Code",
+        header: t('common.code'),
         cell: ({ row }) => (
           <span className="font-mono text-xs">{row.original.code}</span>
         ),
       },
       {
         accessorKey: "usage_count",
-        header: "Usage",
+        header: t('public_codes.usage'),
         cell: ({ row }) => {
           const count = row.original.usage_count || 0;
           return (
             <span className="inline-flex items-center rounded-md bg-zinc-100 dark:bg-zinc-800 px-2.5 py-0.5 text-xs font-medium text-zinc-800 dark:text-zinc-200">
-              {count} {count <= 1 ? "view" : "views"}
+              {count} {count <= 1 ? t('dashboard.views', { count: 1 }) : t('dashboard.views', { count })}
             </span>
           );
         },
       },
       {
         accessorKey: "last_accessed_at",
-        header: "Last Used",
+        header: t('public_codes.last_used'),
         cell: ({ row }) => {
           if (!row.original.last_accessed_at) return <span className="text-muted-foreground text-xs">—</span>;
           try {
@@ -227,7 +229,7 @@ export default function PublicCodesClient() {
       },
       {
         accessorKey: "created_at",
-        header: "Created At",
+        header: t('common.created_at'),
         cell: ({ row }) =>
           row.original.created_at
             ? new Date(row.original.created_at).toLocaleString()
@@ -235,7 +237,7 @@ export default function PublicCodesClient() {
       },
       {
         accessorKey: "updated_at",
-        header: "Updated At",
+        header: t('common.updated_at'),
         cell: ({ row }) =>
           row.original.updated_at
             ? new Date(row.original.updated_at).toLocaleString()
@@ -243,7 +245,7 @@ export default function PublicCodesClient() {
       },
       {
         id: "actions",
-        header: "Actions",
+        header: t('common.actions'),
         cell: ({ row }) => (
           <TokenActions
             token={row.original as PublicTokenRow}
@@ -255,14 +257,14 @@ export default function PublicCodesClient() {
         ),
       },
     ],
-    [deletingCode, handleEdit, handleDelete, getFullUrl]
+    [deletingCode, handleEdit, handleDelete, getFullUrl, copyToClipboard, t]
   )
 
   return (
     <div className="flex flex-col gap-4">
       {error && (
         <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          Failed to load tokens: {error}
+          {t('public_codes.load_error')}: {error}
         </div>
       )}
 
@@ -323,13 +325,13 @@ export default function PublicCodesClient() {
         data={tokens.map(token => ({ ...token, id: token.code }))}
         columns={columns}
         filterKey="path"
-        filterPlaceholder="Search by path, title, or code"
+        filterPlaceholder={t('public_codes.search_placeholder')}
         showAddButton={true}
         onAdd={() => {
           resetForm()
           setIsCreateDialogOpen(true)
         }}
-        addLabel="Create Token"
+        addLabel={t('public_codes.create_token')}
         showColumnCustomizer={true}
         showSearch={true}
         showPagination={true}
@@ -339,7 +341,7 @@ export default function PublicCodesClient() {
       />
 
       {loading && (
-        <p className="text-sm text-muted-foreground">Loading tokens...</p>
+        <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
       )}
     </div>
   )

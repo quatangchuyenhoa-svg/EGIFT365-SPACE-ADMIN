@@ -1,6 +1,6 @@
 "use client";
 
-import { Users, Activity, QrCode, Trophy, Loader2, RefreshCw } from "lucide-react";
+import { Users, Activity, QrCode, Trophy, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -12,8 +12,10 @@ import {
 } from "@/components/ui/card";
 import { useDashboardStats } from "@/hooks/api/useDashboardStats";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "@/lib/i18n/client";
 
 export function SectionCards() {
+  const { t } = useTranslation('common');
   const { data: response, isLoading, isError, refetch } = useDashboardStats();
 
   if (isLoading) {
@@ -37,12 +39,12 @@ export function SectionCards() {
   if (isError || !response) {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center bg-destructive/10 rounded-xl border border-destructive/20 h-[280px]">
-        <p className="text-destructive font-medium mb-4">Lỗi khi tải dữ liệu Dashboard</p>
+        <p className="text-destructive font-medium mb-4">{t('dashboard.error_loading')}</p>
         <button 
           onClick={() => refetch()} 
           className="flex items-center gap-2 text-sm bg-background border px-4 py-2 rounded-md hover:bg-muted transition-colors cursor-pointer"
         >
-          <RefreshCw className="size-4" /> Thử lại
+          <RefreshCw className="size-4" /> {t('common.retry')}
         </button>
       </div>
     );
@@ -64,21 +66,20 @@ export function SectionCards() {
               <Users className="size-4" />
             </div>
             <CardDescription className="font-medium text-emerald-700 dark:text-emerald-400">
-              Tổng Người Dùng
+              {t('dashboard.total_users')}
             </CardDescription>
           </div>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground mt-1">
             {stats.users.total.toLocaleString()}
           </CardTitle>
           <CardAction>
-            {/* Tạm ẩn trend vì chưa có backend, thiết kế UI trước */}
-            <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800">
-              Active
+            <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800 font-semibold px-2">
+              {t('dashboard.users')}
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="relative z-10 text-xs text-muted-foreground pt-4">
-          Tổng số tài khoản trong hệ thống
+          {t('dashboard.total_users_desc')}
         </CardFooter>
       </Card>
 
@@ -93,20 +94,20 @@ export function SectionCards() {
               <Activity className="size-4" />
             </div>
             <CardDescription className="font-medium text-blue-700 dark:text-blue-400">
-              Traffic Tháng Này
+              {t('dashboard.ga_traffic')}
             </CardDescription>
           </div>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground mt-1">
             {stats.googleAnalytics.total_this_month.toLocaleString()}
           </CardTitle>
           <CardAction>
-            <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950 dark:text-blue-400 dark:border-blue-800">
-              Google Analytics
+            <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950 dark:text-blue-400 dark:border-blue-800 font-semibold px-2">
+              {t('dashboard.views')}
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="relative z-10 text-xs text-muted-foreground pt-4">
-          Lượt xem trang thực tế theo GA4
+          {t('dashboard.ga_traffic_desc')}
         </CardFooter>
       </Card>
 
@@ -121,20 +122,20 @@ export function SectionCards() {
               <QrCode className="size-4" />
             </div>
             <CardDescription className="font-medium text-amber-700 dark:text-amber-400">
-              Lượt Quét QR
+              {t('dashboard.qr_scans')}
             </CardDescription>
           </div>
           <CardTitle className="text-3xl font-bold tabular-nums text-foreground mt-1">
             {stats.qrCodes.total_scans.toLocaleString()}
           </CardTitle>
           <CardAction>
-            <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800">
-              Toàn quyền hệ thống
+            <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800 font-semibold px-2">
+              {t('dashboard.scans')}
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="relative z-10 text-xs text-muted-foreground pt-4">
-          Tổng số lượt tải mã Code đã quét
+          {t('dashboard.qr_scans_desc')}
         </CardFooter>
       </Card>
 
@@ -149,7 +150,7 @@ export function SectionCards() {
               <Trophy className="size-4" />
             </div>
             <CardDescription className="font-medium text-yellow-700 dark:text-yellow-400">
-              Top QR Quét Nhiều Nhất
+              {t('dashboard.top_concept')}
             </CardDescription>
           </div>
           {stats.topConcept ? (
@@ -158,25 +159,25 @@ export function SectionCards() {
             </CardTitle>
           ) : (
             <CardTitle className="text-xl font-bold text-muted-foreground mt-2">
-              Chưa có dữ liệu
+              {t('dashboard.no_data')}
             </CardTitle>
           )}
           <CardAction>
             {stats.topConcept && (
               <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950 dark:text-yellow-400 dark:border-yellow-800 font-semibold px-2">
-                {stats.topConcept.usage_count} views
+                {stats.topConcept.usage_count} {t('dashboard.views')}
               </Badge>
             )}
           </CardAction>
         </CardHeader>
         <CardFooter className="relative z-10 text-xs text-muted-foreground pt-4 flex items-center justify-between">
-          <span className="truncate">Đường dẫn: {stats.topConcept?.path || 'N/A'}</span>
+          <span className="truncate">{t('dashboard.top_concept_desc', { path: stats.topConcept?.path || 'N/A' })}</span>
           {stats.topConcept && (
-            <span className="text-yellow-600 dark:text-yellow-400 font-medium whitespace-nowrap ml-2 group-hover:underline">Chi tiết &rarr;</span>
+            <span className="text-yellow-600 dark:text-yellow-400 font-medium whitespace-nowrap ml-2 group-hover:underline">{t('dashboard.details')} &rarr;</span>
           )}
         </CardFooter>
         <a href={`/manager/public-codes`} className="absolute inset-0 z-20">
-          <span className="sr-only">Xem chi tiết Public Codes</span>
+          <span className="sr-only">{t('dashboard.details')}</span>
         </a>
       </Card>
     </div>

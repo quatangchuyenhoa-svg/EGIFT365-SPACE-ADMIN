@@ -5,7 +5,8 @@ import {
   IconChartBar,
   IconHome2,
   IconKey,
-  IconPalette,
+  IconBook2,
+  IconEdit,
   IconUsers,
 } from "@tabler/icons-react";
 import Image from "next/image";
@@ -23,63 +24,65 @@ import {
 } from "@/components/ui/sidebar";
 import { useUser } from "@/hooks/useUser";
 import { ROUTES } from "@/lib/constants/routes";
+import { useTranslation } from "@/lib/i18n/client";
 
-const data = {
-  navMain: [
-    {
-      title: "Home",
-      url: ROUTES.HOME,
-      icon: IconHome2,
-    },
-    {
-      title: "Sanity Studio",
-      url: ROUTES.STUDIO,
-      icon: IconPalette,
-    },
-    {
-      title: "Content Hub",
-      url: "#",
-      icon: IconPalette,
-      items: [
-        {
-          title: "Kho Tri Thức",
-          url: ROUTES.MANAGER.KNOWLEDGE,
-          icon: IconPalette,
-        },
-        {
-          title: "Kho Quan Niệm",
-          url: ROUTES.MANAGER.CONCEPTS,
-          icon: IconPalette,
-        },
-      ],
-    },
-    {
-      title: "Manager",
-      url: "#",
-      icon: IconChartBar,
-      items: [
-        {
-          title: "Concepts",
-          url: ROUTES.MANAGER.ANALYTICS,
-          icon: IconChartBar,
-        },
-        {
-          title: "Users manager",
-          url: ROUTES.MANAGER.USERS,
-          icon: IconUsers,
-        },
-        {
-          title: "Public Codes",
-          url: ROUTES.MANAGER.PUBLIC_CODES,
-          icon: IconKey,
-        },
-      ],
-    },
-  ],
-};
-
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ lng, ...props }: React.ComponentProps<typeof Sidebar> & { lng: string }) {
   const { profile } = useUser();
+  const { t } = useTranslation('common', { lng });
+
+  const sidebarData = {
+    navMain: [
+      {
+        title: t('sidebar.home'),
+        url: ROUTES.HOME,
+        icon: IconHome2,
+      },
+      {
+        title: t('sidebar.sanity'),
+        url: ROUTES.STUDIO,
+        icon: IconEdit,
+      },
+      {
+        title: t('sidebar.content_hub'),
+        url: "#",
+        icon: IconBook2,
+        items: [
+          {
+            title: t('sidebar.knowledge_base'),
+            url: ROUTES.MANAGER.KNOWLEDGE,
+            icon: IconBook2,
+          },
+          {
+            title: t('sidebar.concepts_base'),
+            url: ROUTES.MANAGER.CONCEPTS,
+            icon: IconBook2,
+          },
+        ],
+      },
+      {
+        title: t('sidebar.manager'),
+        url: "#",
+        icon: IconChartBar,
+        items: [
+          {
+            title: t('sidebar.concepts'),
+            url: ROUTES.MANAGER.ANALYTICS,
+            icon: IconChartBar,
+          },
+          {
+            title: t('sidebar.users_manager'),
+            url: ROUTES.MANAGER.USERS,
+            icon: IconUsers,
+          },
+          {
+            title: t('sidebar.public_codes'),
+            url: ROUTES.MANAGER.PUBLIC_CODES,
+            icon: IconKey,
+          },
+        ],
+      },
+    ],
+  };
 
   const user = {
     name: profile?.full_name || "User",
@@ -115,7 +118,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={sidebarData.navMain} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

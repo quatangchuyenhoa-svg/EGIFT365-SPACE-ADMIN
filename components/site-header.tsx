@@ -1,6 +1,7 @@
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { LocaleToggle } from "@/components/locale-toggle"
 
 export function SiteHeader({ title = "Dashboard" }: { title?: string }) {
   return (
@@ -12,7 +13,8 @@ export function SiteHeader({ title = "Dashboard" }: { title?: string }) {
           className="mx-2 data-[orientation=vertical]:h-4"
         />
         <h1 className="text-base font-medium">{title}</h1>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          <LocaleToggle />
           <ThemeToggle />
         </div>
       </div>

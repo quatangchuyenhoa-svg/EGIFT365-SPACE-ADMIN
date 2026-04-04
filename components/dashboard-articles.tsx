@@ -25,8 +25,10 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "@/lib/i18n/client";
 
 export function DashboardArticles() {
+    const { t } = useTranslation();
     const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
     const deleteMutation = useDeleteContent();
 
@@ -50,7 +52,7 @@ export function DashboardArticles() {
         () => [
             {
                 accessorKey: "title",
-                header: "Bài viết gần đây",
+                header: t('dashboard.recent_articles'),
                 cell: ({ row }) => (
                     <div className="flex flex-col">
                         <span className="font-medium text-sm">{row.original.title}</span>
@@ -60,7 +62,7 @@ export function DashboardArticles() {
             },
             {
                 accessorKey: "category",
-                header: "Danh mục",
+                header: t('common.category'),
                 cell: ({ row }) => (
                     <Badge variant="secondary">
                         {row.original.category?.displayName || row.original.category?.name || "N/A"}
@@ -69,16 +71,16 @@ export function DashboardArticles() {
             },
             {
                 accessorKey: "isActive",
-                header: "Trạng thái",
+                header: t('common.status'),
                 cell: ({ row }) => (
                     <Badge variant={row.original.isActive ? "default" : "outline"}>
-                        {row.original.isActive ? "Active" : "Inactive"}
+                        {row.original.isActive ? t('common.active') : t('common.inactive')}
                     </Badge>
                 ),
             },
             {
                 id: "actions",
-                header: "Thao tác",
+                header: t('common.actions'),
                 cell: ({ row }) => {
                     const item = row.original;
                     const studioPath = item._type === 'knowledgeItem' ? 'knowledgeBase' : 'concepts';
@@ -94,14 +96,14 @@ export function DashboardArticles() {
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => window.open(studioUrl, "_blank")}>
                                     <IconPencil className="mr-2 size-4" />
-                                    Sửa
+                                    {t('common.edit')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                     className="text-destructive focus:text-destructive"
                                     onClick={() => setSelectedItem(item)}
                                 >
                                     <IconTrash className="mr-2 size-4" />
-                                    Xóa
+                                    {t('common.delete')}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -109,7 +111,7 @@ export function DashboardArticles() {
                 },
             },
         ],
-        []
+        [t]
     );
 
     return (
@@ -118,7 +120,7 @@ export function DashboardArticles() {
                 data={articles || []}
                 columns={columns}
                 filterKey="title"
-                filterPlaceholder="Tìm kiếm bài viết..."
+                filterPlaceholder={t('content.search_placeholder')}
                 showPagination={false}
                 selectable={false}
             />
@@ -129,14 +131,13 @@ export function DashboardArticles() {
             >
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Xác nhận xóa bài viết</AlertDialogTitle>
+                        <AlertDialogTitle>{t('content.confirm_delete_title')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Bạn có chắc chắn muốn xóa &quot;<strong>{selectedItem?.title}</strong>&quot;?
-                            Hành động này không thể hoàn tác.
+                            {t('content.confirm_delete_desc', { title: selectedItem?.title })}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Hủy</AlertDialogCancel>
+                        <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             onClick={() => {
@@ -148,7 +149,7 @@ export function DashboardArticles() {
                             }}
                             disabled={deleteMutation.isPending}
                         >
-                            {deleteMutation.isPending ? "Đang xóa..." : "Xác nhận xóa"}
+                            {deleteMutation.isPending ? t('common.deleting') : t('common.confirm')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

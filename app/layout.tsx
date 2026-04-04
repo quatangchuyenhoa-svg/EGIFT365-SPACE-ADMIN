@@ -5,6 +5,8 @@ import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { StudioWrapper } from "@/components/studio-wrapper";
 import { UserProvider } from "@/components/UserProvider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { headers } from "next/headers";
+import { fallbackLng } from "@/lib/i18n/settings";
 import "./globals.css";
 
 const inter = Inter({
@@ -22,13 +24,16 @@ export const metadata: Metadata = {
   description: "Admin Dashboard",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headerList = await headers();
+  const lng = headerList.get('x-locale') || fallbackLng;
+
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${firaCode.variable}`}>
+    <html lang={lng} suppressHydrationWarning className={`${inter.variable} ${firaCode.variable}`}>
       <body className="antialiased font-sans bg-background text-foreground relative">
         <ThemeProvider
           attribute="class"

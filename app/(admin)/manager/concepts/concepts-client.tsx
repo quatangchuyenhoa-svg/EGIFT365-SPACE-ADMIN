@@ -23,8 +23,10 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "@/lib/i18n/client";
 
 export default function ConceptsClient() {
+    const { t } = useTranslation();
     const { data: items, isLoading, error } = useContentList("concept");
     const deleteMutation = useDeleteContent();
     const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
@@ -33,12 +35,12 @@ export default function ConceptsClient() {
         () => [
             {
                 accessorKey: "title",
-                header: "Tiêu đề",
+                header: t('common.title'),
                 cell: ({ row }) => <span className="font-medium text-sm">{row.original.title}</span>,
             },
             {
                 accessorKey: "category",
-                header: "Danh mục",
+                header: t('common.category'),
                 cell: ({ row }) => (
                     <Badge variant="secondary">
                         {row.original.category?.displayName || row.original.category?.name || "N/A"}
@@ -47,21 +49,21 @@ export default function ConceptsClient() {
             },
             {
                 accessorKey: "isActive",
-                header: "Trạng thái",
+                header: t('common.status'),
                 cell: ({ row }) => (
                     <Badge variant={row.original.isActive ? "default" : "outline"}>
-                        {row.original.isActive ? "Active" : "Inactive"}
+                        {row.original.isActive ? t('common.active') : t('common.inactive')}
                     </Badge>
                 ),
             },
             {
                 accessorKey: "_createdAt",
-                header: "Ngày tạo",
-                cell: ({ row }) => new Date(row.original._createdAt).toLocaleDateString("vi-VN"),
+                header: t('common.created_at'),
+                cell: ({ row }) => new Date(row.original._createdAt).toLocaleString(),
             },
             {
                 id: "actions",
-                header: "Thao tác",
+                header: t('common.actions'),
                 cell: ({ row }) => {
                     const item = row.original;
                     const studioUrl = `/studio/structure/concepts;${item._id}`;
@@ -76,14 +78,14 @@ export default function ConceptsClient() {
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => window.open(studioUrl, "_blank")}>
                                     <IconPencil className="mr-2 size-4" />
-                                    Sửa trong Studio
+                                    {t('content.edit_in_studio')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                     className="text-destructive focus:text-destructive"
                                     onClick={() => setSelectedItem(item)}
                                 >
                                     <IconTrash className="mr-2 size-4" />
-                                    Xóa bài viết
+                                    {t('content.delete_article')}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -91,14 +93,14 @@ export default function ConceptsClient() {
                 },
             },
         ],
-        []
+        [t]
     );
 
     return (
         <div className="flex flex-col gap-4">
             {error && (
                 <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                    Lỗi: {(error as Error).message}
+                    {t('common.error')}: {(error as Error).message}
                 </div>
             )}
 
@@ -106,10 +108,10 @@ export default function ConceptsClient() {
                 data={items || []}
                 columns={columns}
                 filterKey="title"
-                filterPlaceholder="Tìm kiếm tiêu đề..."
+                filterPlaceholder={t('content.search_placeholder')}
                 showAddButton={true}
                 onAdd={() => window.open("/studio/structure/concepts", "_blank")}
-                addLabel="Thêm bài viết mới"
+                addLabel={t('content.add_new')}
                 showColumnCustomizer={true}
                 showSearch={true}
                 showPagination={true}
@@ -117,7 +119,7 @@ export default function ConceptsClient() {
                 draggable={false}
             />
 
-            {isLoading && <p className="text-sm text-muted-foreground">Đang tải dữ liệu...</p>}
+            {isLoading && <p className="text-sm text-muted-foreground">{t('common.loading')}</p>}
 
             <AlertDialog
                 open={!!selectedItem}
@@ -125,14 +127,13 @@ export default function ConceptsClient() {
             >
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Xác nhận xóa</AlertDialogTitle>
+                        <AlertDialogTitle>{t('content.confirm_delete_title')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Bạn có chắc chắn muốn xóa bài viết &quot;<strong>{selectedItem?.title}</strong>&quot;?
-                            Hành động này không thể hoàn tác.
+                            {t('content.confirm_delete_desc', { title: selectedItem?.title })}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Hủy</AlertDialogCancel>
+                        <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             onClick={() => {
@@ -144,7 +145,7 @@ export default function ConceptsClient() {
                             }}
                             disabled={deleteMutation.isPending}
                         >
-                            {deleteMutation.isPending ? "Đang xóa..." : "Xác nhận xóa"}
+                            {deleteMutation.isPending ? t('common.deleting') : t('common.confirm')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

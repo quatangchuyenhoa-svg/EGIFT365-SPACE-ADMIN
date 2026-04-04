@@ -22,6 +22,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useAuthLogout } from "@/hooks/useAuthLogout"
+import { useTranslation } from "@/lib/i18n/client"
 
 const DEFAULT_AVATAR = "/image/default_avatar.jpg"
 
@@ -34,6 +35,7 @@ export function NavUser({
     avatar?: string
   }
 }) {
+  const { t } = useTranslation()
   const { isMobile } = useSidebar()
   const handleLogout = useAuthLogout()
   const imageSrc = user.avatar || DEFAULT_AVATAR
@@ -90,12 +92,12 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer">
               <IconUserCircle className="mr-2 size-5 opacity-70" />
-              <span>Hồ sơ</span>
+              <span>{t('user.profile')}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
               <IconLogout className="mr-2 size-5 opacity-70" />
-              <span>Đăng xuất</span>
+              <span>{t('user.logout')}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
