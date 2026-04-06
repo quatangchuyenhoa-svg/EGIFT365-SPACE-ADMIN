@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import i18next from 'i18next'
-import { initReactI18next, useTranslation as useTranslationOrg } from 'react-i18next'
+import { initReactI18next, useTranslation as useTranslationOrg, I18nextProvider } from 'react-i18next'
 import resourcesToBackend from 'i18next-resources-to-backend'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { cookieName, languages, fallbackLng, defaultNS } from './settings'
@@ -24,6 +24,35 @@ i18next
     },
     preload: languages
   })
+
+export function TranslationProvider({ 
+  children, 
+  lng, 
+  resources 
+}: { 
+  children: React.ReactNode, 
+  lng: string, 
+  resources: any 
+}) {
+  // Populate global instance if resources provided
+  if (resources && lng) {
+    const bundle = resources[lng]
+    if (bundle) {
+      Object.entries(bundle).forEach(([namespace, bundleResources]) => {
+        if (!i18next.hasResourceBundle(lng, namespace)) {
+          i18next.addResourceBundle(lng, namespace, bundleResources, true, true)
+        }
+      })
+    }
+  }
+
+  // Ensure language is set on server pre-render
+  if (lng && i18next.language !== lng) {
+    i18next.changeLanguage(lng)
+  }
+
+  return <I18nextProvider i18n={i18next}>{children}</I18nextProvider>
+}
 
 export function useTranslation(ns: string | string[] = 'common', options: { keyPrefix?: string, lng?: string } = {}) {
   const ret = useTranslationOrg(ns, options)

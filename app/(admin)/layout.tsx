@@ -6,9 +6,9 @@ export default async function AdminGroupLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { i18n } = await getTranslation()
+  const { i18n, resources } = await getTranslation()
   const lng = i18n.language
 
-  return <AdminLayout lng={lng}>{children}</AdminLayout>
+  return <AdminLayout lng={lng} resources={resources}>{children}</AdminLayout>
 }
 
