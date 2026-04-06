@@ -27,8 +27,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "@/lib/i18n/client";
 
-export function DashboardArticles() {
-    const { t } = useTranslation();
+export function DashboardArticles({ lng }: { lng?: string }) {
+    const { t } = useTranslation('common', { lng });
     const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
     const deleteMutation = useDeleteContent();
 
@@ -123,6 +123,7 @@ export function DashboardArticles() {
                 filterPlaceholder={t('content.search_placeholder')}
                 showPagination={false}
                 selectable={false}
+                lng={lng}
             />
 
             <AlertDialog

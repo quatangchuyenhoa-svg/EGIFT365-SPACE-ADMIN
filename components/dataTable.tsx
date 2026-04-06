@@ -161,6 +161,7 @@ export function DataTable<
   showPagination = true,
   renderExpandedContent,
   meta,
+  lng,
 }: {
   data: TData[];
   columns: ColumnDef<TData>[];
@@ -180,8 +181,9 @@ export function DataTable<
   showPagination?: boolean;
   renderExpandedContent?: (row: Row<TData>) => React.ReactNode;
   meta?: Record<string, unknown>;
+  lng?: string;
 }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common', { lng });
   const [data, setData] = React.useState(() => initialData);
 
   // Update data when initialData changes
@@ -265,18 +267,18 @@ export function DataTable<
 
   const actionsCol: ColumnDef<TData> | null = renderActions
     ? {
-        id: 'actions',
-        cell: ({ row }) => (
-          <div
-            onClick={e => e.stopPropagation()}
-            onPointerDown={e => e.stopPropagation()}
-            onKeyDown={e => e.stopPropagation()}
-            data-stop-row-click
-          >
-            {renderActions(row as Row<TData>)}
-          </div>
-        ),
-      }
+      id: 'actions',
+      cell: ({ row }) => (
+        <div
+          onClick={e => e.stopPropagation()}
+          onPointerDown={e => e.stopPropagation()}
+          onKeyDown={e => e.stopPropagation()}
+          data-stop-row-click
+        >
+          {renderActions(row as Row<TData>)}
+        </div>
+      ),
+    }
     : null;
 
   const allCols = [
@@ -328,12 +330,12 @@ export function DataTable<
     // Chỉ sử dụng client-side pagination nếu không có manual pagination
     ...(isManualPagination
       ? {
-          manualPagination: true,
-          pageCount: meta.pageCount as number,
-        }
+        manualPagination: true,
+        pageCount: meta.pageCount as number,
+      }
       : {
-          getPaginationRowModel: getPaginationRowModel(),
-        }),
+        getPaginationRowModel: getPaginationRowModel(),
+      }),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -367,6 +369,7 @@ export function DataTable<
                   table.getColumn(filterKey)?.setFilterValue(event.target.value)
                 }
                 className="w-full sm:w-56 md:w-72"
+                suppressHydrationWarning
               />
             </div>
           ) : null}
@@ -411,7 +414,7 @@ export function DataTable<
           {showAddButton && onAdd ? (
             <Button variant="outline" size="sm" onClick={onAdd} className="h-9">
               <IconPlus className="size-4" />
-              <span className="hidden md:inline lg:ml-1">
+              <span className="hidden md:inline lg:ml-1" suppressHydrationWarning>
                 {addLabel || t('dataTable.add')}
               </span>
             </Button>
@@ -439,6 +442,7 @@ export function DataTable<
                               type="button"
                               onClick={header.column.getToggleSortingHandler()}
                               className="inline-flex items-center gap-1 select-none"
+                              suppressHydrationWarning
                             >
                               {flexRender(
                                 header.column.columnDef.header,
@@ -498,7 +502,7 @@ export function DataTable<
                         <svg xmlns="http://www.w3.org/2000/svg" className="size-8 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-2.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                         </svg>
-                        <span className="text-sm">{t('dataTable.no_results')}</span>
+                        <span className="text-sm" suppressHydrationWarning>{t('dataTable.no_results')}</span>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -511,9 +515,9 @@ export function DataTable<
           <div className="flex flex-1 items-center gap-2 sm:gap-4">
             {selectable ? (
               <div className="text-muted-foreground hidden flex-1 text-xs sm:text-sm lg:flex">
-                {t('dataTable.selected_count', { 
+                {t('dataTable.selected_count', {
                   selected: table.getFilteredSelectedRowModel().rows.length,
-                  total: table.getFilteredRowModel().rows.length 
+                  total: table.getFilteredRowModel().rows.length
                 })}
               </div>
             ) : (
