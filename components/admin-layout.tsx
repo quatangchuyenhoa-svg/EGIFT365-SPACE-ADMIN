@@ -15,7 +15,7 @@ export function AdminLayout({
 }: {
   children: React.ReactNode,
   lng: string,
-  resources: any,
+  resources: Record<string, Record<string, unknown>>,
 }) {
   const pathname = usePathname()
   const { t, i18n } = useTranslation('common', { lng })

@@ -32,7 +32,7 @@ export function TranslationProvider({
 }: { 
   children: React.ReactNode, 
   lng: string, 
-  resources: any 
+  resources: Record<string, Record<string, unknown>> 
 }) {
   // Populate global instance if resources provided
   if (resources && lng) {
