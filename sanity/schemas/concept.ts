@@ -148,6 +148,20 @@ export default defineType({
       initialValue: false,
     }),
     defineField({
+      name: "showCTA",
+      title: "Hiển thị CTA vật phẩm",
+      type: "boolean",
+      description: "Bật/tắt block CTA liên kết sang trang vật phẩm EGIFT",
+      initialValue: true,
+    }),
+    defineField({
+      name: "ctaLink",
+      title: "Link CTA",
+      type: "url",
+      description: "Link đích khi click CTA. Để trống sẽ dùng mặc định: https://egift365.vn/",
+      validation: (Rule) => Rule.uri({ scheme: ['http', 'https'] }).error('Vui lòng nhập URL hợp lệ'),
+    }),
+    defineField({
       name: "deleteAction",
       title: "Thao tác xóa",
       type: "string",
