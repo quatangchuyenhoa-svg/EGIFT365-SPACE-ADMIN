@@ -39,6 +39,7 @@ export function ChartAreaInteractive() {
   const { t, i18n } = useTranslation('common')
   const isMobile = useIsMobile()
   const [timeRange, setTimeRange] = React.useState("7d")
+  const [mounted, setMounted] = React.useState(false)
   const { data: stats, isLoading, isError } = useDashboardStats()
 
   const chartConfig = {
@@ -56,12 +57,13 @@ export function ChartAreaInteractive() {
   } satisfies ChartConfig
 
   React.useEffect(() => {
+    setMounted(true)
     if (isMobile) {
       setTimeRange("7d")
     }
   }, [isMobile])
 
-  if (isLoading) {
+  if (!mounted || isLoading) {
     return <Skeleton className="h-[400px] w-full rounded-xl" />
   }
 

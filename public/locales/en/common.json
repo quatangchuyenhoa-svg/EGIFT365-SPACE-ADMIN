@@ -51,7 +51,9 @@
     "details": "Details",
     "recent_articles": "Recent Articles",
     "sync_button": "Sync Analytics",
-    "syncing": "Updating..."
+    "syncing": "Updating...",
+    "sync_success": "Analytics updated successfully!",
+    "sync_error": "Error updating Analytics data"
   },
   "time_range": {
     "7d": "Last 7 Days",

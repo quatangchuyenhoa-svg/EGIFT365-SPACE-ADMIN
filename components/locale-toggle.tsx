@@ -34,7 +34,7 @@ export function LocaleToggle() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-9 w-9">
           <Languages className="h-[1.2rem] w-[1.2rem]" />
-          <span className="sr-only">{t('language')}</span>
+          <span className="sr-only" suppressHydrationWarning>{t('language')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { type ColumnDef } from "@tanstack/react-table"
@@ -29,9 +30,14 @@ import { useTranslation } from "@/lib/i18n/client"
 
 export default function UsersClient() {
   const { t } = useTranslation()
+  const [mounted, setMounted] = React.useState(false)
   const { users, loading, error, refetch } = useUsers()
   const router = useRouter()
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const deleteMutation = useDeleteUser({
     onSuccess: async () => {
@@ -64,10 +70,10 @@ export default function UsersClient() {
       {
         accessorKey: "created_at",
         header: t('common.created_at'),
-        cell: ({ row }) =>
-          row.original.created_at
-            ? new Date(row.original.created_at).toLocaleString()
-            : "—",
+        cell: ({ row }) => {
+          if (!mounted || !row.original.created_at) return "—"
+          return new Date(row.original.created_at).toLocaleString()
+        },
       },
       {
         id: "actions",

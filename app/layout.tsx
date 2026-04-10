@@ -34,7 +34,7 @@ export default async function RootLayout({
 
   return (
     <html lang={lng} suppressHydrationWarning className={`${inter.variable} ${firaCode.variable}`}>
-      <body className="antialiased font-sans bg-background text-foreground relative">
+      <body suppressHydrationWarning className="antialiased font-sans bg-background text-foreground relative">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
