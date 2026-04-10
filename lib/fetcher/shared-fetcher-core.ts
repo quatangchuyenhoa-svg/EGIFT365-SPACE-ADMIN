@@ -115,9 +115,13 @@ async function performRefresh(): Promise<{ success: boolean; cookies?: string }>
     let cookies: string | undefined;
     if (data.data.cookies) {
       // For server-side, construct cookie string from response data
-      const accessToken = response.headers.get('set-cookie')?.split(';')[0]?.split('=')[1];
-      const refreshToken = response.headers.get('set-cookie')?.split(';')[0]?.split('=')[1];
-      if (accessToken && refreshToken) {
+      const setCookies = response.headers.getSetCookie();
+      const accessTokenCookie = setCookies.find(c => c.startsWith(data.data.cookies!.accessTokenCookie));
+      const refreshTokenCookie = setCookies.find(c => c.startsWith(data.data.cookies!.refreshTokenCookie));
+      
+      if (accessTokenCookie && refreshTokenCookie) {
+        const accessToken = accessTokenCookie.split(';')[0].split('=')[1];
+        const refreshToken = refreshTokenCookie.split(';')[0].split('=')[1];
         cookies = `${data.data.cookies.accessTokenCookie}=${accessToken}; ${data.data.cookies.refreshTokenCookie}=${refreshToken}`;
       }
     }

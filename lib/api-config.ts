@@ -27,6 +27,9 @@ export const API_CONFIG = {
         UPDATE: (code: string) => `/api/admin/public-tokens/${encodeURIComponent(code)}`,
         DELETE: (code: string) => `/api/admin/public-tokens/${encodeURIComponent(code)}`,
       },
+      ANALYTICS: {
+        SYNC: '/api/admin/analytics/sync',
+      },
     },
   },
 } as const;

@@ -11,16 +11,33 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { IconEye } from "@tabler/icons-react"
-import { AlertCircle, RefreshCcw } from "lucide-react"
+import { AlertCircle, RefreshCcw, RefreshCw } from "lucide-react"
 
 import { useTranslation } from "@/lib/i18n/client"
+import { syncAnalyticsService } from "@/lib/services/dashboard.services"
+import { toast } from "sonner"
 
 export default function AnalyticsClient() {
   const { t } = useTranslation()
   const [dateRange, setDateRange] = useState("30daysAgo")
   const [type, setType] = useState<"concepts" | "home">("concepts")
+  const [isSyncing, setIsSyncing] = useState(false)
 
   const { data, loading, error, refetch } = useAnalytics(dateRange, type)
+
+  const handleSync = async () => {
+    setIsSyncing(true)
+    try {
+      await syncAnalyticsService()
+      toast.success(t('dashboard.sync_success', { defaultValue: 'Cập nhật dữ liệu Analytics thành công!' }))
+      refetch()
+    } catch (error) {
+      console.error('Sync error:', error)
+      toast.error(t('dashboard.sync_error', { defaultValue: 'Lỗi khi cập nhật dữ liệu Analytics' }))
+    } finally {
+      setIsSyncing(false)
+    }
+  }
 
   const columns: ColumnDef<AnalyticsRow>[] = useMemo(
     () => [
@@ -112,6 +129,16 @@ export default function AnalyticsClient() {
               <SelectItem value="2020-01-01">{t('analytics.range.all')}</SelectItem>
             </SelectContent>
           </Select>
+
+          <Button
+            variant="default"
+            onClick={handleSync}
+            disabled={isSyncing}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
+            {isSyncing ? 'Syncing...' : 'Sync GA4'}
+          </Button>
 
           <Button
             variant="outline"

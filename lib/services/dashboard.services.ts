@@ -34,6 +34,13 @@ export interface DashboardStatsResponse {
  */
 export async function getDashboardStatsService(): Promise<DashboardStatsResponse> {
   return clientFetcher.get<DashboardStatsResponse>(
-    `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN.DASHBOARD.STATS}`,
+    API_CONFIG.ENDPOINTS.ADMIN.DASHBOARD.STATS,
   );
+}
+
+/**
+ * Trigger manual analytics sync
+ */
+export async function syncAnalyticsService(): Promise<{ success: boolean; message: string }> {
+  return clientFetcher.post('/api/admin/analytics/sync', {});
 }
