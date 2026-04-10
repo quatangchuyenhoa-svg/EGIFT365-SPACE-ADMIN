@@ -49,7 +49,9 @@
     "qr_scans_desc": "Tổng số lượt tải mã Code đã quét",
     "top_concept_desc": "Đường dẫn: {{path}}",
     "details": "Chi tiết",
-    "recent_articles": "Bài viết gần đây"
+    "recent_articles": "Bài viết gần đây",
+    "sync_button": "Đồng bộ Analytics",
+    "syncing": "Đang cập nhật..."
   },
   "time_range": {
     "7d": "7 Ngày Gần Nhất",
@@ -135,7 +137,9 @@
         "30days": "30 ngày qua",
         "90days": "90 ngày qua",
         "all": "Tất cả thời gian"
-    }
+    },
+    "sync_button": "Đồng bộ GA4",
+    "syncing": "Đang đồng bộ..."
   },
   "content": {
     "edit_in_studio": "Sửa trong Studio",

@@ -36,21 +36,21 @@ import { Skeleton } from "@/components/ui/skeleton"
 export const description = "An interactive area chart"
 
 export function ChartAreaInteractive() {
-  const { t, i18n } = useTranslation('dashboard')
+  const { t, i18n } = useTranslation('common')
   const isMobile = useIsMobile()
   const [timeRange, setTimeRange] = React.useState("7d")
   const { data: stats, isLoading, isError } = useDashboardStats()
 
   const chartConfig = {
     views: {
-      label: t('views'),
+      label: t('dashboard.views'),
     },
     home: {
-      label: t('sidebar.dashboard', { ns: 'common' }),
+      label: t('sidebar.dashboard'),
       color: "var(--chart-1)",
     },
     concepts: {
-      label: "Concepts",
+      label: t('sidebar.concepts'),
       color: "var(--chart-2)",
     },
   } satisfies ChartConfig
@@ -68,7 +68,7 @@ export function ChartAreaInteractive() {
   if (isError || !stats) {
     return (
       <Card className="flex h-[400px] flex-col items-center justify-center text-muted-foreground p-6 text-center">
-        {t('error_loading')}
+        {t('dashboard.error_loading')}
       </Card>
     )
   }
@@ -117,12 +117,12 @@ export function ChartAreaInteractive() {
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardTitle>{t('online_traffic')}</CardTitle>
+        <CardTitle>{t('dashboard.online_traffic')}</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            {t('ga4_total_views_desc')}
+            {t('dashboard.ga4_total_views_desc')}
           </span>
-          <span className="@[540px]/card:hidden">{t('ga4_views')}</span>
+          <span className="@[540px]/card:hidden">{t('dashboard.ga4_views')}</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup

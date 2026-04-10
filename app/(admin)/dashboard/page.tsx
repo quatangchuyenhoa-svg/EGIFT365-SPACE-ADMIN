@@ -41,7 +41,7 @@ export default function Page() {
             className="flex items-center gap-2"
           >
             <RefreshCw className={`size-4 ${isSyncing ? 'animate-spin' : ''}`} />
-            {isSyncing ? 'Updating...' : 'Sync Analytics'}
+            {isSyncing ? t('dashboard.syncing') : t('dashboard.sync_button')}
           </Button>
         </div>
         

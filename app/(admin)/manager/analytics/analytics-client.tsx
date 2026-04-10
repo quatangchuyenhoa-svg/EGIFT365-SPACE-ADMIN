@@ -137,7 +137,7 @@ export default function AnalyticsClient() {
             className="bg-emerald-600 hover:bg-emerald-700 text-white"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
-            {isSyncing ? 'Syncing...' : 'Sync GA4'}
+            {isSyncing ? t('analytics.syncing') : t('analytics.sync_button')}
           </Button>
 
           <Button
