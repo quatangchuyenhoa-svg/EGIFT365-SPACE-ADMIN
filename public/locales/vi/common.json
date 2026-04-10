@@ -51,7 +51,9 @@
     "details": "Chi tiết",
     "recent_articles": "Bài viết gần đây",
     "sync_button": "Đồng bộ Analytics",
-    "syncing": "Đang cập nhật..."
+    "syncing": "Đang cập nhật...",
+    "sync_success": "Cập nhật dữ liệu Analytics thành công!",
+    "sync_error": "Lỗi khi cập nhật dữ liệu Analytics"
   },
   "time_range": {
     "7d": "7 Ngày Gần Nhất",

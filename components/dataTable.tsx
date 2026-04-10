@@ -382,7 +382,9 @@ export function DataTable<
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-9">
                   <IconLayoutColumns className="size-4" />
-                  <span className="hidden md:inline lg:ml-1">{t('dataTable.customize_columns')}</span>
+                  <span className="hidden md:inline lg:ml-1" suppressHydrationWarning>
+                    {t('dataTable.customize_columns')}
+                  </span>
                   <IconChevronDown className="ml-1 hidden size-3 md:inline" />
                 </Button>
               </DropdownMenuTrigger>
@@ -457,10 +459,12 @@ export function DataTable<
                               )}
                             </button>
                           ) : (
-                            flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )
+                            <span suppressHydrationWarning>
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </span>
                           )}
                         </TableHead>
                       );
@@ -514,7 +518,7 @@ export function DataTable<
         <div className="flex flex-col gap-4 px-2 sm:flex-row sm:items-center sm:justify-between sm:px-4">
           <div className="flex flex-1 items-center gap-2 sm:gap-4">
             {selectable ? (
-              <div className="text-muted-foreground hidden flex-1 text-xs sm:text-sm lg:flex">
+              <div className="text-muted-foreground hidden flex-1 text-xs sm:text-sm lg:flex" suppressHydrationWarning>
                 {t('dataTable.selected_count', {
                   selected: table.getFilteredSelectedRowModel().rows.length,
                   total: table.getFilteredRowModel().rows.length
@@ -534,7 +538,7 @@ export function DataTable<
                 className="h-9"
               >
                 <IconTrash className="size-4" />
-                <span className="hidden md:inline lg:ml-1">
+                <span className="hidden md:inline lg:ml-1" suppressHydrationWarning>
                   {t('dataTable.bulk_delete', { count: table.getFilteredSelectedRowModel().rows.length })}
                 </span>
                 <span className="ml-1 md:hidden">
@@ -546,7 +550,7 @@ export function DataTable<
           {showPagination && (
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 lg:w-fit lg:gap-8">
               <div className="hidden items-center gap-2 lg:flex">
-                <Label htmlFor="rows-per-page" className="text-sm font-medium">
+                <Label htmlFor="rows-per-page" className="text-sm font-medium" suppressHydrationWarning>
                   {t('dataTable.rows_per_page')}
                 </Label>
                 <Select
@@ -567,7 +571,7 @@ export function DataTable<
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center justify-center text-xs font-medium sm:text-sm">
+              <div className="flex items-center justify-center text-xs font-medium sm:text-sm" suppressHydrationWarning>
                 {t('dataTable.page_info', {
                   current: table.getState().pagination.pageIndex + 1,
                   total: table.getPageCount()
