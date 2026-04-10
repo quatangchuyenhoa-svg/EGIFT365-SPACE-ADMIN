@@ -49,7 +49,9 @@
     "qr_scans_desc": "Total QR Code scans tracked",
     "top_concept_desc": "Path: {{path}}",
     "details": "Details",
-    "recent_articles": "Recent Articles"
+    "recent_articles": "Recent Articles",
+    "sync_button": "Sync Analytics",
+    "syncing": "Updating..."
   },
   "time_range": {
     "7d": "Last 7 Days",
@@ -135,7 +137,9 @@
         "30days": "Last 30 days",
         "90days": "Last 90 days",
         "all": "All time"
-    }
+    },
+    "sync_button": "Sync GA4",
+    "syncing": "Syncing..."
   },
   "content": {
     "edit_in_studio": "Edit in Studio",

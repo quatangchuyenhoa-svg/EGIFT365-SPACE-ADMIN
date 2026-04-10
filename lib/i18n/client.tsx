@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import i18next from 'i18next'
 import { initReactI18next, useTranslation as useTranslationOrg, I18nextProvider } from 'react-i18next'
 import resourcesToBackend from 'i18next-resources-to-backend'
@@ -46,10 +46,23 @@ export function TranslationProvider({
     }
   }
 
-  // Ensure language is set on server pre-render
-  if (lng && i18next.language !== lng) {
-    i18next.changeLanguage(lng)
-  }
+  // Use a ref to track the last lng prop from server to avoid unnecessary syncs
+  // that can fight with manual client-side changes
+  const lastServerLng = useRef(lng)
+
+  useEffect(() => {
+    if (lng && lastServerLng.current !== lng) {
+      i18next.changeLanguage(lng)
+      lastServerLng.current = lng
+    }
+  }, [lng])
+
+  // Ensure language is set on initial client-side load if not already set
+  useEffect(() => {
+    if (lng && i18next.language !== lng) {
+      i18next.changeLanguage(lng)
+    }
+  }, []) // Only on mount
 
   return <I18nextProvider i18n={i18next}>{children}</I18nextProvider>
 }
@@ -58,10 +71,12 @@ export function useTranslation(ns: string | string[] = 'common', options: { keyP
   const ret = useTranslationOrg(ns, options)
   const { i18n } = ret
   
-  // If we're on the client and receiving an explicit lng (from a prop), sync it
+  // Only sync if the explicit lng prop changes to avoid fighting with manual changes
+  const lastOptionsLng = useRef(options.lng)
   useEffect(() => {
-    if (options.lng && i18n.language !== options.lng) {
+    if (options.lng && lastOptionsLng.current !== options.lng) {
       i18n.changeLanguage(options.lng)
+      lastOptionsLng.current = options.lng
     }
   }, [options.lng, i18n])
 

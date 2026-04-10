@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { AdminLayout } from "@/components/admin-layout"
 import { getTranslation } from "@/lib/i18n/server"
 

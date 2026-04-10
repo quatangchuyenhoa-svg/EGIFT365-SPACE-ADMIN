@@ -18,13 +18,7 @@ export function AdminLayout({
   resources: Record<string, Record<string, unknown>>,
 }) {
   const pathname = usePathname()
-  const { t, i18n } = useTranslation('common', { lng })
-
-  React.useEffect(() => {
-    if (lng && i18n.language !== lng) {
-      i18n.changeLanguage(lng)
-    }
-  }, [lng, i18n])
+  const { t } = useTranslation('common')
 
   const pageTitles: Record<string, string> = {
     [ROUTES.HOME]: t('sidebar.home'),
