@@ -1,148 +1,182 @@
 import { defineType, defineField } from "sanity";
 import { DeleteButtonInput } from "../components/DeleteButtonInput";
 
-// Schema cho Kho Tri Thức - giống hệt Kho Quan Niệm
 export default defineType({
   name: "knowledgeItem",
-  title: "Kho Tri Thức (Knowledge Base)",
+  title: "Kho Tri Thức",
   type: "document",
+  groups: [
+    { name: "content", title: "Nội Dung 📖", default: true },
+    { name: "media", title: "Hình Ảnh 🎨" },
+    { name: "audio", title: "Âm Thanh 🎙️" },
+    { name: "layout", title: "Giao Diện 🖥️" },
+    { name: "settings", title: "Cài Đặt ⚙️" },
+  ],
   fields: [
+    // --- GROUP: CONTENT ---
     defineField({
       name: "title",
-      title: "Title",
+      title: "Tiêu đề tri thức",
       type: "string",
+      group: "content",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "subtitle",
-      title: "Subtitle",
+      title: "Phụ đề / Trích dẫn",
       type: "string",
-      description: "Phụ đề hoặc câu trích dẫn ngắn",
-    }),
-    defineField({
-      name: "headerContent",
-      title: "Mở bài (Header)",
-      type: "blockContent",
-      description: "Phần mở đầu của bài viết",
-    }),
-    defineField({
-      name: "bodyContent",
-      title: "Thân bài (Body)",
-      type: "blockContent",
-      description: "Nội dung chính của bài viết",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "footerContent",
-      title: "Kết bài (Footer)",
-      type: "blockContent",
-      description: "Phần kết thúc của bài viết",
-    }),
-    defineField({
-      name: "applicationContent",
-      title: "Ứng dụng vào cuộc sống",
-      type: "blockContent",
-      description: "Phần hướng dẫn ứng dụng quan niệm vào cuộc sống thực tế",
-    }),
-    defineField({
-      name: "image",
-      title: "Image",
-      type: "image",
-      options: { hotspot: true },
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "backgroundImage",
-      title: "Background Image",
-      type: "image",
-      options: { hotspot: true },
-      description: "Ảnh nền cho trang (dùng cho cả layout dọc và ngang)",
-    }),
-    defineField({
-      name: "mobileImage",
-      title: "Ảnh Mobile View",
-      type: "image",
-      options: { hotspot: true },
-      description: "Ảnh tỉ lệ dọc (9:16) dùng cho trang lướt mobile. Nếu không có sẽ dùng ảnh chính.",
-    }),
-    defineField({
-      name: "audio",
-      title: "Audio",
-      type: "file",
-      options: { accept: "audio/*" },
-      description: "Tùy chọn: upload audio (mp3, m4a, wav...) cho bài viết",
-    }),
-    defineField({
-      name: "autoplay",
-      title: "Auto Play",
-      type: "boolean",
-      description: "Tự động phát audio khi vào trang",
-      initialValue: false,
-    }),
-    defineField({
-      name: "slug",
-      title: "Slug",
-      type: "slug",
-      options: { source: "title", maxLength: 96 },
-      validation: (Rule) => Rule.required(),
+      group: "content",
     }),
     defineField({
       name: "category",
-      title: "Category",
+      title: "Lĩnh vực",
       type: "reference",
+      group: "content",
       to: [{ type: "category" }],
       options: { filter: "isActive == true" },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "author",
-      title: "Tác giả",
+      title: "Người chia sẻ",
       type: "string",
-      description: "Tên tác giả",
+      group: "content",
+      initialValue: "EGift Space",
     }),
     defineField({
-      name: "order",
-      title: "Order",
-      type: "number",
-      description: "Thứ tự hiển thị",
-      initialValue: 0,
+      name: "headerContent",
+      title: "Mở đầu (Header)",
+      type: "blockContent",
+      group: "content",
     }),
     defineField({
-      name: "isActive",
-      title: "Active",
-      type: "boolean",
-      description: "Bật/tắt bài viết",
-      initialValue: true,
-    }),
-    defineField({
-      name: "layoutType",
-      title: "Layout Type",
-      type: "string",
-      description: "Loại layout hiển thị: portrait (ảnh dọc) hoặc landscape (ảnh ngang)",
-      options: {
-        list: [
-          { title: "Portrait (Ảnh dọc)", value: "portrait" },
-          { title: "Landscape (Ảnh ngang)", value: "landscape" },
-        ],
-      },
-      initialValue: "portrait",
+      name: "bodyContent",
+      title: "Nội dung chi tiết (Body)",
+      type: "blockContent",
+      group: "content",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "handwrittenMode",
-      title: "Handwritten Mode",
+      name: "footerContent",
+      title: "Lời kết (Footer)",
+      type: "blockContent",
+      group: "content",
+    }),
+    defineField({
+      name: "applicationContent",
+      title: "Ứng dụng thực tế",
+      type: "blockContent",
+      group: "content",
+    }),
+
+    // --- GROUP: MEDIA ---
+    defineField({
+      name: "image",
+      title: "Ảnh chính",
+      type: "image",
+      group: "media",
+      options: { hotspot: true },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "mobileImage",
+      title: "Ảnh Mobile (9:16)",
+      type: "image",
+      group: "media",
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: "backgroundImage",
+      title: "Ảnh nền trang",
+      type: "image",
+      group: "media",
+      options: { hotspot: true },
+    }),
+
+    // --- GROUP: AUDIO ---
+    defineField({
+      name: "audio",
+      title: "File Audio",
+      type: "file",
+      group: "audio",
+      options: { accept: "audio/*" },
+    }),
+    defineField({
+      name: "autoplay",
+      title: "Tự động phát Audio",
       type: "boolean",
-      description: "Bật để hiển thị bài viết dưới dạng chữ viết tay trên giấy kẻ ngang",
+      group: "audio",
       initialValue: false,
+    }),
+
+    // --- GROUP: LAYOUT ---
+    defineField({
+      name: "layoutType",
+      title: "Bố cục hiển thị",
+      type: "string",
+      group: "layout",
+      options: {
+        list: [
+          { title: "Dọc (Portrait)", value: "portrait" },
+          { title: "Ngang (Landscape)", value: "landscape" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "portrait",
+    }),
+    defineField({
+      name: "mobileLayout",
+      title: "Bố cục lướt Mobile",
+      type: "string",
+      group: "layout",
+      options: {
+        list: [
+          { title: "Full màn hình", value: "portrait" },
+          { title: "Dải mờ (Contain)", value: "landscape" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "portrait",
+    }),
+    defineField({
+      name: "handwrittenMode",
+      title: "Chế độ viết tay ✍️",
+      type: "boolean",
+      group: "layout",
+      initialValue: false,
+    }),
+
+    // --- GROUP: SETTINGS ---
+    defineField({
+      name: "isActive",
+      title: "Kích hoạt hiển thị",
+      type: "boolean",
+      group: "settings",
+      initialValue: true,
+    }),
+    defineField({
+      name: "order",
+      title: "Thứ tự hiện",
+      type: "number",
+      group: "settings",
+      initialValue: 0,
+    }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      group: "settings",
+      options: { source: "title", maxLength: 96 },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "deleteAction",
-      title: "Thao tác xóa",
+      title: "Xóa vĩnh viễn 🗑️",
       type: "string",
+      group: "settings",
       components: {
         input: DeleteButtonInput
       },
-      description: "Cẩn trọng: Xóa bài viết vĩnh viễn",
     }),
   ],
   preview: {
@@ -151,12 +185,14 @@ export default defineType({
       media: "image",
       categoryName: "category.name",
       handwrittenMode: "handwrittenMode",
+      isActive: "isActive"
     },
-    prepare({ title, media, categoryName, handwrittenMode }) {
+    prepare({ title, media, categoryName, handwrittenMode, isActive }) {
+      const status = isActive ? "🟢" : "🔴";
       const handwrittenIndicator = handwrittenMode ? " ✍️" : "";
       return {
-        title: (title || "Untitled") + handwrittenIndicator,
-        subtitle: categoryName ? `Danh mục: ${categoryName}` : "",
+        title: `${status} ${title || "Chưa có tên"}${handwrittenIndicator}`,
+        subtitle: categoryName ? `Danh mục: ${categoryName}` : "Chưa phân loại",
         media,
       };
     },

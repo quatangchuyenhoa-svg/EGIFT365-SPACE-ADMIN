@@ -62,7 +62,7 @@ export function TranslationProvider({
     if (lng && i18next.language !== lng) {
       i18next.changeLanguage(lng)
     }
-  }, []) // Only on mount
+  }, [lng]) // On mount or when lng changes
 
   return <I18nextProvider i18n={i18next}>{children}</I18nextProvider>
 }
