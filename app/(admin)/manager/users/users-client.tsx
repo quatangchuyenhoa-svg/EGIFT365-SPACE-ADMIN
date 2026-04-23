@@ -111,7 +111,7 @@ export default function UsersClient() {
         },
       },
     ],
-    [deleteMutation.isPending, selectedUser, t]
+    [deleteMutation.isPending, selectedUser, t, mounted]
   )
 
   return (
