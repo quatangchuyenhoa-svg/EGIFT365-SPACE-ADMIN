@@ -309,6 +309,8 @@ export default defineConfig({
           .title("Quản lý Nội dung")
           .items([
             // --- MAIN CONTENT ---
+
+
             S.listItem()
               .title("Kho Tri Thức")
               .icon(BookIcon)
@@ -369,9 +371,11 @@ export default defineConfig({
   document: {
     actions: (prev, context) => {
       // Add custom delete action for knowledge and concepts
+
       if (['knowledgeItem', 'concept'].includes(context.schemaType)) {
         return [...prev, DeletePostAction]
       }
+
 
       return prev
     },
