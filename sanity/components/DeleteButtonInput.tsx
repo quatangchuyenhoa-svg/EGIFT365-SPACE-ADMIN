@@ -10,7 +10,7 @@ export function DeleteButtonInput() {
 
     const { delete: deleteOp } = useDocumentOperation(docId?.replace('drafts.', ''), docType)
 
-    const handleDelete = () => {
+    const handleDelete = React.useCallback(() => {
         const confirmed = window.confirm(
             'Bạn có chắc chắn muốn xóa bài viết này?\n\nHành động này không thể hoàn tác và bài viết sẽ bị xóa vĩnh viễn.'
         )
@@ -18,7 +18,8 @@ export function DeleteButtonInput() {
         if (confirmed) {
             deleteOp.execute()
         }
-    }
+    }, [deleteOp])
+
 
     return (
         <Card padding={3} border tone="critical" radius={2}>

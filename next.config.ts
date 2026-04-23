@@ -13,7 +13,11 @@ const nextConfig: NextConfig = {
     "localhost",
     "127.0.0.1",
     "192.168.1.60",
+    "192.168.2.200",
   ],
+  env: {
+    SC_DISABLE_SPEEDY: 'false',
+  },
 };
 
 export default nextConfig;
