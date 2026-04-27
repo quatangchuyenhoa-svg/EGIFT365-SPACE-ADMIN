@@ -484,7 +484,7 @@ export function DataTable<
                         new Set();
                       const isExpanded = expandedRows.has(row.id);
                       return (
-                        <React.Fragment key={row.id}>
+                        <React.Fragment key={`${row.id}-${row.index}`}>
                           <DraggableRow row={row} onRowClick={onRowClick} />
                           {isExpanded && renderExpandedContent && (
                             <TableRow>
