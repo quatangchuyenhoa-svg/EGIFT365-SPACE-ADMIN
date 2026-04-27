@@ -28,13 +28,24 @@ export default defineType({
       group: "content",
     }),
     defineField({
+      name: "categories",
+      title: "Lĩnh vực / Tags",
+      type: "array",
+      group: "content",
+      of: [{ type: "reference", to: [{ type: "category" }] }],
+      options: {
+        layout: "tags",
+      },
+      validation: (Rule) => Rule.required().min(1).error('Vui lòng chọn ít nhất 1 tag'),
+    }),
+    defineField({
       name: "category",
-      title: "Lĩnh vực",
+      title: "Lĩnh vực cũ (Legacy)",
       type: "reference",
       group: "content",
       to: [{ type: "category" }],
-      options: { filter: "isActive == true" },
-      validation: (Rule) => Rule.required(),
+      readOnly: true,
+      description: "Dữ liệu cũ trước khi nâng cấp hệ thống nhiều tag. Hãy chọn lại ở ô phía trên.",
     }),
     defineField({
       name: "author",
@@ -183,16 +194,18 @@ export default defineType({
     select: {
       title: "title",
       media: "image",
-      categoryName: "category.name",
+      categories: "categories",
+      legacyCategoryName: "category.name",
       handwrittenMode: "handwrittenMode",
       isActive: "isActive"
     },
-    prepare({ title, media, categoryName, handwrittenMode, isActive }) {
+    prepare({ title, media, categories, legacyCategoryName, handwrittenMode, isActive }) {
+      const firstCategory = (categories && categories[0] ? categories[0].name : null) || legacyCategoryName;
       const status = isActive ? "🟢" : "🔴";
       const handwrittenIndicator = handwrittenMode ? " ✍️" : "";
       return {
         title: `${status} ${title || "Chưa có tên"}${handwrittenIndicator}`,
-        subtitle: categoryName ? `Danh mục: ${categoryName}` : "Chưa phân loại",
+        subtitle: firstCategory ? `Danh mục: ${firstCategory}` : "Chưa phân loại",
         media,
       };
     },

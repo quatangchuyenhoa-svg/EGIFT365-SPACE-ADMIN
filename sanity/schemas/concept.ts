@@ -31,15 +31,24 @@ export default defineType({
       description: "Câu trích dẫn ngắn xuất hiện dưới tiêu đề",
     }),
     defineField({
+      name: "categories",
+      title: "Phân loại / Tags",
+      type: "array",
+      group: "content",
+      of: [{ type: "reference", to: [{ type: "category" }] }],
+      options: {
+        layout: "tags",
+      },
+      validation: (Rule) => Rule.required().min(1).error('Vui lòng chọn ít nhất 1 tag'),
+    }),
+    defineField({
       name: "category",
-      title: "Phân loại",
+      title: "Danh mục cũ (Legacy)",
       type: "reference",
       group: "content",
       to: [{ type: "category" }],
-      options: {
-        filter: "isActive == true",
-      },
-      validation: (Rule) => Rule.required(),
+      readOnly: true,
+      description: "Dữ liệu cũ trước khi nâng cấp hệ thống nhiều tag. Hãy chọn lại ở ô phía trên.",
     }),
     defineField({
       name: "author",
@@ -229,13 +238,15 @@ export default defineType({
     select: {
       title: "title",
       media: "image",
-      categoryName: "category.displayName",
-      categoryValue: "category.value",
+      categories: "categories",
+      legacyCategoryName: "category.name",
       handwrittenMode: "handwrittenMode",
       isActive: "isActive"
     },
-    prepare({ title, media, categoryName, categoryValue, handwrittenMode, isActive }) {
-      const categoryText = categoryName || categoryValue ? `[${categoryName || categoryValue}]` : "";
+    prepare({ title, media, categories, legacyCategoryName, handwrittenMode, isActive }) {
+      // Ưu tiên lấy tag mới, nếu không có thì lấy tag cũ
+      const firstCategory = (categories && categories[0] ? categories[0].name : null) || legacyCategoryName;
+      const categoryText = firstCategory ? `[${firstCategory}]` : "";
       const status = isActive ? "✅" : "❌";
       const handwrittenIndicator = handwrittenMode ? " ✍️" : "";
       return {
