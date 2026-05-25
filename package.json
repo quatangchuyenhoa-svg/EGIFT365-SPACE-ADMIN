@@ -34,6 +34,7 @@
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@sanity/client": "^7.21.0",
+    "@sanity/icons": "^3.7.4",
     "@sanity/image-url": "^2.1.1",
     "@sanity/ui": "^3.1.14",
     "@sanity/vision": "^5.22.0",
