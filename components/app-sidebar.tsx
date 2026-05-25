@@ -8,6 +8,7 @@ import {
   IconBook2,
   IconEdit,
   IconUsers,
+  IconSchool,
 } from "@tabler/icons-react";
 import Image from "next/image";
 
@@ -78,6 +79,11 @@ export function AppSidebar({ lng, ...props }: React.ComponentProps<typeof Sideba
             title: t('sidebar.public_codes'),
             url: ROUTES.MANAGER.PUBLIC_CODES,
             icon: IconKey,
+          },
+          {
+            title: "Microsite",
+            url: ROUTES.MANAGER.MICROSITES,
+            icon: IconSchool,
           },
         ],
       },

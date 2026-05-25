@@ -1,0 +1,304 @@
+react-doctor v0.1.6
+
+✔ Select projects to scan › egift-admin
+Scanning /Applications/WorkSpace/egift-space/egift-admin...
+
+- Detecting framework. Found Next.js.
+✔ Detecting framework. Found Next.js.
+- Detecting React version. Found React ^19.2.5.
+✔ Detecting React version. Found React ^19.2.5.
+- Detecting language. Found TypeScript.
+✔ Detecting language. Found TypeScript.
+- Detecting React Compiler. Found React Compiler.
+✔ Detecting React Compiler. Found React Compiler.
+- Found 142 source files.
+✔ Found 142 source files.
+
+- Running lint checks...
+- Detecting dead code.
+✔ Detecting dead code.
+- Running lint checks...
+✔ Running lint checks.
+
+  ⚠ knip/exports                                              ×60
+      Unused export: getAuthCallbackUrl
+      lib/constants/routes.ts
+      components/chart-area-interactive.tsx
+      lib/fetcher/index.ts
+      lib/api-config.ts
+      components/ui/sidebar.tsx
+      components/ui/badge.tsx
+      hooks/api/useDashboardStats.ts
+      components/ui/chart.tsx
+      components/ui/select.tsx
+      components/ui/dropdown-menu.tsx
+      components/ui/alert-dialog.tsx
+      components/ui/field.tsx
+      components/ui/tabs.tsx
+      lib/services/public-tokens.services.ts
+      lib/fetcher/fetch-server.ts
+      lib/fetcher/fetch-client.ts
+      lib/fetcher/shared-fetcher-core.ts
+      components/ui/sheet.tsx
+      components/ui/toggle.tsx
+      components/ui/table.tsx
+      components/ui/dialog.tsx
+
+  ⚠ react-doctor/design-no-redundant-size-axes                ×19
+      w-9 h-9 → use the shorthand size-9 (Tailwind v3.4+)
+      → Collapse `w-N h-N` to `size-N` (Tailwind v3.4+) when both axes match
+      components/locale-toggle.tsx:35
+      components/locale-toggle.tsx:36
+      components/dataTable.tsx:583
+      components/dataTable.tsx:592
+      components/dataTable.tsx:602
+      components/dataTable.tsx:612
+      components/nav-user.tsx:63
+      components/dashboard-articles.tsx:92
+      components/ui/password-input.tsx:33
+      components/ui/password-input.tsx:35
+      app/(admin)/manager/analytics/analytics-client.tsx:101
+      components/data-table.tsx:571
+      components/molecules/public-codes/TokenActions.tsx:20
+      app/(admin)/manager/concepts/concepts-client.tsx:74
+      app/not-found.tsx:18
+      app/not-found.tsx:19
+      components/ui/chart.tsx:297
+      app/(admin)/manager/users/users-client.tsx:88
+      app/(admin)/manager/knowledge/knowledge-client.tsx:74
+
+  ⚠ knip/files                                                ×12
+      Unused file
+      → This file is not imported by any other file in the project.
+      hooks/useAuthOAuth.ts
+      components/data-table.tsx
+      components/nav-documents.tsx
+      components/nav-secondary.tsx
+      scripts/force-publish-theme.js
+      scripts/migrate-concepts-to-knowledge.mjs
+      scripts/verify-sanity-document.js
+      lib/utils/server.ts
+      components/ui/breadcrumb.tsx
+      components/ui/drawer.tsx
+      components/ui/sonner.tsx
+      app/(admin)/manager/users/index.tsx
+
+  ⚠ knip/types                                                ×12
+      Unused type: ApiResponse
+      lib/fetcher/index.ts
+      app/(admin)/manager/users/create-new-edit-user.tsx
+      hooks/usePublicAccessTokens.ts
+      store/useUserStore.ts
+      types/auth.type.ts
+
+  ⚠ react-doctor/react-compiler-destructure-method            ×6
+      Destructure for clarity: `const { get } = useSearchParams()` then call `get(...)` directly — easier for React Compiler to memoize and clearer about which methods this component depends on
+      → Destructure the method up front: `const { push } = useRouter()` then call `push(...)` directly — clearer dependency graph and easier for React Compiler to memoize
+      components/login-form.tsx:51
+      components/login-form.tsx:56
+      components/locale-toggle.tsx:28
+      app/(admin)/manager/users/create-new-edit-user.tsx:160
+      app/(admin)/manager/users/create-new-edit-user.tsx:292
+      app/(admin)/manager/users/users-client.tsx:131
+
+  ⚠ react-doctor/js-combine-iterations                        ×4
+      .filter().map() iterates the array twice — combine into a single loop with .reduce() or for...of
+      → Combine `.map().filter()` (or similar chains) into a single pass with `.reduce()` or a `for...of` loop to avoid iterating the array twice
+      components/dataTable.tsx:392
+      components/data-table.tsx:450
+      components/ui/chart.tsx:182
+      components/ui/chart.tsx:280
+
+  ⚠ react-doctor/no-react19-deprecated-apis                   ×4
+      useContext is superseded by `use()` on React 19+ — `use()` reads context conditionally inside hooks, branches, and loops; switch to `import { use } from 'react'`
+      → Pass `ref` as a regular prop on function components — `forwardRef` is no longer needed in React 19+. Replace `useContext(X)` with `use(X)` for branch-aware context reads. Only enabled on projects detected as React 19+.
+      components/ui/sidebar.tsx:48
+      components/ui/password-input.tsx:10
+      components/ui/toggle-group.tsx:59
+      components/ui/chart.tsx:28
+
+  ⚠ react-doctor/rerender-state-only-in-handlers              ×3
+      useState "mounted" is updated but never read in the component's return — use useRef so updates don't trigger re-renders
+      → Replace useState with useRef when the value is only mutated and never read in render — `ref.current = ...` updates without re-rendering the component
+      components/theme-toggle.tsx:10
+      components/chart-area-interactive.tsx:42
+      app/loading.tsx:7
+
+  ⚠ react-doctor/design-no-bold-heading                       ×3
+      font-bold on <h1> crushes counter shapes at display sizes — use font-semibold (600) or font-medium (500)
+      → Use `font-semibold` (600) or `font-medium` (500) on headings — 700+ crushes letter counter shapes at display sizes
+      components/login-form.tsx:73
+      app/(admin)/page.tsx:34
+      app/(admin)/dashboard/page.tsx:36
+
+  ⚠ react-doctor/prefer-useReducer                            ×3
+      Component "DataTable" has 6 useState calls — consider useReducer for related state
+      → Group related state: `const [state, dispatch] = useReducer(reducer, { field1, field2, ... })`
+      components/dataTable.tsx:185
+      components/data-table.tsx:343
+      app/(admin)/manager/public-codes/public-codes-client.tsx:18
+
+  ⚠ react-doctor/no-render-in-render                          ×3
+      Inline render function "renderActions()" — extract to a separate component for proper reconciliation
+      → Extract to a named component: `const ListItem = ({ item }) => <div>{item.name}</div>`
+      components/dataTable.tsx:278
+      components/dataTable.tsx:493
+      sanity/components/NavbarActions.tsx:66
+
+  ⚠ react-doctor/prefer-dynamic-import                        ×3
+      "recharts" is a heavy library — use React.lazy() or next/dynamic for code splitting
+      → Use `const Component = dynamic(() => import('library'), { ssr: false })` from next/dynamic or React.lazy()
+      components/chart-area-interactive.tsx:4
+      components/data-table.tsx:52
+      components/ui/chart.tsx:4
+
+  ⚠ react-doctor/no-derived-state-effect                      ×2
+      State reset in useEffect — use a key prop to reset component state when props change
+      → For derived state, compute inline: `const x = fn(dep)`. For state resets on prop change, use a key prop: `<Component key={prop} />`. See https://react.dev/learn/you-might-not-need-an-effect
+      hooks/useUser.ts:15
+      components/dataTable.tsx:190
+
+  ⚠ react-doctor/no-dynamic-import-path                       ×2
+      Template literal with interpolation in dynamic import — use a string literal so the bundler can split this chunk
+      → Use a string-literal path: `import('./feature/heavy.js')` so the bundler can split this chunk
+      lib/i18n/server.ts:11
+      lib/i18n/client.tsx:14
+
+  ⚠ react-doctor/nextjs-missing-metadata                      ×2
+      Page without metadata or generateMetadata export — hurts SEO
+      → Add `export const metadata = { title: '...', description: '...' }` or `export async function generateMetadata()`
+      app/auth/login/page.tsx:1
+      app/(studio)/studio/[[...index]]/page.tsx:1
+
+  ⚠ react-doctor/no-array-index-as-key                        ×2
+      Array index "i" used as key — causes bugs when list is reordered or filtered
+      → Use a stable unique identifier: `key={item.id}` or `key={item.slug}` — index keys break on reorder/filter
+      components/section-cards.tsx:25
+      components/ui/field.tsx:215
+
+  ⚠ react-doctor/no-giant-component                           ×2
+      Component "DataTable" is 485 lines — consider breaking it into smaller focused components
+      → Extract logical sections into focused components: `<UserHeader />`, `<UserActions />`, etc.
+      components/dataTable.tsx:143
+      app/(admin)/manager/public-codes/public-codes-client.tsx:18
+
+  ⚠ react-doctor/query-mutation-missing-invalidation          ×2
+      useMutation without a cache update — stale data may remain after the mutation. Call queryClient.invalidateQueries / setQueryData / resetQueries / refetchQueries inside onSuccess (or trigger a router refresh)
+      → Add `onSuccess: () => queryClient.invalidateQueries({ queryKey: ['...'] })` so cached data stays in sync after the mutation
+      hooks/useAuthOAuth.ts:14
+      hooks/useAuthLogin.ts:19
+
+  ⚠ react-doctor/no-prevent-default                           ×2
+      preventDefault() on <form> onSubmit — form won't work without JavaScript. Consider using a server action for progressive enhancement
+      → Use `<form action={serverAction}>` (works without JS) or `<button>` instead of `<a>` with preventDefault
+      components/data-table.tsx:208
+      components/data-table.tsx:233
+
+  ⚠ react-doctor/design-no-vague-button-label                 ×2
+      Vague button label "Submit" — name the action ("Save changes", "Send invite", "Delete account") so screen readers and hesitant users know what happens
+      → Name the action: "Save changes" instead of "Continue", "Send invite" instead of "Submit", "Delete account" instead of "OK". The label IS the button's accessible name
+      components/data-table.tsx:800
+      components/data-table.tsx:802
+
+  ⚠ react/no-danger                                           ×2
+      Do not use `dangerouslySetInnerHTML` prop
+      → `dangerouslySetInnerHTML` is a way to inject HTML into your React component. This is dangerous because it can easily lead to XSS vulnerabilities.
+      sanity.config.tsx:59
+      components/ui/chart.tsx:83
+
+  ⚠ react-doctor/rerender-memo-before-early-return            ×2
+      useMemo returning JSX runs before an early return — extract the JSX into a memoized child component so the parent bails out before the subtree renders
+      → Extract the JSX into a memoized child component so the parent's early return short-circuits before the child renders
+      components/ui/field.tsx:194
+      components/ui/chart.tsx:131
+
+  ⚠ react-doctor/server-sequential-independent-await
+      Sequential `await` without a data dependency on the previous result — wrap the independent calls in `Promise.all([...])` so they race instead of waterfalling
+      → Wrap independent awaits in `Promise.all([...])` so they race instead of waterfalling — second call doesn't depend on the first
+      lib/i18n/server.ts:18
+
+  ⚠ jsx-a11y/anchor-is-valid
+      Use of incorrect `href` for the 'a' element.
+      → Provide a correct `href` for the `a` element.
+      app/auth/login/page.tsx:11
+
+  ⚠ react-doctor/nextjs-image-missing-sizes
+      next/image with fill but no sizes — the browser downloads the largest image. Add a sizes attribute for responsive behavior
+      → Add sizes for responsive behavior: `sizes="(max-width: 768px) 100vw, 50vw"` matching your layout breakpoints
+      app/auth/login/page.tsx:25
+
+  ⚠ react-doctor/nextjs-no-use-search-params-without-suspense
+      useSearchParams() requires a <Suspense> boundary — without one, the entire page bails out to client-side rendering
+      → Wrap the component using useSearchParams: `<Suspense fallback={<Skeleton />}><SearchComponent /></Suspense>`
+      components/login-form.tsx:35
+
+  ⚠ react-doctor/nextjs-no-client-side-redirect
+      router.replace() in useEffect — use redirect() from next/navigation or handle navigation in an event handler
+      → Avoid redirects inside useEffect. Use an event handler, middleware, or server-side redirect (App Router: redirect() from next/navigation; Pages Router: getServerSideProps redirect)
+      components/login-form.tsx:56
+
+  ⚠ jsx-a11y/no-static-element-interactions
+      Static HTML elements with event handlers require a role.
+      → Add a role attribute to this element, or use a semantic HTML element instead.
+      components/dataTable.tsx:272
+
+  ⚠ react-doctor/no-many-boolean-props
+      Component "DataTable" takes 4 boolean-like props (showSearch, showColumnCustomizer, showAddButton…) — consider compound components or explicit variants instead of stacking flags
+      → Split into compound components or named variants: `<Button.Primary />`, `<DialogConfirm />` instead of stacking `isPrimary`, `isConfirm` flags
+      components/dataTable.tsx:143
+
+  ⚠ react-doctor/design-no-space-on-flex-children
+      space-y-1 on a flex/grid parent — use gap-y-1 instead. Per-sibling margins phantom-gap on conditional render and don't mirror in RTL
+      → Use `gap-*` on the flex/grid parent. `space-x-*` / `space-y-*` produce phantom gaps when a sibling is conditionally rendered, lose vertical spacing on wrapped lines, and don't mirror in RTL
+      components/nav-user.tsx:83
+
+  ⚠ react-doctor/no-derived-useState
+      useState initialized from prop "defaultOpen" — if this value should stay in sync with the prop, derive it during render instead
+      → Remove useState and compute the value inline: `const value = transform(propName)`
+      components/ui/sidebar.tsx:74
+
+  ⚠ react-doctor/no-inline-exhaustive-style
+      8 inline style properties — extract to a CSS class, CSS module, or styled component for maintainability and reuse
+      → Move styles to a CSS class, CSS module, Tailwind utilities, or a styled component — inline objects with many properties hurt readability and create new references every render
+      sanity.config.tsx:21
+
+  ⚠ react-doctor/no-tiny-text
+      Font size 10px is too small — body text should be at least 12px for readability, 16px is ideal
+      → Use at least 12px for body content, 16px is ideal. Small text is hard to read, especially on high-DPI mobile screens
+      sanity.config.tsx:45
+
+  ⚠ react-doctor/server-fetch-without-revalidate
+      fetch(url) in a Server Component / route handler defaults to forever-caching — pass { next: { revalidate: <seconds> } } / { next: { tags: [...] } } / { cache: "no-store" } so stale data doesn't quietly persist
+      → Pass `{ next: { revalidate: <seconds> } }` (or `cache: "no-store"` / `next: { tags: [...] }`) so stale cached data doesn't silently persist
+      app/api/sync-content/route.ts:22
+
+  ⚠ react-doctor/rendering-hydration-no-flicker
+      useEffect(setState, []) on mount causes a flash — consider useSyncExternalStore or suppressHydrationWarning
+      → Use `useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)` or add `suppressHydrationWarning` to the element
+      app/(admin)/manager/users/users-client.tsx:38
+
+  ⚠ react-doctor/design-no-three-period-ellipsis
+      Three-period ellipsis ("...") in JSX text — use the actual ellipsis character "…" (or `&hellip;`)
+      → Use the typographic ellipsis "…" (or `&hellip;`) instead of three periods — pairs with action-with-followup labels ("Rename…", "Loading…")
+      app/(admin)/manager/users/index.tsx:67
+
+  ⚠ react-doctor/no-effect-event-handler
+      useEffect simulating an event handler — move logic to an actual event handler instead
+      → Move the conditional logic into onClick, onChange, or onSubmit handlers directly
+      app/(admin)/manager/public-codes/public-codes-client.tsx:31
+
+  ⚠ react-doctor/design-no-em-dash-in-jsx-text
+      Em dash (—) in JSX text reads as model output — replace with comma, colon, semicolon, or parentheses
+      → Replace em dashes in JSX text with commas, colons, semicolons, periods, or parentheses — em dashes read as model-output filler
+      app/(admin)/manager/public-codes/public-codes-client.tsx:221
+
+  ┌─────┐  72 / 100 Needs work
+  │ • • │  ████████████████████████████████████░░░░░░░░░░░░░░
+  │  ─  │  React Doctor (www.react.doctor)
+  └─────┘
+
+  168 issues across 65/142 files  in 270ms
+  Full diagnostics written to /var/folders/rn/lj_l93dx4k9gcwnrnmywpsx00000gn/T/react-doctor-2285f908-8305-4f73-a616-4807f3301379
+
+  → Share your results: https://www.react.doctor/share?p=egift-admin&s=72&w=168&f=65
+

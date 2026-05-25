@@ -30,6 +30,13 @@ export const API_CONFIG = {
       ANALYTICS: {
         SYNC: '/api/admin/analytics/sync',
       },
+      STUDENTS: {
+        LIST: '/api/admin/students',
+        DETAIL: (id: string) => `/api/admin/students/${id}`,
+        CREATE: '/api/admin/students',
+        UPDATE: (id: string) => `/api/admin/students/${id}`,
+        DELETE: (id: string) => `/api/admin/students/${id}`,
+      },
     },
   },
 } as const;

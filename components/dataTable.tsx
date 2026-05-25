@@ -185,6 +185,11 @@ export function DataTable<
 }) {
   const { t } = useTranslation('common', { lng });
   const [data, setData] = React.useState(() => initialData);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Update data when initialData changes
   React.useEffect(() => {
@@ -584,7 +589,7 @@ export function DataTable<
                   onClick={() => table.setPageIndex(0)}
                   disabled={!table.getCanPreviousPage()}
                 >
-                  <span className="sr-only">{t('dataTable.first_page')}</span>
+                  <span className="sr-only">{mounted ? t('dataTable.first_page') : 'Go to first page'}</span>
                   <IconChevronsLeft className="size-4" />
                 </Button>
                 <Button
@@ -594,7 +599,7 @@ export function DataTable<
                   onClick={() => table.previousPage()}
                   disabled={!table.getCanPreviousPage()}
                 >
-                  <span className="sr-only">{t('dataTable.prev_page')}</span>
+                  <span className="sr-only">{mounted ? t('dataTable.prev_page') : 'Go to previous page'}</span>
                   <IconChevronLeft className="size-4" />
                 </Button>
                 <Button
@@ -604,7 +609,7 @@ export function DataTable<
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
                 >
-                  <span className="sr-only">{t('dataTable.next_page')}</span>
+                  <span className="sr-only">{mounted ? t('dataTable.next_page') : 'Go to next page'}</span>
                   <IconChevronRight className="size-4" />
                 </Button>
                 <Button
@@ -614,7 +619,7 @@ export function DataTable<
                   onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                   disabled={!table.getCanNextPage()}
                 >
-                  <span className="sr-only">{t('dataTable.last_page')}</span>
+                  <span className="sr-only">{mounted ? t('dataTable.last_page') : 'Go to last page'}</span>
                   <IconChevronsRight className="size-4" />
                 </Button>
               </div>

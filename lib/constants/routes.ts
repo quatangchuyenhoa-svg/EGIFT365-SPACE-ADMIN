@@ -22,6 +22,7 @@ export const ROUTES = {
     KNOWLEDGE: "/manager/knowledge",
     CONCEPTS: "/manager/concepts",
     ANALYTICS: "/manager/analytics",
+    MICROSITES: "/manager/microsites",
   },
 } as const
 

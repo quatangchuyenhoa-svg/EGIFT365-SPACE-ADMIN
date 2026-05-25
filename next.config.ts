@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
   env: {
     SC_DISABLE_SPEEDY: 'false',
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:9062"}/api/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
